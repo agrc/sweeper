@@ -3,6 +3,8 @@
 Created on Wed Jun 5 14:15:04 2019
 @author: eneemann
 Script to identify empty geometries in a feature class with open source tools
+
+New commments added here
 """
 
 import os
@@ -68,9 +70,7 @@ def find_empty_geom(db, data):
 if __name__ == "__main__":
     for fc in sorted(fclist):
         find_empty_geom(database, fc)
-
-#for fc in sorted(fclist):
-#    find_empty_geom(database, fc)
+        
 
 print("Script shutting down ...")
 # Stop timer and print end time in UTC
