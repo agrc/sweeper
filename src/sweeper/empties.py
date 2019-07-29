@@ -5,6 +5,7 @@ Created on Wed Jun 5 14:15:04 2019
 Script to identify empty geometries in a feature class with open source tools
 
 New commments added here
+Another line of comments
 '''
 import time
 import fiona
