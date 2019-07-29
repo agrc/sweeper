@@ -6,11 +6,10 @@ Script to identify empty geometries in a feature class with open source tools
 
 New commments added here
 '''
-
-import os
 import time
-import geopandas as gpd
 import fiona
+# import os
+# import geopandas as gpd
 
 # Start timer and print start time in UTC
 start_time = time.time()
@@ -18,8 +17,8 @@ readable_start = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
 print('The script start time is {}'.format(readable_start))
 
 # Get list of feature classes in a geodatabase
-database = r'C:\E911\Box Elder CO\BoxElder_Spillman_WGS84.gdb'
-#database = r'C:\E911\StGeorgeDispatch_TEST\Bad_Geometries_TEST.gdb'
+# database = r'C:\E911\Box Elder CO\BoxElder_Spillman_WGS84.gdb'
+database = r'C:\E911\StGeorgeDispatch_TEST\Bad_Geometries_TEST.gdb'
 fclist = fiona.listlayers(database)
 
 ###############
@@ -31,7 +30,7 @@ def find_empty_geom(db, data):
     lyr = fiona.open(db, layer=data)
 
     if lyr.schema['geometry'] == ('Point' or 'MultiPoint'):
-        print('{} geometry type is: Point, looping through features ...'.format(lyr.name, lyr.schema['geometry']))
+        print('{} geometry type is: {}, looping through features ...'.format(lyr.name, lyr.schema['geometry']))
         # Assign x and y min/max values from lyr bounds and use to verify each point
         xmin, ymin, xmax, ymax = lyr.bounds[0], lyr.bounds[1], lyr.bounds[2], lyr.bounds[3]
 
