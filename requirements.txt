@@ -1,3 +1,5 @@
 docopt
 fiona
 geopandas
+xxhash
+
