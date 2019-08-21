@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 '''
-Created on Wed Jun 5 14:15:04 2019
+Created on Thu Aug 8 13:54:56 2019
 @author: eneemann
-Script to identify empty geometries in a feature class with open source tools
-
-New commments added here
-Another line of comments
+Script to identify empty geometries in a feature class with ArcPy
 '''
+
+#import os
 import time
-import fiona
-# import os
-# import geopandas as gpd
+import arcpy
+from arcpy import env
+import pprint
 
 # Start timer and print start time in UTC
 start_time = time.time()
@@ -18,52 +17,63 @@ readable_start = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
 print('The script start time is {}'.format(readable_start))
 
 # Get list of feature classes in a geodatabase
-# database = r'C:\E911\Box Elder CO\BoxElder_Spillman_WGS84.gdb'
 database = r'C:\E911\StGeorgeDispatch_TEST\Bad_Geometries_TEST.gdb'
-fclist = fiona.listlayers(database)
-
+env.workspace = database
+fclist = arcpy.ListFeatureClasses()
+            
 ###############
 #  Functions  #
 ###############
 
 
-def find_empty_geom(db, data):
-    lyr = fiona.open(db, layer=data)
-
-    if lyr.schema['geometry'] == ('Point' or 'MultiPoint'):
-        print('{} geometry type is: {}, looping through features ...'.format(lyr.name, lyr.schema['geometry']))
-        # Assign x and y min/max values from lyr bounds and use to verify each point
-        xmin, ymin, xmax, ymax = lyr.bounds[0], lyr.bounds[1], lyr.bounds[2], lyr.bounds[3]
-
-        for feature in lyr:
-            geom = feature['geometry']
-            if geom is None:
-                print('Geometry is invalid (null) for ID: {}'.format(feature['id']))
-            # Check for points with coordinates outside of lyr bounds, these are invalid
-            elif geom['coordinates'][0] < xmin or geom['coordinates'][0] > xmax:
-                print('Geometry is invalid (outside of bounds) for ID: {}'.format(feature['id']))
-            elif geom['coordinates'][1] < ymin or geom['coordinates'][1] > ymax:
-                print('Geometry is invalid (outside of bounds) for ID: {}'.format(feature['id']))
-
-    elif lyr.schema['geometry'] in ['LineString', 'MultiLineString']:
-        print('{} geometry type is: {}, looping through features ...'.format(lyr.name, lyr.schema['geometry']))
-        # Loop through line features, find those with empty coordinate tuples
-        for feature in lyr:
-            geom = feature['geometry']
-            if geom is None:
-                print('Geometry is invalid (null) for ID: {}'.format(feature['id']))
-            elif len(geom['coordinates'][0]) == 0:
-                print('Geometry is invalid (empty) for ID: {}'.format(feature['id']))
-
-    elif lyr.schema['geometry'] in ['Polygon', 'MultiPolygon']:
-        print('{} geometry type is: {}, looping through features ...'.format(lyr.name, lyr.schema['geometry']))
-        # Loop through polygon features, find those with empty coordinate tuples
-        for feature in lyr:
-            geom = feature['geometry']
-            if geom is None:
-                print('Geometry is invalid (null) for ID: {}'.format(feature['id']))
-            elif len(geom['coordinates'][0]) == 0:
-                print('Geometry is invalid (empty) for ID: {}'.format(feature['id']))
+def delete_empty_geom(db, lyr):
+    del_count = 0
+    fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
+    with arcpy.da.UpdateCursor(lyr, fields) as Ucursor:
+        print("Looping through rows in '{}' ...".format(lyr))
+        for row in Ucursor:
+            bad_geom = False
+            # Check if geometry object is null
+            if row[2] is None:
+                print("     OID {} has null (None) geometry".format(row[0]))
+                bad_geom = True
+            # Check shape centroid has a null coordinate
+            elif row[1][0] == None or row[1][1] == None:
+                print("     OID {} has empty geometry".format(row[0]))
+                bad_geom = True
+            
+            if bad_geom == True:
+                print("     --> Deleting OID {} ... ".format(row[0]))
+                Ucursor.deleteRow()
+                del_count += 1
+    print("Total number of rows deleted: {}".format(del_count))
+    
+    
+def report_empty_geom(db, lyr):
+    empty_count = 0
+    report_dict = {}
+    fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
+    with arcpy.da.SearchCursor(lyr, fields) as Scursor:
+        print("Looping through rows in '{}' ...".format(lyr))
+        for row in Scursor:
+            bad_geom = False
+            # Check if geometry object is null
+            if row[2] is None:
+                print("     OID {} has null (None) geometry".format(row[0]))
+                bad_geom = True
+                report_dict[row[0]] = {'problem':'null geometry', 'action':'delete'}
+            # Check shape centroid has a null coordinate
+            elif row[1][0] == None or row[1][1] == None:
+                print("     OID {} has empty geometry".format(row[0]))
+                bad_geom = True
+                report_dict[row[0]] = {'problem':'empty geometry', 'action':'delete or repair'}
+            if bad_geom == True:
+#                print("     --> Deleting OID {} ... ".format(row[0]))
+                empty_count += 1
+    print("Total number of empty geometries: {}".format(empty_count))
+    report = {'empties': report_dict}
+    pprint.pprint(report)
+    return report
 
 
 ##########################
@@ -72,7 +82,7 @@ def find_empty_geom(db, data):
 
 if __name__ == '__main__':
     for fc in sorted(fclist):
-        find_empty_geom(database, fc)
+        report = report_empty_geom(database, fc)
 
 print('Script shutting down ...')
 # Stop timer and print end time in UTC
