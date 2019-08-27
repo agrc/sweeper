@@ -16,11 +16,10 @@ Examples:
 '''
 import sys
 from docopt import docopt
-from . import duplicates, empties, invalids
 
 
 def main():
-    '''Main entry point for program. Parse arguments and pass to engine module
+    '''Main entry point for program. Parse arguments and pass to sweeper modules
     '''
 
     args = docopt(__doc__, version='1.0.0')
