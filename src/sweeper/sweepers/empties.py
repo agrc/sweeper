@@ -25,55 +25,58 @@ fclist = arcpy.ListFeatureClasses()
 #  Functions  #
 ###############
 
-
-def delete_empty_geom(db, lyr):
-    del_count = 0
-    fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
-    with arcpy.da.UpdateCursor(lyr, fields) as Ucursor:
-        print("Looping through rows in '{}' ...".format(lyr))
-        for row in Ucursor:
-            bad_geom = False
-            # Check if geometry object is null
-            if row[2] is None:
-                print("     OID {} has null (None) geometry".format(row[0]))
-                bad_geom = True
-            # Check shape centroid has a null coordinate
-            elif row[1][0] == None or row[1][1] == None:
-                print("     OID {} has empty geometry".format(row[0]))
-                bad_geom = True
-            
-            if bad_geom == True:
-                print("     --> Deleting OID {} ... ".format(row[0]))
-                Ucursor.deleteRow()
-                del_count += 1
-    print("Total number of rows deleted: {}".format(del_count))
+class EmptyTest(object):
+    def __init__(self):
+        pass
+    
+    def delete_empty_geom(self, lyr):
+        del_count = 0
+        fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
+        with arcpy.da.UpdateCursor(lyr, fields) as Ucursor:
+            print("Looping through rows in '{}' ...".format(lyr))
+            for row in Ucursor:
+                bad_geom = False
+                # Check if geometry object is null
+                if row[2] is None:
+                    print("     OID {} has null (None) geometry".format(row[0]))
+                    bad_geom = True
+                # Check shape centroid has a null coordinate
+                elif row[1][0] == None or row[1][1] == None:
+                    print("     OID {} has empty geometry".format(row[0]))
+                    bad_geom = True
+                
+                if bad_geom == True:
+                    print("     --> Deleting OID {} ... ".format(row[0]))
+                    Ucursor.deleteRow()
+                    del_count += 1
+        print("Total number of rows deleted: {}".format(del_count))
     
     
-def report_empty_geom(db, lyr):
-    empty_count = 0
-    report_dict = {}
-    fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
-    with arcpy.da.SearchCursor(lyr, fields) as Scursor:
-        print("Looping through rows in '{}' ...".format(lyr))
-        for row in Scursor:
-            bad_geom = False
-            # Check if geometry object is null
-            if row[2] is None:
-                print("     OID {} has null (None) geometry".format(row[0]))
-                bad_geom = True
-                report_dict[row[0]] = {'problem':'null geometry', 'action':'delete'}
-            # Check shape centroid has a null coordinate
-            elif row[1][0] == None or row[1][1] == None:
-                print("     OID {} has empty geometry".format(row[0]))
-                bad_geom = True
-                report_dict[row[0]] = {'problem':'empty geometry', 'action':'delete or repair'}
-            if bad_geom == True:
-#                print("     --> Deleting OID {} ... ".format(row[0]))
-                empty_count += 1
-    print("Total number of empty geometries: {}".format(empty_count))
-    report = {'empties': report_dict}
-    pprint.pprint(report)
-    return report
+    def report_empty_geom(self, lyr):
+        empty_count = 0
+        report_dict = {}
+        fields = ['OID@', 'Shape', 'SHAPE@']  # for point, polylines, or polygons
+        with arcpy.da.SearchCursor(lyr, fields) as Scursor:
+            print("Looping through rows in '{}' ...".format(lyr))
+            for row in Scursor:
+                bad_geom = False
+                # Check if geometry object is null
+                if row[2] is None:
+                    print("     OID {} has null (None) geometry".format(row[0]))
+                    bad_geom = True
+                    report_dict[row[0]] = {'problem':'null geometry', 'action':'delete'}
+                # Check shape centroid has a null coordinate
+                elif row[1][0] == None or row[1][1] == None:
+                    print("     OID {} has empty geometry".format(row[0]))
+                    bad_geom = True
+                    report_dict[row[0]] = {'problem':'empty geometry', 'action':'delete or repair'}
+                if bad_geom == True:
+    #                print("     --> Deleting OID {} ... ".format(row[0]))
+                    empty_count += 1
+        print("Total number of empty geometries: {}".format(empty_count))
+        report = {'empties': report_dict}
+        pprint.pprint(report)
+        return report
 
 
 ##########################
@@ -82,7 +85,8 @@ def report_empty_geom(db, lyr):
 
 if __name__ == '__main__':
     for fc in sorted(fclist):
-        report = report_empty_geom(database, fc)
+        empty = EmptyTest()
+        report = empty.report_empty_geom(fc)
 
 print('Script shutting down ...')
 # Stop timer and print end time in UTC
