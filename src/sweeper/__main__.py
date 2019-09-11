@@ -4,15 +4,18 @@
 sweeper
 
 Usage:
-  sweeper sweep duplicates <input> [--verbose]
-  sweeper sweep nulls <input> [--verbose]
-  sweeper sweep invalids <input> [--verbose]
+  sweeper sweep duplicates <table_name> --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep empties <table_name> --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep invalids <table_name> --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
 
 Arguments:
-  input
+  workspace   - path to feature class eg: `c:\\my.gdb`
+  table_name  - name of feature class or table eg: `Roads`
+  report_path - folder to save report to eg: `c:\\temp`
+  backup_path - place to create a temp gdb and import original table
 
 Examples:
-  sweeper sweep c:\data\thing
+  sweeper sweep empties thing --workspace c:\data\thing
 '''
 import sys
 from docopt import docopt
