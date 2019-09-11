@@ -20,6 +20,7 @@ Examples:
 import sys
 from docopt import docopt
 from .sweepers.empties import EmptyTest
+import report
 
 def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules
@@ -41,15 +42,14 @@ def main():
         empty_sweeper.sweep()
 
         report_data = empty_sweeper.get_report()
-        report_string = helper.format_report(report_data, 'empties')
-
         if args['<report_path>']:
-            helper.save_report(args['<report_path>'])
+            report.save_report(report_data, 'empties', args['<table_name>'], args['<report_path>'])
+        else:
+            report.print_report(report_data, 'empties', args['<table_name>'])
 
         if args['--try-fix']:
             empty_sweeper.try_fix()
 
-         print(empty_sweeper.get_report())
 
 if __name__ == '__main__':
     sys.exit(main())
