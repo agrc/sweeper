@@ -19,7 +19,7 @@ Examples:
 '''
 import sys
 from docopt import docopt
-
+from .sweepers.empties import EmptyTest
 
 def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules
@@ -34,10 +34,22 @@ def main():
     elif args['invalids']:
         #: do something
         print(args)
-    elif args['nulls']:
-        #: do something
+    elif args['empties']:
         print(args)
 
+        empty_sweeper = EmptyTest(args['--workspace'], args['<table_name>'])
+        empty_sweeper.sweep()
+
+        report_data = empty_sweeper.get_report()
+        report_string = helper.format_report(report_data, 'empties')
+
+        if args['<report_path>']:
+            helper.save_report(args['<report_path>'])
+
+        if args['--try-fix']:
+            empty_sweeper.try_fix()
+
+         print(empty_sweeper.get_report())
 
 if __name__ == '__main__':
     sys.exit(main())
