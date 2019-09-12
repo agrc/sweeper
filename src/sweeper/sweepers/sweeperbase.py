@@ -12,8 +12,5 @@ class SweeperBase(object):
   def sweep(self, params):
     raise NotImplemented()
 
-  def get_report(self, params):
-    raise NotImplemented()
-
   def try_fix(self, params):
     raise NotImplemented()
