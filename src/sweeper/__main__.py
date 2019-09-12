@@ -39,9 +39,8 @@ def main():
         print(args)
 
         empty_sweeper = EmptyTest(args['--workspace'], args['<table_name>'])
-        empty_sweeper.sweep()
 
-        report_data = empty_sweeper.get_report()
+        report_data = empty_sweeper.sweep()
         if args['<report_path>']:
             report.save_report(report_data, 'empties', args['<table_name>'], args['<report_path>'])
         else:

@@ -34,8 +34,7 @@ class EmptyTest(object):
                     empty_count += 1
 
         print('Total number of empty geometries: {}'.format(empty_count))
-
-    def get_report(self):
+        
         return self.report
 
 
