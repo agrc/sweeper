@@ -24,16 +24,16 @@ class EmptyTest(object):
         arcpy.env.workspace = self.workspace
 
         with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
-            print("Looping through rows in '{}' ...".format(self.table_name))
+            #print("Looping through rows in '{}' ...".format(self.table_name))
 
             for oid, geometry in search_cursor:
                 #: Check if geometry object is null
                 if geometry is None:
-                    print('     OID {} has empty (None) geometry'.format(oid))
+                    #print('     OID {} has empty (None) geometry'.format(oid))
                     self.report[oid] = 'empty geometry'
                     empty_count += 1
 
-        print('Total number of empty geometries: {}'.format(empty_count))
+        #print('Total number of empty geometries: {}'.format(empty_count))
         
         return self.report
 
@@ -47,12 +47,12 @@ class EmptyTest(object):
         fields = ['OID@']
         query = 'OBJECTID IN ({})'.format(','.join(str(d) for d in self.report))
         with arcpy.da.UpdateCursor(self.table_name, fields, query) as update_cursor:
-            print("Looping through rows in '{}' ...".format(self.table_name))
+            #print("Looping through rows in '{}' ...".format(self.table_name))
             for oid, in update_cursor:
                 #: this is a redundant check that OID is in the dictionary
                 if oid in self.report:
                     update_cursor.deleteRow()
                     del_count += 1
 
-        print('Total number of rows deleted: {}'.format(del_count))
+        #print('Total number of rows deleted: {}'.format(del_count))
 

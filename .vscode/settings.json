@@ -6,5 +6,5 @@
     "python.formatting.provider": "yapf",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "C:\\Users\\zbeck\\AppData\\Local\\ESRI\\conda\\envs\\sweeper\\python.exe"
+    "python.pythonPath": "C:\\Users\\gbunce\\AppData\\Local\\Programs\\ArcGIS\\Pro\\bin\\Python\\envs\\sweeper\\python.exe"
 }
