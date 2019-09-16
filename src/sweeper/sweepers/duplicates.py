@@ -7,10 +7,11 @@ A module that removes duplicate geometry or attributes or both
 
 import arcpy
 import re
+import os
 from xxhash import xxh64
 
 class DuplicateTest(object):
-    def __init__(self):
+    def __init__(self, workspace, table_name):
         self.report = {}
         self.workspace = workspace
         self.table_name = table_name
@@ -22,8 +23,10 @@ class DuplicateTest(object):
 
         digTrim = re.compile(r'(\d+\.\d{2})(\d+)')
 
-        shps = ['Shape', 'SHAPE']
-        fields = [f.name for f in arcpy.ListFields(self.table_name) if f.name not in shps]
+        arcpy.env.workspace = self.workspace
+
+        omitFlds = ['Shape', 'SHAPE', 'GLOBALID']
+        fields = [f.name for f in arcpy.ListFields(self.table_name) if f.name not in omitFlds]
         fields.append('SHAPE@WKT')
 
         with arcpy.da.SearchCursor(self.table_name, fields) as sCursor:
