@@ -15,9 +15,10 @@ Arguments:
   backup_path - place to create a temp gdb and import original table
 
 Examples:
-  sweeper sweep empties thing --workspace c:\data\thing
+  sweeper sweep empties thing --workspace c:\\data\\thing
 '''
 import sys
+import os
 from docopt import docopt
 from .sweepers.empties import EmptyTest
 from . import report, backup
@@ -28,9 +29,9 @@ def main():
 
     args = docopt(__doc__, version='1.0.0')
 
-    # backup file before quality checks
+    #: backup input file before quality checks
     if args['--backup-to']:
-        backup.backup_data(args['--workspace'] + '\\' + args['<table_name>'], args['--backup-to'])
+        backup.backup_data(os.path.join(args['--workspace'], args['<table_name>']), args['--backup-to'])
 
     if args['duplicates']:
         #: do something
@@ -41,7 +42,7 @@ def main():
         print(args)
     elif args['empties']:
         print(args)
-        # initialize the class object
+        #: instantiate the class object
         empty_sweeper = EmptyTest(args['--workspace'], args['<table_name>'])
         report_data = empty_sweeper.sweep()
 
