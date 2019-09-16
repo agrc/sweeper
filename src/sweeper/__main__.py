@@ -21,6 +21,7 @@ import sys
 import os
 from docopt import docopt
 from .sweepers.empties import EmptyTest
+from .sweepers.duplicates import DuplicateTest
 from . import report, backup
 
 def main():
@@ -37,22 +38,23 @@ def main():
         #: do something
         print(args)
         # duplicates.find(args['--input'])
+        sweeper = DuplicateTest(args['--workspace'], args['<table_name>'])
     elif args['invalids']:
         #: do something
         print(args)
     elif args['empties']:
         print(args)
-        #: instantiate the class object
-        empty_sweeper = EmptyTest(args['--workspace'], args['<table_name>'])
-        report_data = empty_sweeper.sweep()
 
-        if args['--save-report']:
-            report.save_report(report_data, 'empties', args['<table_name>'], args['--save-report'])
-        else:
-            report.print_report(report_data, 'empties', args['<table_name>'])
+        sweeper = EmptyTest(args['--workspace'], args['<table_name>'])
 
-        if args['--try-fix']:
-            empty_sweeper.try_fix()
+    report_data = sweeper.sweep()
+    if args['--save-report']:
+        report.save_report(report_data, 'empties', args['<table_name>'], args['<report_path>'])
+    else:
+        report.print_report(report_data, 'empties', args['<table_name>'])
+
+    if args['--try-fix']:
+        sweeper.try_fix()
 
 
 if __name__ == '__main__':
