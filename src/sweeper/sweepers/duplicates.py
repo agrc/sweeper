@@ -19,42 +19,51 @@ class DuplicateTest(object):
 
     def sweep(self):
 
-        digestDict = {}
+        digest_dict = {}
 
-        digTrim = re.compile(r'(\d+\.\d{2})(\d+)')
+        dig_trim = re.compile(r'(\d+\.\d{2})(\d+)')
 
         arcpy.env.workspace = self.workspace
 
-        omitFlds = ['Shape', 'SHAPE', 'GLOBALID']
-        fields = [f.name for f in arcpy.ListFields(self.table_name) if f.name not in omitFlds]
+        def is_skip_field(field):
+            return 'SHAPE' in field.upper() or field.upper() in ['OBJECTID', 'FID', 'GLOBAL_ID', 'GLOBALID']
+
+        fields = [f.name for f in arcpy.ListFields(self.table_name) if not is_skip_field(f.name)]
         fields.append('SHAPE@WKT')
+        fields.append('OID@')
 
         with arcpy.da.SearchCursor(self.table_name, fields) as sCursor:
             for row in sCursor:
-                shp = row[-1]
+                shp = row[-2]
                 if shp != None:
-                    coordTrim = digTrim.sub(r'\1', shp)
-                    hash = xxh64('{} {}'.format(row[1:-1], coordTrim))
+                    coord_trim = dig_trim.sub(r'\1', shp)
+                    hash = xxh64('{} {}'.format(row[:-2], coord_trim))
                     digest = hash.hexdigest()
-                    if digest not in digestDict:
-                        digestDict.setdefault(digest)
+                    if digest not in digest_dict:
+                        digest_dict.setdefault(digest)
                     else:
-                        self.report[row[0]] = 'duplicate feature'
+                        self.report[row[-1]] = 'duplicate feature'
 
                 else:
-                    self.report[row[0]] = 'empty geometry'
+                    self.report[row[-1]] = 'empty geometry'
 
+        arcpy.ClearEnvironment('workspace')
         return self.report
+        
 
 
     def try_fix(self):
+
+        arcpy.env.workspace = self.workspace
         if len(self.report) > 0:
             try:
                 sql = '"OBJECTID" IN ({})'.format(', '.join(str(d) for d in self.report))
-                duplicate_FL = arcpy.MakeFeatureLayer_management(fc, 'duplicate_FL', sql)
+                duplicate_FL = arcpy.MakeFeatureLayer_management(self.table_name, 'duplicate_FL', sql)
                 print('Deleted {} duplicate records'.format(len(self.report)))
                 arcpy.DeleteFeatures_management(duplicate_FL)
             except:
                 print('unable to delete features')
+
+        arcpy.ClearEnvironment('workspace')
 
     
