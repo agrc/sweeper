@@ -25,15 +25,12 @@ class DuplicateTest(object):
 
         arcpy.env.workspace = self.workspace
 
-        def is_skip_field(field):
-            return 'SHAPE' in field.upper() or field.upper() in ['OBJECTID', 'FID', 'GLOBAL_ID', 'GLOBALID']
-
-        fields = [f.name for f in arcpy.ListFields(self.table_name) if not is_skip_field(f.name)]
+        fields = [f.name for f in arcpy.ListFields(self.table_name) if f.type not in ['OID', 'Guid', 'GlobalID', 'Geometry']]
         fields.append('SHAPE@WKT')
         fields.append('OID@')
 
-        with arcpy.da.SearchCursor(self.table_name, fields) as sCursor:
-            for row in sCursor:
+        with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
+            for row in search_cursor:
                 shp = row[-2]
                 if shp != None:
                     coord_trim = dig_trim.sub(r'\1', shp)
@@ -51,14 +48,13 @@ class DuplicateTest(object):
         return self.report
         
 
-
     def try_fix(self):
 
         arcpy.env.workspace = self.workspace
         if len(self.report) > 0:
             try:
                 sql = '"OBJECTID" IN ({})'.format(', '.join(str(d) for d in self.report))
-                duplicate_FL = arcpy.MakeFeatureLayer_management(self.table_name, 'duplicate_FL', sql)
+                duplicate_FL = arcpy.management.MakeFeatureLayer(self.table_name, 'duplicate_FL', sql)
                 print('Deleted {} duplicate records'.format(len(self.report)))
                 arcpy.DeleteFeatures_management(duplicate_FL)
             except:
