@@ -19,8 +19,8 @@ class DuplicateTest():
     def sweep(self):
         '''A method that finds duplicate records and returns a report dictionary
         '''
+        digests = set([])
 
-        digest_dict = {}
 
         dig_trim = re.compile(r'(\d+\.\d{2})(\d+)')
 
