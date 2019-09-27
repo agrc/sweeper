@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # * coding: utf8 *
-'''
-backup.py
-A module that to identify empty geometries in a feature class with ArcPy
-'''
 
-#import os
+
 import arcpy
 
 class EmptyTest(object):
