@@ -81,7 +81,7 @@ class DuplicateTest():
             try:
                 duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
 
-                print(f'attemptying to deleted {len(self.report)} duplicate records')
+                print(f'attempting to delete {len(self.report)} duplicate records')
 
                 arcpy.management.DeleteFeatures(duplicate_features)
             except Exception as error:
