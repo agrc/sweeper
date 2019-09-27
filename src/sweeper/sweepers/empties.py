@@ -5,6 +5,8 @@
 import arcpy
 
 class EmptyTest():
+    '''A class to find empty geometries
+    '''
     def __init__(self, workspace, table_name):
         self.report = {}
         self.workspace = workspace
@@ -12,6 +14,8 @@ class EmptyTest():
 
 
     def sweep(self):
+        '''A method to find empty geometries and return a report dictionarty
+        '''
         fields = ['OID@', 'SHAPE@']
 
         with arcpy.EnvManager(workspace=self.workspace):
@@ -26,6 +30,8 @@ class EmptyTest():
 
 
     def try_fix(self):
+        '''A method to that attempts to remove records with empty geometries
+        '''
         if len(self.report) == 0:
             return
 
