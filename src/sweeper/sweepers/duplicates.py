@@ -8,6 +8,8 @@ import arcpy
 
 
 class DuplicateTest():
+    '''A class that finds and removes duplicate geometries or attributes or both
+    '''
     def __init__(self, workspace, table_name):
         self.report = {}
         self.workspace = workspace
@@ -15,6 +17,8 @@ class DuplicateTest():
 
 
     def sweep(self):
+        '''A method that finds duplicate records and returns a report dictionary
+        '''
 
         digest_dict = {}
 
@@ -46,6 +50,8 @@ class DuplicateTest():
         
 
     def try_fix(self):
+        '''a method that tries to remove the duplicate records
+        '''
 
         arcpy.env.workspace = self.workspace
         if len(self.report) > 0:
