@@ -21,48 +21,71 @@ class DuplicateTest():
         '''
         digests = set([])
 
+        truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
-        dig_trim = re.compile(r'(\d+\.\d{2})(\d+)')
+        with arcpy.EnvManager(workspace=self.workspace):
+            description = arcpy.da.Describe(self.table_name)
 
-        arcpy.env.workspace = self.workspace
+            skip_fields = ['guid', description.shapeFieldName]
 
-        fields = [f.name for f in arcpy.ListFields(self.table_name) if f.type not in ['OID', 'Guid', 'GlobalID', 'Geometry']]
-        fields.append('SHAPE@WKT')
-        fields.append('OID@')
+            if description.hasGlobalID:
+                skip_fields.append(description.globalIDFieldName)
 
-        with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
-            for row in search_cursor:
-                shp = row[-2]
-                if shp != None:
-                    coord_trim = dig_trim.sub(r'\1', shp)
-                    hash = xxh64('{} {}'.format(row[:-2], coord_trim))
-                    digest = hash.hexdigest()
-                    if digest not in digest_dict:
-                        digest_dict.setdefault(digest)
-                    else:
-                        self.report[row[-1]] = 'duplicate feature'
+            if description.hasOID:
+                skip_fields.append(description.OIDFieldName)
 
-                else:
-                    self.report[row[-1]] = 'empty geometry'
+            fields = [field.name for field in description.fields if field.type not in skip_fields]
 
-        arcpy.ClearEnvironment('workspace')
+            fields.append('SHAPE@WKT')
+            fields.append('OID@')
+
+            shapefield_index = fields.indexOf('SHAPE@WKT')
+            oid_index = fields.indexOf('OID@')
+
+            with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
+                for row in search_cursor:
+                    shape_wkt = row[shapefield_index]
+                    object_id = row[oid_index]
+
+                    if shape_wkt is None:
+                        self.report[object_id] = 'empty geometry'
+
+                        continue
+
+                    #: trim some digits to help with hash matching
+                    generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
+
+                    hasher = xxh64(f'{row[:-2]} {generalized_wkt}')
+                    digest = hasher.hexdigest()
+
+                    if digest in digests:
+                        self.report[row[object_id]] = 'duplicate feature'
+
+                        continue
+
+                    digests.add(digest)
+
         return self.report
-        
+
 
     def try_fix(self):
         '''a method that tries to remove the duplicate records
         '''
+        if len(self.report) == 0:
+            return
 
-        arcpy.env.workspace = self.workspace
-        if len(self.report) > 0:
+        sql = f'"OBJECTID" IN ({",".join(str(object_id) for object_id in self.report)})'
+        temp_feature_layer = 'temp_layer'
+
+        with arcpy.EnvManager(workspace=self.workspace):
             try:
-                sql = '"OBJECTID" IN ({})'.format(', '.join(str(d) for d in self.report))
-                duplicate_FL = arcpy.management.MakeFeatureLayer(self.table_name, 'duplicate_FL', sql)
-                print('Deleted {} duplicate records'.format(len(self.report)))
-                arcpy.DeleteFeatures_management(duplicate_FL)
-            except:
-                print('unable to delete features')
+                duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
 
-        arcpy.ClearEnvironment('workspace')
+                print(f'attemptying to deleted {len(self.report)} duplicate records')
 
-    
+                arcpy.management.DeleteFeatures(duplicate_features)
+            except Exception as error:
+                print(f'unable to delete features {error}')
+            finally:
+                if arcpy.Exists(temp_feature_layer):
+                    arcpy.management.Delete(temp_feature_layer)
