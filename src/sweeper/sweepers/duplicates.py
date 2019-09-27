@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # * coding: utf8 *
-'''
-duplicates.py
-A module that removes duplicate geometry or attributes or both
-'''
-
-import arcpy
 import re
-import os
+
 from xxhash import xxh64
 
 class DuplicateTest(object):

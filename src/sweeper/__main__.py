@@ -17,12 +17,15 @@ Arguments:
 Examples:
   sweeper sweep empties thing --workspace c:\\data\\thing
 '''
-import sys
 import os
+import sys
+
 from docopt import docopt
-from .sweepers.empties import EmptyTest
+
+from . import backup, report
 from .sweepers.duplicates import DuplicateTest
-from . import report, backup
+from .sweepers.empties import EmptyTest
+
 
 def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules
