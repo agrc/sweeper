@@ -5,8 +5,10 @@ backup.py
 A module that creates a gdb if it doesn't exist and inserts a feature class
 '''
 import os
-import arcpy
 from datetime import datetime
+
+import arcpy
+
 
 def backup_data(source_data, out_path):
     '''
