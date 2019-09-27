@@ -4,7 +4,10 @@ import re
 
 from xxhash import xxh64
 
-class DuplicateTest(object):
+import arcpy
+
+
+class DuplicateTest():
     def __init__(self, workspace, table_name):
         self.report = {}
         self.workspace = workspace
