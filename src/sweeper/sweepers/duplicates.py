@@ -34,7 +34,7 @@ class DuplicateTest():
             if description.hasOID:
                 skip_fields.append(description.OIDFieldName)
 
-            fields = [field.name for field in description.fields if field.type not in skip_fields]
+            fields = [field.name for field in description.fields if field.name not in skip_fields]
 
             fields.append('SHAPE@WKT')
             fields.append('OID@')
