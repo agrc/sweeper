@@ -59,7 +59,7 @@ class DuplicateTest():
                     digest = hasher.hexdigest()
 
                     if digest in digests:
-                        self.report[row[object_id]] = 'duplicate feature'
+                        self.report[object_id] = 'duplicate feature'
 
                         continue
 
