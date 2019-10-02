@@ -40,7 +40,7 @@ class DuplicateTest():
             fields.append('OID@')
 
             shapefield_index = fields.index('SHAPE@WKT')
-            oid_index = fields.indexOf('OID@')
+            oid_index = fields.index('OID@')
 
             with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
                 for row in search_cursor:
