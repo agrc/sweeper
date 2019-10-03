@@ -24,7 +24,7 @@ class DuplicateTest():
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
         with arcpy.EnvManager(workspace=self.workspace):
-            description = arcpy.da.Describe(self.table_name)
+            description = arcpy.Describe(self.table_name)
 
             skip_fields = ['guid', description.shapeFieldName]
 
