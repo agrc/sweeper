@@ -24,17 +24,17 @@ class DuplicateTest():
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
         with arcpy.EnvManager(workspace=self.workspace):
-            description = arcpy.Describe(self.table_name)
+            description = arcpy.da.Describe(self.table_name)
 
-            skip_fields = ['guid', description.shapeFieldName]
+            skip_fields = ['guid', description['shapeFieldName']]
 
-            if description.hasGlobalID:
-                skip_fields.append(description.globalIDFieldName)
+            if description['hasGlobalID']:
+                skip_fields.append(description['globalIDFieldName'])
 
-            if description.hasOID:
-                skip_fields.append(description.OIDFieldName)
+            if description['hasOID']:
+                skip_fields.append(description['OIDFieldName'])
 
-            fields = [field.name for field in description.fields if field.name not in skip_fields]
+            fields = [field.name for field in description['fields'] if field.name not in skip_fields]
 
             fields.append('SHAPE@WKT')
             fields.append('OID@')
