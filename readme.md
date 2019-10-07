@@ -5,7 +5,6 @@ fix data
 ## development
 
 1. create conda environment
-   - `conda create --name sweeper`
    - `conda create --clone arcgispro-py3 --name sweeper`
 1. activate environment
    - `activate sweeper`
