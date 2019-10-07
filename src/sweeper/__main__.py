@@ -52,7 +52,7 @@ def main():
 
     report_data = sweeper.sweep()
     if args['--save-report']:
-        report.save_report(report_data, 'empties', args['<table_name>'], args['<report_path>'])
+        report.save_report(report_data, 'empties', args['<table_name>'], args['<--save-report>'])
     else:
         report.print_report(report_data, 'empties', args['<table_name>'])
 
