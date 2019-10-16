@@ -10,8 +10,8 @@ from datetime import datetime
 
 
 def save_report(data_dict, title, fc, path):
-    now = datetime.now().strftime('%Y%m%d_%H%M%S_%f')[:-3]
-    name = f'{title}_report_{now}.txt'
+    now = datetime.now().strftime('%Y%m%d_%H%M')
+    name = f'{fc}_{len(data_dict)}_{title}_{now}.txt'
 
     filename = os.path.join(path, name)
 
