@@ -7,7 +7,7 @@ Usage:
   sweeper sweep duplicates --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
   sweeper sweep empties --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
   sweeper sweep invalids --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep all-checks --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]  
+  sweeper sweep --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]  
 
 Arguments:
   workspace - path to workspace eg: `c:\\my.gdb`
@@ -16,7 +16,7 @@ Arguments:
   backup_path - place to create a temp gdb and import original table
 
 Examples:
-  sweeper sweep all-checks --workspace=c:\\data\\thing --save-report=c:\\temp --try-fix --backup-to=c:\\temp
+  sweeper sweep --workspace=c:\\data\\thing --save-report=c:\\temp --try-fix --backup-to=c:\\temp
 '''
 import os
 import sys
@@ -37,72 +37,69 @@ def main():
     if args['--backup-to']:
         backup.backup_data(os.path.join(args['--workspace'], args['--table-name']), args['--backup-to'])
 
+    closet = []
     #: check what quality check to run.
     if args['duplicates']:
-        call_sweeper(args, "DuplicateTest")
+        closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
     elif args['invalids']:
-        call_sweeper(args, "InvalidsTest")
+        pass
     elif args['empties']:
-        call_sweeper(args, "EmptyTest")
-    elif args['all-checks']:
-        call_sweeper(args, "DuplicateTest")
-        call_sweeper(args, "EmptyTest")
+        closet.append(EmptyTest(args['--workspace'], args['--table-name']))
+    else:
+        closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
+        closet.append(EmptyTest(args['--workspace'], args['--table-name']))
+
+    reports = execute_sweepers(closet, args['--try-fix'])
+
+    report.print_report(reports)
+
+    if (args['--save-report']):
+        report.save_report(reports, args['--save-report'])
 
 
-def call_sweeper(args, sweeper_test):
+def execute_sweepers(closet, try_fix):
     '''
     orchestrate the sweeper calls.
 
-    args: the docopt arguments.
-    sweeper_test: the name of the sweeper function to call.
-    '''
-    print(args)
-
-    #: if table name was provided, then run quality check on single table.
-    if args['--table-name']:
-        #: call the quality check.
-        if sweeper_test == "DuplicateTest":
-            sweeper = DuplicateTest(args['--workspace'], args['--table-name'])
-            save_report(args, sweeper, args['--table-name'], 'duplicates')
-        elif sweeper_test == "EmptyTest":
-            sweeper = EmptyTest(args['--workspace'], args['--table-name']) 
-            save_report(args, sweeper, args['--table-name'], 'empties')
-        #: attempt to fix flagged items.
-        if args['--try-fix']:
-            sweeper.try_fix()
-    #: if table name was not provided, then run quality check on all tables in the workpace.
-    else:
-        #: get a list of feature classes that are contained in the workspace.
-        featureclasses = workspace_info.get_featureclasses(args['--workspace'])
-        for fc in featureclasses:
-            print(fc)
-            #: call the quality check.
-            if sweeper_test == "DuplicateTest":
-                sweeper = DuplicateTest(args['--workspace'], fc)
-                save_report(args, sweeper, fc, 'duplicates')
-            elif sweeper_test == "EmptyTest":
-                sweeper = EmptyTest(args['--workspace'], fc)
-                save_report(args, sweeper, fc, 'empties')
-            #: attempt to fix flagged items.
-            if args['--try-fix']:
-                sweeper.try_fix()
-
-
-def save_report(args, sweeper, table_name, quality_check):
-    '''
-    save the quality check report or print it to console.
-
-    args: the docopt arguments.
-    sweeper: the sweeper variable returned from the class.
-    table_name: the name of the feature class table.
-    quality_check: the name of the quality check (example: 'duplicates', 'empties').
+    closet: array of sweepers.
+    try_fix: bool whether to fix or not.
     '''
 
-    report_data = sweeper.sweep()
-    if args['--save-report']:
-        report.save_report(report_data, quality_check, table_name, args['--save-report'])
-    else:
-        report.print_report(report_data, quality_check, table_name)
+    feature_class_names = []
+    reports = []
+
+    print(f'running {len(closet)} sweepers. try fix: {try_fix}')
+    for tool in closet:
+        if tool.table_name:
+            report = tool.sweep()
+
+            reports.append(report)
+
+            if try_fix:
+                tool.try_fix()
+
+            continue
+
+        print('missing table, executing over workspace')
+        #: get all feature classes
+        #: explode current tool to match the numbner of feature classes
+        #: execute sweep on new exploded tools
+
+        #: get feature class names once
+        if len(feature_class_names) == 0:
+            feature_class_names = workspace_info.get_featureclasses(tool.workspace)
+        
+        #: explode sweeper class for each feature class
+        for table_name in feature_class_names:
+            new_tool = tool.clone(table_name)
+            report = new_tool.sweep()
+
+            reports.append(report)
+
+            if try_fix:
+                tool.try_fix()
+
+    return reports
 
 
 if __name__ == '__main__':
