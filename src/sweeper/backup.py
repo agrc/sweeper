@@ -21,7 +21,7 @@ def backup_data(source_data, out_path):
     if not arcpy.Exists(out_path):
         #: if db does not exist, then create it
         out_dir = out_path.rsplit('\\', 1)[0]
-        gdb_name=out_path.rsplit('\\', 1)[1]
+        gdb_name = out_path.rsplit('\\', 1)[1]
 
         arcpy.management.CreateFileGDB(out_dir, gdb_name)
 
