@@ -11,9 +11,9 @@ import arcpy
 from . import workspace_info
 
 
-def backup_data(workspace_dir, table_name, out_path):
+def backup_data(workspace_path, table_name, out_path):
     '''
-    workspace_dir: the full path to the workspace or geodatabase containing the tables to be backed up.
+    workspace_path: the full path to the workspace or geodatabase containing the tables to be backed up.
     table_name: the table name to be backed up - if it was provided to the CLI.
     out_path: a geodatabase path where the feature class will be stored.
     '''
@@ -34,13 +34,14 @@ def backup_data(workspace_dir, table_name, out_path):
         tables_to_backup.append(table_name)
     else: #: table name was not provided, use all tables in workspace.
         #: get a list of feature class names that are contained in the provided workspace
-        feature_class_names = workspace_info.get_featureclasses(workspace_dir)
+        feature_class_names = workspace_info.get_featureclasses(workspace_path)
         for feature_class in feature_class_names:
             tables_to_backup.append(feature_class)
 
+
     #: loop through the list and backup each feature class
     for table in tables_to_backup:
-        full_table_path = os.path.join(workspace_dir, table)
+        full_table_path = os.path.join(workspace_path, table)
         fc_name = full_table_path.rsplit('\\', 1)[1] + '_' + now
 
         #: backup the source feature class
