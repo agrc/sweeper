@@ -13,7 +13,7 @@ def get_featureclasses(workspace_path):
     '''
     workspace_path: full path to the feature workspace.
     '''
-    
+
     with arcpy.EnvManager(workspace=workspace_path):
         fc_list = []
 

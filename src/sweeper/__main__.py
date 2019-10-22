@@ -32,8 +32,7 @@ def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules.
     '''
     args = docopt(__doc__, version='1.0.0')
-    print(args)
-    
+
     #: backup input file before quality checks
     if args['--backup-to']:
         backup.backup_data(args['--workspace'], args['--table-name'], args['--backup-to'])
