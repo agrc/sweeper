@@ -47,11 +47,6 @@ class DuplicateTest():
                     shape_wkt = row[shapefield_index]
                     object_id = row[oid_index]
 
-                    if shape_wkt is None:
-                        # self.report['issues'].append(object_id)
-
-                        continue
-
                     #: trim some digits to help with hash matching
                     generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
 
