@@ -16,7 +16,7 @@ Arguments:
   backup_path - place to create a temp gdb and import original table
 
 Examples:
-  sweeper sweep --workspace=c:\\data\\thing --save-report=c:\\temp --try-fix --backup-to=c:\\temp
+  sweeper sweep --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb
 '''
 import os
 import sys
@@ -32,12 +32,15 @@ def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules.
     '''
     args = docopt(__doc__, version='1.0.0')
-
+    print(args)
+    
     #: backup input file before quality checks
     if args['--backup-to']:
-        backup.backup_data(os.path.join(args['--workspace'], args['--table-name']), args['--backup-to'])
+        backup.backup_data(args['--workspace'], args['--table-name'], args['--backup-to'])
 
+    #: create a list to hold the instantiated objects.
     closet = []
+
     #: check what quality check to run.
     if args['duplicates']:
         closet.append(DuplicateTest(args['--workspace'], args['--table-name']))

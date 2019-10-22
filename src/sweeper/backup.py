@@ -8,11 +8,13 @@ import os
 from datetime import datetime
 
 import arcpy
+from . import workspace_info
 
 
-def backup_data(source_data, out_path):
+def backup_data(workspace_dir, table_name, out_path):
     '''
-    source_data: full path to the feature class to be backed up.
+    workspace_dir: the full path to the workspace or geodatabase containing the tables to be backed up.
+    table_name: the table name to be backed up - if it was provided to the CLI.
     out_path: a geodatabase path where the feature class will be stored.
     '''
     now = datetime.now().strftime('%Y%m%d_%H%M')
@@ -25,8 +27,23 @@ def backup_data(source_data, out_path):
 
         arcpy.management.CreateFileGDB(out_dir, gdb_name)
 
-    #: get source_data feature class name
-    fc_name = source_data.rsplit('\\', 1)[1] + '_' + now
+    tables_to_backup = []
 
-    #: backup the source feature class
-    arcpy.management.Copy(source_data, os.path.join(out_path, fc_name))
+    #: populate the list with feature class name(s) to backup
+    if table_name: #: table name was provided.
+        tables_to_backup.append(table_name)
+    else: #: table name was not provided, use all tables in workspace.
+        #: get a list of feature class names that are contained in the provided workspace
+        feature_class_names = workspace_info.get_featureclasses(workspace_dir)
+        for feature_class in feature_class_names:
+            tables_to_backup.append(feature_class)
+
+    #: loop through the list and backup each feature class
+    for table in tables_to_backup:
+        full_table_path = os.path.join(workspace_dir, table)
+        fc_name = full_table_path.rsplit('\\', 1)[1] + '_' + now
+
+        #: backup the source feature class
+        arcpy.management.Copy(full_table_path, os.path.join(out_path, fc_name))
+
+    print(f'The following feature classes were backed up here', out_path, ':', str(tables_to_backup))
