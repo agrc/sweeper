@@ -38,7 +38,6 @@ def backup_data(workspace_path, table_name, out_path):
         for feature_class in feature_class_names:
             tables_to_backup.append(feature_class)
 
-
     #: loop through the list and backup each feature class
     for table in tables_to_backup:
         full_table_path = os.path.join(workspace_path, table)
