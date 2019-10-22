@@ -51,7 +51,7 @@ def save_report(reports, save_directory):
 
         with open(file_path, 'w') as textfile:
             def write_lines(text):
-                textfile.writelines(f'{text}\n')
+                textfile.writelines(f'{text}')
 
             _generate_report(write_lines, [report])
 

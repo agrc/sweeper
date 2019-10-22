@@ -15,7 +15,6 @@ def get_featureclasses(workspace_path):
     '''
 
     with arcpy.EnvManager(workspace=workspace_path):
-        #arcpy.env.workspace = workspace_path
         fc_list = []
 
         datasets = arcpy.ListDatasets(feature_type='feature')
