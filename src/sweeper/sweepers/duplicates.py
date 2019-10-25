@@ -48,13 +48,14 @@ class DuplicateTest():
                     object_id = row[oid_index]
 
                     #: trim some digits to help with hash matching
-                    generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
+                    if shape_wkt is not None:
+                        generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
 
-                    hasher = xxh64(f'{row[:-2]} {generalized_wkt}')
-                    digest = hasher.hexdigest()
+                        hasher = xxh64(f'{row[:-2]} {generalized_wkt}')
+                        digest = hasher.hexdigest()
 
-                    if digest in digests:
-                        self.report['issues'].append(str(object_id))
+                        if digest in digests:
+                            self.report['issues'].append(str(object_id))
 
                         continue
 
