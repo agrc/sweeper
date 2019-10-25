@@ -31,7 +31,7 @@ def _generate_report(writer, reports):
             writer(f'    ObjectID {oid}')
 
         writer('\nSelect statement to view issues in ArcGIS:')
-        statement = f'OBJECTID IN ({",".join(report["issues"])})'
+        statement = f'OBJECTID IN ({", ".join(report["issues"])})'
 
         writer(statement)
 
@@ -51,7 +51,7 @@ def save_report(reports, save_directory):
 
         with open(file_path, 'w') as textfile:
             def write_lines(text):
-                textfile.writelines(f'{text}')
+                textfile.writelines(f'{text}\n')
 
             _generate_report(write_lines, [report])
 

@@ -7,7 +7,7 @@ Usage:
   sweeper sweep duplicates --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
   sweeper sweep empties --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
   sweeper sweep invalids --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]  
+  sweeper sweep --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
 
 Arguments:
   workspace - path to workspace eg: `c:\\my.gdb`
@@ -55,7 +55,7 @@ def main():
 
     report.print_report(reports)
 
-    if (args['--save-report']):
+    if args['--save-report']:
         report.save_report(reports, args['--save-report'])
 
 
@@ -90,7 +90,7 @@ def execute_sweepers(closet, try_fix):
         #: get feature class names once
         if len(feature_class_names) == 0:
             feature_class_names = workspace_info.get_featureclasses(tool.workspace)
-        
+
         #: explode sweeper class for each feature class
         for table_name in feature_class_names:
             new_tool = tool.clone(table_name)
