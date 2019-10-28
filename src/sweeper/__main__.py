@@ -79,6 +79,8 @@ def execute_sweepers(closet, try_fix):
 
             if try_fix:
                 tool.try_fix()
+                #: run sweeper again to ensure all errors were fixed.
+                report = tool.sweep()
 
             continue
 
