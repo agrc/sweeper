@@ -75,13 +75,12 @@ def execute_sweepers(closet, try_fix):
         if tool.table_name:
             report = tool.sweep()
 
-            reports.append(report)
-
             if try_fix:
                 tool.try_fix()
                 #: run sweeper again to ensure all errors were fixed.
                 report = tool.sweep()
 
+            reports.append(report)
             continue
 
         print('missing table, executing over workspace')
@@ -98,10 +97,12 @@ def execute_sweepers(closet, try_fix):
             new_tool = tool.clone(table_name)
             report = new_tool.sweep()
 
-            reports.append(report)
-
             if try_fix:
-                tool.try_fix()
+                new_tool.try_fix()
+                #: run sweeper again to ensure all errors were fixed.
+                report = new_tool.sweep()
+
+            reports.append(report)
 
     return reports
 
