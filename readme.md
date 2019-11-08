@@ -9,6 +9,5 @@ fix data
 1. activate environment
    - `activate sweeper`
 1. install dependencies
-   - `pip install -r requirements.txt`
-1. install dev dependencies
-   - `pip installal -r requirements.dev.txt`
+   - `conda install -y -f --file requirements.dev.txt`
+1. run tests: `pytest`
