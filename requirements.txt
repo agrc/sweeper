@@ -2,4 +2,4 @@ docopt
 fiona
 geopandas
 xxhash
-
+usaddress

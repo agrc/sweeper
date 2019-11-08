@@ -3,6 +3,7 @@
         "conda",
         "objectid",
         "posix",
+        "usaddress",
         "xxhash"
     ],
     "python.formatting.provider": "yapf",
