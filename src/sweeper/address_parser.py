@@ -15,7 +15,7 @@ TAG_MAPPING = {
     'StreetName': 'street_name',
     # 'StreetNamePreModifier': 'address1',
     # 'StreetNamePreType': 'address1',
-    'StreetNamePostDirectional': 'suffix_direction',
+    'StreetNamePostDirectional': 'street_direction',
     # 'StreetNamePostModifier': 'address1',
     'StreetNamePostType': 'street_type',
     # 'CornerOf': 'address1',
@@ -44,12 +44,13 @@ class Address():
     address_number_suffix = None
     prefix_direction = None
     street_name = None
-    street_suffix = None
+    street_direction = None
     street_type = None
     unit_type = None
     unit_id = None
     city = None
     zip_code = None
+
     def __init__(self, address_text):
         parts, parsed_as = usaddress.tag(address_text, TAG_MAPPING)
         if parsed_as != 'Street Address':
