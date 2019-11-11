@@ -4,7 +4,9 @@
 test_address_parser.py
 tests for the address parser module
 '''
-from .address_parser import Address, normalize_direction
+import pytest
+
+from .address_parser import Address, normalize_direction, normalize_street_type, InvalidStreetTypeError
 
 
 class TestAddressNumber():
@@ -87,6 +89,9 @@ class TestStreetDirection():
 
 
 class TestNormalizeDirection():
+    '''
+    tests for normalizing cardinal directions
+    '''
     def test_normalize_direction(self):
     north_tests = [
         'North',
@@ -108,9 +113,27 @@ def test_white_space():
     assert address.street_name == 'MAIN'
 
 
-def test_normalizedAddressString():
+class TestNormalizeStreetType():
+    '''
+    tests for normalizing street types
+    '''
+    def test_normalize_street_type(self):
+        tests = [
+            ['ALY', 'ALY'],
+            ['AVEN', 'AVE'],
+            ['corner', 'COR']
+        ]
+
+        for input_text, expected in tests:
+            assert normalize_street_type(input_text) == expected
+
+    def test_raises_exceptions(self):
+        with pytest.raises(InvalidStreetTypeError):
+            normalize_street_type('9999')
+
+
+def test_normalized_address_string():
     address = Address('123 EA Fifer Place ')
-    print(address)
 
     assert address.normalized == '123 E FIFER PL'
 
