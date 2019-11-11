@@ -51,6 +51,16 @@ class TestPrefixDirection():
         for input_text, expected in tests:
             assert Address(input_text).prefix_direction == expected
 
+    def test_no_prefix_direction(self):
+        address = Address('1901 Sidewinder Dr')
+
+        assert address.address_number == '1901'
+        assert address.prefix_direction is None
+        assert address.street_name == 'SIDEWINDER'
+        assert address.street_type == 'DR'
+        assert address.street_direction is None
+        assert address.normalized == '1901 SIDEWINDER DR'
+
 
 class TestStreetName():
     '''
@@ -106,11 +116,24 @@ class TestNormalizeDirection():
     def test_two_characters(self):
         assert normalize_direction('EA') == 'E'
 
-def test_white_space():
-    address = Address(' 123 S Main ')
 
-    assert address.address_number == '123'
-    assert address.street_name == 'MAIN'
+class TestWhiteSpace():
+    '''
+    tests for dealing with white space
+    '''
+    def test_white_space(self):
+        address = Address(' 123 S Main ')
+
+        assert address.address_number == '123'
+        assert address.street_name == 'MAIN'
+
+    def test_double_spaces(self):
+        address = Address('  123  ea main  st')
+
+        assert address.address_number == '123'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == 'MAIN'
+        assert address.street_type == 'ST'
 
 
 class TestNormalizeStreetType():
@@ -131,6 +154,28 @@ class TestNormalizeStreetType():
         with pytest.raises(InvalidStreetTypeError):
             normalize_street_type('9999')
 
+    def test_street_names_with_types(self):
+        '''
+        street names with types as part of the name
+        '''
+        address = Address('123 E PARKWAY AVE')
+
+        assert address.address_number == '123'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == 'PARKWAY'
+        assert address.street_type == 'AVE'
+        assert address.street_direction is None
+        assert address.normalized == '123 E PARKWAY AVE'
+
+        address = Address('123 E PARKWAY TRAIL AVE')
+
+        assert address.address_number == '123'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == 'PARKWAY TRAIL'
+        assert address.street_type == 'AVE'
+        assert address.street_direction is None
+        assert address.normalized == '123 E PARKWAY TRAIL AVE'
+
 
 def test_normalized_address_string():
     address = Address('123 EA Fifer Place ')
@@ -141,8 +186,6 @@ def test_normalized_address_string():
 
     assert address.normalized == '123 E 400 W'
 
-    # def test_doubleSpaces(self):
-    #     address = Address('  123  ea main  st')
 
 
 def test_strip_periods():
@@ -155,158 +198,142 @@ def test_strip_periods():
     assert address.street_direction is None
     assert address.normalized == '123 E MAIN ST'
 
-    # # tests from Steve's geocoder...
-    # def test_steves(self):
-    #     address = Address("5301 w jacob hill cir")
-    #     assert '5301' == address.houseNumber
-    #     assert "JACOB HILL" == address.streetName
-    #     assert 'CIR' == address.suffix_type
 
-    #     address = Address("400 S 532 E")
-    #     assert '400' == address.houseNumber
-    #     assert "532" == address.streetName
-    #     assert 'E' == address.suffix_direction
+def test_steve():
+    '''
+    tests from steve's geocoder
+    '''
+    address = Address('5301 w jacob hill cir')
+    assert address.address_number == '5301'
+    assert address.street_name == 'JACOB HILL'
+    assert address.street_type == 'CIR'
 
-    #     address = Address("5625 S 995 E")
-    #     assert '5625' == address.houseNumber
-    #     assert "995" == address.streetName
-    #     assert 'E' == address.suffix_direction
+    address = Address('400 S 532 E')
+    assert address.address_number == '400'
+    assert address.street_name == '532'
+    assert address.street_direction == 'E'
 
-    #     address = Address("372 North 600 East")
-    #     assert '372' == address.houseNumber
-    #     assert "600" == address.streetName
-    #     assert 'E' == address.suffix_direction
+    address = Address('5625 S 995 E')
+    assert address.address_number == '5625'
+    assert address.street_name == '995'
+    assert address.street_direction == 'E'
 
-    #     address = Address("30 WEST 300 NORTH")
-    #     assert '30' == address.houseNumber
-    #     assert "300" == address.streetName
-    #     assert 'N' == address.suffix_direction
+    address = Address('372 North 600 East')
+    assert address.address_number == '372'
+    assert address.street_name == '600'
+    assert address.street_direction == 'E'
 
-    #     address = Address("126 E 400 N")
-    #     assert '126' == address.houseNumber
-    #     assert "400" == address.streetName
-    #     assert 'N' == address.suffix_direction
+    address = Address('30 WEST 300 NORTH')
+    assert address.address_number == '30'
+    assert address.street_name == '300'
+    assert address.street_direction == 'N'
 
-    #     address = Address("270 South 1300 East")
-    #     assert '270' == address.houseNumber
-    #     assert "1300" == address.streetName
-    #     assert 'E' == address.suffix_direction
+    address = Address('126 E 400 N')
+    assert address.address_number == '126'
+    assert address.street_name == '400'
+    assert address.street_direction == 'N'
 
-    #     address = Address("126 W SEGO LILY DR")
-    #     assert '126' == address.houseNumber
-    #     assert "SEGO LILY" == address.streetName
-    #     assert 'DR' == address.suffix_type
+    address = Address('270 South 1300 East')
+    assert address.address_number == '270'
+    assert address.street_name == '1300'
+    assert address.street_direction == 'E'
 
-    #     address = Address("261 E MUELLER PARK RD")
-    #     assert '261' == address.houseNumber
-    #     assert "MUELLER PARK" == address.streetName
-    #     assert 'RD' == address.suffix_type
+    address = Address('126 W SEGO LILY DR')
+    assert address.address_number == '126'
+    assert address.street_name == 'SEGO LILY'
+    assert address.street_type == 'DR'
 
-    #     address = Address("17 S VENICE MAIN ST")
-    #     assert '17' == address.houseNumber
-    #     assert "VENICE MAIN" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    address = Address('261 E MUELLER PARK RD')
+    assert address.address_number == '261'
+    assert address.street_name == 'MUELLER PARK'
+    assert address.street_type == 'RD'
 
-    #     address = Address("20 W Center St")
-    #     assert '20' == address.houseNumber
-    #     assert 'W' == address.prefixDirection
-    #     assert "CENTER" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    address = Address('17 S VENICE MAIN ST')
+    assert address.address_number == '17'
+    assert address.street_name == 'VENICE MAIN'
+    assert address.street_type == 'ST'
 
-    #     address = Address("9314 ALVEY LN")
-    #     assert '9314' == address.houseNumber
-    #     assert "ALVEY" == address.streetName
-    #     assert 'LN' == address.suffix_type
+    address = Address('20 W Center St')
+    assert address.address_number == '20'
+    assert address.prefix_direction == 'W'
+    assert address.street_name == 'CENTER'
+    assert address.street_type == 'ST'
 
-    #     address = Address("167 DALY AVE")
-    #     assert '167' == address.houseNumber
-    #     assert "DALY" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('9314 ALVEY LN')
+    assert address.address_number == '9314'
+    assert address.street_name == 'ALVEY'
+    assert address.street_type == 'LN'
 
-    #     address = Address("1147 MCDANIEL CIR")
-    #     assert '1147' == address.houseNumber
-    #     assert "MCDANIEL" == address.streetName
-    #     assert 'CIR' == address.suffix_type
+    address = Address('167 DALY AVE')
+    assert address.address_number == '167'
+    assert address.street_name == 'DALY'
+    assert address.street_type == 'AVE'
 
-    #     address = Address("300 Walk St")
-    #     assert '300' == address.houseNumber
-    #     assert "WALK" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    address = Address('1147 MCDANIEL CIR')
+    assert address.address_number == '1147'
+    assert address.street_name == 'MCDANIEL'
+    assert address.street_type == 'CIR'
 
-    #     address = Address("5 Cedar Ave")
-    #     assert '5' == address.houseNumber
-    #     assert "CEDAR" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('300 Walk St')
+    assert address.address_number == '300'
+    assert address.street_name == 'WALK'
+    assert address.street_type == 'ST'
 
-    #     address = Address("1238 E 1ST Avenue")
-    #     assert '1238' == address.houseNumber
-    #     assert "1ST" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('5 Cedar Ave')
+    assert address.address_number == '5'
+    assert address.street_name == 'CEDAR'
+    assert address.street_type == 'AVE'
 
-    #     address = Address("1238 E FIRST Avenue")
-    #     assert '1238' == address.houseNumber
-    #     assert "FIRST" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('1238 E 1ST Avenue')
+    assert address.address_number == '1238'
+    assert address.street_name == '1ST'
+    assert address.street_type == 'AVE'
 
-    #     address = Address("1238 E 2ND Avenue")
-    #     assert '1238' == address.houseNumber
-    #     assert "2ND" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('1238 E FIRST Avenue')
+    assert address.address_number == '1238'
+    assert address.street_name == 'FIRST'
+    assert address.street_type == 'AVE'
 
-    #     address = Address("1238 E 3RD Avenue")
-    #     assert '1238' == address.houseNumber
-    #     assert "3RD" == address.streetName
-    #     assert 'AVE' == address.suffix_type
+    address = Address('1238 E 2ND Avenue')
+    assert address.address_number == '1238'
+    assert address.street_name == '2ND'
+    assert address.street_type == 'AVE'
 
-    #     address = Address("1573 24TH Street")
-    #     assert '1573' == address.houseNumber
-    #     assert "24TH" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    address = Address('1238 E 3RD Avenue')
+    assert address.address_number == '1238'
+    assert address.street_name == '3RD'
+    assert address.street_type == 'AVE'
 
-    #     # if you dont' have a street name but you have a prefix direction then the
-    #     # prefix diretion is probably the street name.
-    #     address = Address("168 N ST")
-    #     assert '168' == address.houseNumber
-    #     assert "N" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    address = Address('1573 24TH Street')
+    assert address.address_number == '1573'
+    assert address.street_name == '24TH'
+    assert address.street_type == 'ST'
 
-    #     address = Address("168 N N ST")
-    #     assert '168' == address.houseNumber
-    #     assert "N" == address.streetName
-    #     assert 'ST' == address.suffix_type
+    # if you don't have a street name but you have a prefix direction then the
+    # prefix direction is probably the street name.
+    address = Address('168 N ST')
+    assert address.address_number == '168'
+    assert address.street_name == 'N'
+    assert address.street_type == 'ST'
 
-    #     address = Address("478 S WEST FRONTAGE RD")
-    #     assert '478' == address.houseNumber
-    #     assert "WEST FRONTAGE" == address.streetName
-    #     assert 'RD' == address.suffix_type
+    address = Address('168 N N ST')
+    assert address.address_number == '168'
+    assert address.street_name == 'N'
+    assert address.street_type == 'ST'
 
-    #     address = Address("1048 W 1205 N")
-    #     assert '1048' == address.houseNumber
-    #     assert "1205" == address.streetName
-    #     assert None == address.suffix_type
-    #     assert 'N' == address.suffix_direction
+    address = Address('478 S WEST FRONTAGE RD')
+    assert address.address_number == '478'
+    assert address.street_name == 'WEST FRONTAGE'
+    assert address.street_type == 'RD'
 
-    #     address = Address("2139 N 50 W")
-    #     assert '2139' == address.houseNumber
-    #     assert "50" == address.streetName
-    #     assert None == address.suffix_type
-    #     assert 'W' == address.suffix_direction
+    address = Address('1048 W 1205 N')
+    assert address.address_number == '1048'
+    assert address.street_name == '1205'
+    assert address.street_type is None
+    assert address.street_direction == 'N'
 
-    # def test_streetTypeNames(self):
-    #     address = Address('123 E PARKWAY AVE')
-
-    #     assert address.houseNumber == '123'
-    #     assert address.prefixDirection == 'E'
-    #     assert address.streetName == 'PARKWAY'
-    #     assert address.suffix_type == 'AVE'
-    #     assert address.suffix_direction == None
-    #     assert address.normalizedAddressString == '123 E PARKWAY AVE'
-
-    #     address = Address('123 E PARKWAY TRAIL AVE')
-
-    #     assert address.houseNumber == '123'
-    #     assert address.prefixDirection == 'E'
-    #     assert address.streetName == 'PARKWAY TRAIL'
-    #     assert address.suffix_type == 'AVE'
-    #     assert address.suffix_direction == None
-    #     assert address.normalizedAddressString == '123 E PARKWAY TRAIL AVE'
+    address = Address('2139 N 50 W')
+    assert address.address_number == '2139'
+    assert address.street_name == '50'
+    assert address.street_type is None
+    assert address.street_direction == 'W'
