@@ -58,7 +58,7 @@ class Address():
     zip_code = None
 
     def __init__(self, address_text):
-        parts, parsed_as = usaddress.tag(address_text, TAG_MAPPING)
+        parts, parsed_as = usaddress.tag(address_text.replace('.', ''), TAG_MAPPING)
         if parsed_as != 'Street Address':
             raise Exception(f'{address_text} is not recognized as a valid street address')
 

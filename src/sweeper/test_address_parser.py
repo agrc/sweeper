@@ -144,30 +144,16 @@ def test_normalized_address_string():
     # def test_doubleSpaces(self):
     #     address = Address('  123  ea main  st')
 
-    #     assert address.houseNumber == '123'
-    #     assert address.prefixDirection == 'E'
-    #     assert address.streetName == 'MAIN'
-    #     assert address.suffix_type == 'ST'
 
-    # def test_noPreDir(self):
-    #     address = Address('1901 Sidewinder Dr')
+def test_strip_periods():
+    address = Address('  123 ea. main st.')
 
-    #     assert address.houseNumber == '1901'
-    #     assert address.prefixDirection == None
-    #     assert address.streetName == 'SIDEWINDER'
-    #     assert address.suffix_type == 'DR'
-    #     assert address.suffix_direction == None
-    #     assert address.normalizedAddressString == '1901 SIDEWINDER DR'
-
-    # def test_stripPeriods(self):
-    #     address = Address('  123 ea main st.')
-
-    #     assert address.houseNumber == '123'
-    #     assert address.prefixDirection == 'E'
-    #     assert address.streetName == 'MAIN'
-    #     assert address.suffix_type == 'ST'
-    #     assert address.suffix_direction == None
-    #     assert address.normalizedAddressString == '123 E MAIN ST'
+    assert address.address_number == '123'
+    assert address.prefix_direction == 'E'
+    assert address.street_name == 'MAIN'
+    assert address.street_type == 'ST'
+    assert address.street_direction is None
+    assert address.normalized == '123 E MAIN ST'
 
     # # tests from Steve's geocoder...
     # def test_steves(self):
