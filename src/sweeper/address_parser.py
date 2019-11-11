@@ -34,6 +34,7 @@ TAG_MAPPING = {
     # 'StateName': 'state',
     'ZipCode': 'zip_code',
 }
+TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 
 
 class Address():
@@ -66,6 +67,11 @@ class Address():
             except AttributeError:
                 pass
 
+        #: look for two-character prefix directions which usaddress does not handle
+        street_name_parts = self.street_name.split(' ')
+        if len(street_name_parts) > 1 and street_name_parts[0].upper() in TWO_CHAR_DIRECTIONS and self.prefix_direction is None:
+            self.prefix_direction = normalize_direction(street_name_parts[0])
+            self.street_name = ' '.join(street_name_parts[1:])
 
     def __repr__(self):
         return f'Parsed Address:\n{pprint.pformat(vars(self))}'

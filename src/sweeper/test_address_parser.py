@@ -97,3 +97,6 @@ class TestNormalizeDirection():
 
     for text in north_tests:
         assert normalize_direction(text) == 'N'
+
+    def test_two_characters(self):
+        assert normalize_direction('EA') == 'E'
