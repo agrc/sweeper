@@ -76,6 +76,23 @@ class Address():
     def __repr__(self):
         return f'Parsed Address:\n{pprint.pformat(vars(self))}'
 
+    @property
+    def normalized(self):
+        '''
+        getter for normalized address string
+        '''
+        parts = [
+            self.address_number,
+            self.address_number_suffix,
+            self.prefix_direction,
+            self.street_name,
+            self.street_type,
+            self.unit_type,
+            self.unit_id
+        ]
+
+        return ' '.join([part for part in parts if part is not None])
+
 
 def normalize_direction(direction_text):
     return direction_text[0].upper()

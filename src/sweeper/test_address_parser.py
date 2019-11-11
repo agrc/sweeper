@@ -100,3 +100,21 @@ class TestNormalizeDirection():
 
     def test_two_characters(self):
         assert normalize_direction('EA') == 'E'
+
+def test_white_space():
+    address = Address(' 123 S Main ')
+
+    assert address.address_number == '123'
+    assert address.street_name == 'MAIN'
+
+
+def test_normalizedAddressString():
+    address = Address('123 EA Fifer Place ')
+    print(address)
+
+    assert address.normalized == '123 E FIFER PL'
+
+    address = Address(' 123 east 400 w  ')
+
+    assert address.normalized == '123 E 400 W'
+
