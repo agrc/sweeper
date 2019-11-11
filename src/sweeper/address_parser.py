@@ -4,8 +4,8 @@
 address_parser.py
 A module that parses street addresses into their various parts.
 '''
+import pprint
 import usaddress
-
 
 TAG_MAPPING = {
     'AddressNumber': 'address_number',
@@ -64,6 +64,10 @@ class Address():
                 setattr(self, part, value)
             except AttributeError:
                 pass
+
+
+    def __repr__(self):
+        return f'Parsed Address:\n{pprint.pformat(vars(self))}'
 
 
 def normalize_direction(direction_text):
