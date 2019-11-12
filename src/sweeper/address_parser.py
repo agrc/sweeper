@@ -82,7 +82,10 @@ class Address():
             self.street_type = normalize_street_type(self.street_type)
 
     def __repr__(self):
-        return f'Parsed Address:\n{pprint.pformat(vars(self))}'
+        properties = vars(self)
+        properties.update({'normalized': self.normalized})
+
+        return f'Parsed Address:\n{pprint.pformat(properties)}'
 
     @property
     def normalized(self):
