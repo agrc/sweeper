@@ -38,13 +38,14 @@ class EmptyTest():
         #: for point, polylines, or polygons
         fields = ['OID@']
         query = f'OBJECTID IN ({",".join(self.report["issues"])})'
-        print(query)
 
         with arcpy.EnvManager(workspace=self.workspace):
             with arcpy.da.UpdateCursor(self.table_name, fields, query) as update_cursor:
                 for oid, in update_cursor:
-                    if str(oid) in self.report['issues']:
-                        update_cursor.deleteRow()
+                    if str(oid) not in self.report['issues']:
+                        continue
+
+                    update_cursor.deleteRow()
 
 
     def clone(self, table_name):
