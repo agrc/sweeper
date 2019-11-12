@@ -178,6 +178,28 @@ class TestNormalizeStreetType():
         assert address.normalized == '123 E PARKWAY TRAIL AVE'
 
 
+class TestUnitParts():
+    '''
+    tests for unit_type and unit_id
+    '''
+    def test_add_hash_if_no_type(self):
+        address = Address('123 s main st 3')
+
+        assert address.unit_type is None
+        assert address.unit_id == '# 3'
+
+        address = Address('123 s main st suite 3')
+
+        assert address.unit_type == 'SUITE'
+        assert address.unit_id == '3'
+
+    def test_strip_hash_if_type(self):
+        address = Address('123 s main st suite #3')
+
+        assert address.unit_type == 'SUITE'
+        assert address.unit_id == '3'
+
+
 def test_normalized_address_string():
     address = Address('123 EA Fifer Place ')
 

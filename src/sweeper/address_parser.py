@@ -35,7 +35,7 @@ TAG_MAPPING = {
     # 'SubaddressType': 'address2',
     'PlaceName': 'city',
     # 'StateName': 'state',
-    'ZipCode': 'zip_code',
+    'ZipCode': 'zip_code'
 }
 TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
@@ -80,6 +80,15 @@ class Address():
 
         if self.street_type is not None:
             self.street_type = normalize_street_type(self.street_type)
+
+        if self.unit_id is not None:
+            #: add `#` if there is not unit type
+            if not self.unit_id.startswith('#') and self.unit_type is None:
+                self.unit_id = f'# {self.unit_id}'
+
+            #: strip `#` if there is a unit type
+            elif self.unit_id.startswith('#') and self.unit_type is not None:
+                self.unit_id = self.unit_id[1:].strip()
 
     def __repr__(self):
         properties = vars(self)

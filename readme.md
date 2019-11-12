@@ -43,6 +43,7 @@ All properties default to None if there is no parsed value.
 `unit_type`
 
 `unit_id`
+If no `unit_type` is found, this property is prefixed with `#` (e.g. `# 3`). If `unit_type` is found, `#` is stripped from this property.
 
 `city`
 
