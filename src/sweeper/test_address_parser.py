@@ -29,7 +29,8 @@ class TestAddressNumberSuffix():
     '''
     def test_parses_number_suffix(self):
         tests = [
-            ['123 1/2 s main street', '1/2']
+            ['123 1/2 s main street', '1/2'],
+            ['123 A S Main St', 'A']
         ]
 
         for input_text, expected in tests:
