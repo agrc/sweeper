@@ -9,4 +9,6 @@ fix data
 1. activate environment
    - `activate sweeper`
 1. install dependencies
-   - `conda install -y -f --file requirements.dev.txt`
+   - `pip install -r requirements.txt`
+1. install dev dependencies
+   - `pip installal -r requirements.dev.txt`
