@@ -13,11 +13,9 @@ class TestAddressNumber():
     '''
     tests for parsing address numbers
     '''
+
     def test_parses_address_number(self):
-        tests = [
-            ['123 main street', '123'],
-            ['4 main street', '4']
-        ]
+        tests = [['123 main street', '123'], ['4 main street', '4']]
 
         for input_text, expected in tests:
             assert Address(input_text).address_number == expected
@@ -27,11 +25,9 @@ class TestAddressNumberSuffix():
     '''
     tests for parsing address number suffixes
     '''
+
     def test_parses_number_suffix(self):
-        tests = [
-            ['123 1/2 s main street', '1/2'],
-            ['123 A S Main St', 'A']
-        ]
+        tests = [['123 1/2 s main street', '1/2'], ['123 A S Main St', 'A']]
 
         for input_text, expected in tests:
             assert Address(input_text).address_number_suffix == expected
@@ -41,13 +37,10 @@ class TestPrefixDirection():
     '''
     tests for parsing prefix directions
     '''
+
     def test_parses_prefix_direction(self):
-        tests = [
-            ['123 1/2 S main street', 'S'],
-            ['123 S main street', 'S'],
-            ['456 North main', 'N'],
-            ['123 EA Some Street', 'E']
-        ]
+        tests = [['123 1/2 S main street', 'S'], ['123 S main street', 'S'], ['456 North main', 'N'], ['123 EA Some Street', 'E'], ['9258 So 3090 W', 'S'],
+                 ['9258 SO. 3090 w', 'S']]
 
         for input_text, expected in tests:
             assert Address(input_text).prefix_direction == expected
@@ -67,10 +60,13 @@ class TestStreetName():
     '''
     tests for parsing street names
     '''
+
     def test_parses_street_name(self):
         tests = [
             ['123 S main street', 'MAIN'],
-            ['456 North main', 'MAIN']
+            ['456 North main', 'MAIN'],
+            ['9258 w 3090 so.', '3090'],
+            ['9258 w 3090 so', '3090'],
         ]
 
         for input_text, expected in tests:
@@ -92,6 +88,7 @@ class TestStreetDirection():
     '''
     tests for parsing suffix directions
     '''
+
     def test_street_direction(self):
         address = Address('123 E 400 N')
 
@@ -103,25 +100,23 @@ class TestNormalizeDirection():
     '''
     tests for normalizing cardinal directions
     '''
+
     def test_normalize_direction(self):
-        north_tests = [
-            'North',
-            'N',
-            'north',
-            'n'
-        ]
+        north_tests = ['North', 'N', 'north', 'n']
 
         for text in north_tests:
             assert normalize_direction(text) == 'N'
 
     def test_two_characters(self):
         assert normalize_direction('EA') == 'E'
+        assert normalize_direction('SO') == 'S'
 
 
 class TestWhiteSpace():
     '''
     tests for dealing with white space
     '''
+
     def test_white_space(self):
         address = Address(' 123 S Main ')
 
@@ -141,12 +136,9 @@ class TestNormalizeStreetType():
     '''
     tests for normalizing street types
     '''
+
     def test_normalize_street_type(self):
-        tests = [
-            ['ALY', 'ALY'],
-            ['AVEN', 'AVE'],
-            ['corner', 'COR']
-        ]
+        tests = [['ALY', 'ALY'], ['AVEN', 'AVE'], ['corner', 'COR']]
 
         for input_text, expected in tests:
             assert normalize_street_type(input_text) == expected
@@ -182,6 +174,7 @@ class TestUnitParts():
     '''
     tests for unit_type and unit_id
     '''
+
     def test_add_hash_if_no_type(self):
         address = Address('123 s main st 3')
 
@@ -200,6 +193,26 @@ class TestUnitParts():
         assert address.unit_id == '3'
 
 
+class TestPOBox():
+    '''
+    tests for parsing PO box numbers
+    '''
+
+    def test_parses_po_boxes(self):
+        tests = [
+            #: input, po_box, normalized
+            ['po box 1', '1', 'PO BOX 1'],
+            ['p.o. box 2', '2', 'PO BOX 2'],
+            ['P.O. BOX G', 'G', 'PO BOX G']
+        ]
+
+        for address_input, expected_box_name, normalized in tests:
+            address = Address(address_input)
+
+            assert address.po_box == expected_box_name
+            assert address.normalized == normalized
+
+
 def test_normalized_address_string():
     address = Address('123 EA Fifer Place ')
 
@@ -208,7 +221,6 @@ def test_normalized_address_string():
     address = Address(' 123 east 400 w  ')
 
     assert address.normalized == '123 E 400 W'
-
 
 
 def test_strip_periods():
@@ -360,22 +372,3 @@ def test_steve():
     assert address.street_name == '50'
     assert address.street_type is None
     assert address.street_direction == 'W'
-
-
-class TestPOBox():
-    '''
-    tests for parsing PO box numbers
-    '''
-    def test_parses_po_boxes(self):
-        tests = [
-            #: input, po_box, normalized
-            ['po box 1', '1', 'PO BOX 1'],
-            ['p.o. box 2', '2', 'PO BOX 2'],
-            ['P.O. BOX G', 'G', 'PO BOX G']
-        ]
-
-        for address_input, expected_box_name, normalized in tests:
-            address = Address(address_input)
-
-            assert address.po_box == expected_box_name
-            assert address.normalized == normalized
