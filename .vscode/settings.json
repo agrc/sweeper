@@ -13,6 +13,10 @@
         "xxhash"
     ],
     "python.formatting.provider": "yapf",
+    "python.formatting.yapfArgs": [
+        "--style",
+        "${workspaceRoot}/setup.cfg"
+    ],
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.pythonPath": "C:\\Users\\gbunce\\AppData\\Local\\Programs\\ArcGIS\\Pro\\bin\\Python\\envs\\sweeper\\python.exe"
