@@ -110,6 +110,8 @@ class TestNormalizeDirection():
     def test_two_characters(self):
         assert normalize_direction('EA') == 'E'
         assert normalize_direction('SO') == 'S'
+        assert normalize_direction('WE') == 'W'
+        assert normalize_direction('NO') == 'N'
 
 
 class TestWhiteSpace():
