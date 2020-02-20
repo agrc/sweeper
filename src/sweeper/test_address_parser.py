@@ -360,3 +360,22 @@ def test_steve():
     assert address.street_name == '50'
     assert address.street_type is None
     assert address.street_direction == 'W'
+
+
+class TestPOBox():
+    '''
+    tests for parsing PO box numbers
+    '''
+    def test_parses_po_boxes(self):
+        tests = [
+            #: input, po_box, normalized
+            ['po box 1', '1', 'PO BOX 1'],
+            ['p.o. box 2', '2', 'PO BOX 2'],
+            ['P.O. BOX G', 'G', 'PO BOX G']
+        ]
+
+        for address_input, expected_box_name, normalized in tests:
+            address = Address(address_input)
+
+            assert address.po_box == expected_box_name
+            assert address.normalized == normalized

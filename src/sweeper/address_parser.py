@@ -35,7 +35,8 @@ TAG_MAPPING = {
     # 'SubaddressType': 'address2',
     'PlaceName': 'city',
     # 'StateName': 'state',
-    'ZipCode': 'zip_code'
+    'ZipCode': 'zip_code',
+    'USPSBoxID': 'po_box'
 }
 TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
@@ -56,11 +57,12 @@ class Address():
     unit_id = None
     city = None
     zip_code = None
+    po_box = None
 
     def __init__(self, address_text):
         parts, parsed_as = usaddress.tag(address_text.replace('.', ''), TAG_MAPPING)
-        if parsed_as != 'Street Address':
-            raise Exception(f'{address_text} is not recognized as a valid street address')
+        if parsed_as not in ['Street Address', 'PO Box']:
+            raise Exception(f'{address_text} is not recognized as a valid street address, or P.O. Box')
 
         for part in parts:
             try:
@@ -71,6 +73,9 @@ class Address():
                 setattr(self, part, value)
             except AttributeError:
                 pass
+
+        if self.po_box is not None:
+            return
 
         #: look for two-character prefix directions which usaddress does not handle
         street_name_parts = self.street_name.split(' ')
@@ -101,6 +106,9 @@ class Address():
         '''
         getter for normalized address string
         '''
+        if self.po_box is not None:
+            return f'PO BOX {self.po_box}'
+
         parts = [
             self.address_number,
             self.address_number_suffix,

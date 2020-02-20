@@ -49,8 +49,11 @@ If no `unit_type` is found, this property is prefixed with `#` (e.g. `# 3`). If 
 
 `zip_code`
 
+`po_box`
+The PO Box if a po-box-type address was entered (e.g. `po_box` would be `1` for `p.o. box 1`).
+
 `normalized`
-A normalized string representing the entire address that was passed into the constructor.
+A normalized string representing the entire address that was passed into the constructor. PO Boxes are normalized in this format `PO BOX <number>`.
 
 ## development
 
