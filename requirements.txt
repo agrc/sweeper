@@ -1,5 +1,0 @@
-docopt
-fiona
-geopandas
-xxhash
-

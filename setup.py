@@ -38,10 +38,19 @@ setup(
     keywords=[],
     install_requires=[
         'docopt==0.6.*',
+        'fiona',
+        'geopandas',
+        'xxhash',
+        'usaddress'
     ],
     dependency_links=[],
     extras_require={
         'tests': [
+            'pytest',
+        ],
+        'develop': [
+            'yapf',
+            'pylint'
         ]
     },
     entry_points={"console_scripts": ["sweeper = sweeper.sweeper:__main__"]}
