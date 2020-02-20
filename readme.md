@@ -61,6 +61,13 @@ A normalized string representing the entire address that was passed into the con
    - `conda create --clone arcgispro-py3 --name sweeper`
 1. activate environment
    - `activate sweeper`
-1. install dependencies
-   - `conda install -y -f --file requirements.dev.txt`
+
+### Installing dependencies
+
+1. install only required dependencies to run sweeper
+   - `pip install -e .`
+1. install required dependencies to work on sweeper
+   - `pip install -e ".[develop]"`
+1. install required dependencies to run sweeper tests
+   - `pip install -e ".[test]"`
 1. run tests: `pytest`
