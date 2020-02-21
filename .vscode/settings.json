@@ -8,6 +8,7 @@
         "bdist",
         "conda",
         "objectid",
+        "oids",
         "pformat",
         "posix",
         "pypi",

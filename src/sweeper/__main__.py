@@ -4,19 +4,22 @@
 sweeper
 
 Usage:
-  sweeper sweep duplicates --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep empties --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep invalids --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
+  sweeper sweep duplicates  --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
+  sweeper sweep empties     --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
+  sweeper sweep invalids    --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
+  sweeper sweep addresses   --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name> --field-name=<field_name>]
+  sweeper sweep             --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
 
 Arguments:
-  workspace - path to workspace eg: `c:\\my.gdb`
-  table_name - name of feature class or table eg: `Roads`
-  report_path - folder to save report to eg: `c:\\temp`
-  backup_path - place to create a temp gdb and import original table
+  workspace     - path to workspace eg: `c:\\my.gdb`
+  table_name    - name of feature class or table eg: `Roads`
+  report_path   - folder to save report to eg: `c:\\temp`
+  backup_path   - place to create a temp gdb and import original table
+  field_name    - name of the field to check
 
 Examples:
-  sweeper sweep --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb
+  sweeper sweep           --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb
+  sweeper sweep addresses --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb --field-name=ADDRESS
 '''
 import os
 import sys
@@ -27,6 +30,7 @@ from docopt import docopt
 from . import backup, report, workspace_info
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
+from .sweepers.addresses import AddressTest
 
 
 def main():
@@ -48,6 +52,8 @@ def main():
         pass
     elif args['empties']:
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
+    elif args['addresses']:
+        closet.append(AddressTest(args['--workspace'], args['--table-name'], args['--field-name']))
     else:
         closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
