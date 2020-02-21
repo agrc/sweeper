@@ -77,24 +77,23 @@ def execute_sweepers(closet, try_fix):
     feature_class_names = []
     reports = []
 
+    def run_tool(tool):
+        reports.append(tool.sweep())
+
+        if try_fix:
+            reports.append(tool.try_fix())
+
+            #: run sweeper again to ensure all errors were fixed.
+            reports.append(tool.sweep())
+
     print(f'running {len(closet)} sweepers. try fix: {try_fix}')
     for tool in closet:
         if tool.table_name:
-            report = tool.sweep()
-
-            reports.append(report)
-
-            if try_fix:
-                tool.try_fix()
-                #: run sweeper again to ensure all errors were fixed.
-                report = tool.sweep()
+            run_tool(tool)
 
             continue
 
         print('missing table, executing over workspace')
-        #: get all feature classes
-        #: explode current tool to match the numbner of feature classes
-        #: execute sweep on new exploded tools
 
         #: get feature class names once
         if len(feature_class_names) == 0:
@@ -103,12 +102,8 @@ def execute_sweepers(closet, try_fix):
         #: explode sweeper class for each feature class
         for table_name in feature_class_names:
             new_tool = tool.clone(table_name)
-            report = new_tool.sweep()
 
-            reports.append(report)
-
-            if try_fix:
-                tool.try_fix()
+            run_tool(new_tool)
 
     return reports
 

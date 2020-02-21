@@ -17,7 +17,8 @@ def _generate_report(writer, reports):
     #: loop through each report dict in the list of dicts
     for report in reports:
         writer(f'{report["title"]} Report for {report["feature_class"]}')
-        issues_found = len(report['issues'])
+        issues = report['issues']
+        issues_found = len(issues)
         if issues_found == 0:
             writer('No issues found!')
             writer('---')
@@ -27,11 +28,16 @@ def _generate_report(writer, reports):
         writer(f'{issues_found} issues found')
         writer('  Issues found:')
 
-        for oid in report['issues']:
-            writer(f'    ObjectID {oid}')
+        if type(issues) == list:
+            for oid in issues:
+                writer(f'    ObjectID {oid}')
+        else:
+            #: must be dict
+            for oid in issues:
+                writer(f'    ObjectID {oid}: {issues[oid]}')
 
         writer('\nSelect statement to view issues in ArcGIS:')
-        statement = f'OBJECTID IN ({", ".join(report["issues"])})'
+        statement = f'OBJECTID IN ({", ".join([str(oid) for oid in issues])})'
 
         writer(statement)
 
@@ -39,7 +45,7 @@ def _generate_report(writer, reports):
 
 def save_report(reports, save_directory):
     '''
-    save_directory 
+    save_directory
       - folder sweeper-run-{date}
         - feature class name-sweeper name-numberofissues.txt `Counties-Empties-5.txt`   `Counties-Empties-0.txt`
     '''
@@ -60,7 +66,7 @@ def print_report(reports):
 
 def _get_file_name(report):
     title = report['title'].replace(' ', '')
-    
+
     return f'{report["feature_class"]}_{title}_{len(report["issues"])}.txt'
 
 def _create_report_directory(parent_directory):
