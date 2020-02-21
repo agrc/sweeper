@@ -6,7 +6,7 @@ tests for the address parser module
 '''
 import pytest
 
-from .address_parser import Address, normalize_direction, normalize_street_type, InvalidStreetTypeError
+from ..address_parser import Address, normalize_direction, normalize_street_type, InvalidStreetTypeError
 
 
 class TestAddressNumber():
@@ -374,3 +374,15 @@ def test_steve():
     assert address.street_name == '50'
     assert address.street_type is None
     assert address.street_direction == 'W'
+
+
+class TestBadAddresses():
+    '''tests to make sure that it can handle bad data
+    '''
+
+    def test_missing_street_names(self):
+        address = Address('100 south')
+
+        assert address.street_name is None
+        assert address.address_number == '100'
+        assert address.prefix_direction == 'S'
