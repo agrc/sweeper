@@ -20,6 +20,7 @@ Examples:
 '''
 import os
 import sys
+import pkg_resources
 
 from docopt import docopt
 
@@ -31,7 +32,7 @@ from .sweepers.empties import EmptyTest
 def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules.
     '''
-    args = docopt(__doc__, version='1.0.3')
+    args = docopt(__doc__, version=pkg_resources.require('agrc-sweeper')[0].version)
 
     #: backup input file before quality checks
     if args['--backup-to']:

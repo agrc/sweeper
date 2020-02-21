@@ -85,5 +85,6 @@ A normalized string representing the entire address that was passed into the con
 
 ### Uploading to pypi.org
 
+1. Bump `version` in `setup.py`
 1. `python setup.py sdist bdist_wheel`
 1. `twine upload dist/*` (`pip install twine`, if needed)
