@@ -61,8 +61,6 @@ A normalized string representing the entire address that was passed into the con
     - `conda create --clone arcgispro-py3 --name sweeper`
 1. activate environment
     - `activate sweeper`
-1. install fiona via conda since it's not yet supported via pip
-    - `conda install fiona`
 1. install sweeper
     - `pip install agrc-sweeper`
 1. run cli for docs

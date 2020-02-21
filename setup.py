@@ -38,7 +38,6 @@ setup(
     keywords=[],
     install_requires=[
         'docopt==0.6.*',
-        'fiona', #: this needs to be installed via conda for now
         'xxhash',
         'usaddress'
     ],
