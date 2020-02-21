@@ -31,7 +31,7 @@ from .sweepers.empties import EmptyTest
 def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules.
     '''
-    args = docopt(__doc__, version='1.0.1')
+    args = docopt(__doc__, version='1.0.3')
 
     #: backup input file before quality checks
     if args['--backup-to']:
