@@ -62,7 +62,7 @@ class Address():
     def __init__(self, address_text):
         parts, parsed_as = usaddress.tag(address_text.replace('.', ''), TAG_MAPPING)
         if parsed_as not in ['Street Address', 'PO Box']:
-            raise Exception(f'{address_text} is not recognized as a valid street address, or P.O. Box')
+            raise Exception(f'"{address_text}" is not recognized as a valid street address, or P.O. Box')
 
         for part in parts:
             try:
@@ -78,14 +78,15 @@ class Address():
             return
 
         #: look for two-character prefix directions which usaddress does not handle
-        street_name_parts = self.street_name.split(' ')
-        if len(street_name_parts) > 1:
-            if street_name_parts[0].upper() in TWO_CHAR_DIRECTIONS and self.prefix_direction is None:
-                self.prefix_direction = normalize_direction(street_name_parts[0])
-                self.street_name = ' '.join(street_name_parts[1:])
-            elif street_name_parts[-1].upper() in TWO_CHAR_DIRECTIONS and self.street_direction is None:
-                self.street_direction = normalize_direction(street_name_parts[-1])
-                self.street_name = ' '.join(street_name_parts[:-1])
+        if self.street_name:
+            street_name_parts = self.street_name.split(' ')
+            if len(street_name_parts) > 1:
+                if street_name_parts[0].upper() in TWO_CHAR_DIRECTIONS and self.prefix_direction is None:
+                    self.prefix_direction = normalize_direction(street_name_parts[0])
+                    self.street_name = ' '.join(street_name_parts[1:])
+                elif street_name_parts[-1].upper() in TWO_CHAR_DIRECTIONS and self.street_direction is None:
+                    self.street_direction = normalize_direction(street_name_parts[-1])
+                    self.street_name = ' '.join(street_name_parts[:-1])
 
         if self.street_type is not None:
             self.street_type = normalize_street_type(self.street_type)
