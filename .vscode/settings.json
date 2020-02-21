@@ -9,6 +9,8 @@
         "objectid",
         "pformat",
         "posix",
+        "pypi",
+        "sdist",
         "usaddress",
         "xxhash"
     ],

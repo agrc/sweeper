@@ -55,7 +55,20 @@ The PO Box if a po-box-type address was entered (e.g. `po_box` would be `1` for 
 `normalized`
 A normalized string representing the entire address that was passed into the constructor. PO Boxes are normalized in this format `PO BOX <number>`.
 
-## development
+## Installation
+
+1. create conda environment
+    - `conda create --clone arcgispro-py3 --name sweeper`
+1. activate environment
+    - `activate sweeper`
+1. install fiona via conda since it's not yet supported via pip
+    - `conda install fiona`
+1. install sweeper
+    - `pip install agrc-sweeper`
+1. run cli for docs
+    - `sweeper`
+
+## Development
 
 1. create conda environment
    - `conda create --clone arcgispro-py3 --name sweeper`
@@ -65,9 +78,14 @@ A normalized string representing the entire address that was passed into the con
 ### Installing dependencies
 
 1. install only required dependencies to run sweeper
-   - `pip install -e .`
+    - `pip install -e .`
 1. install required dependencies to work on sweeper
-   - `pip install -e ".[develop]"`
+    - `pip install -e ".[develop]"`
 1. install required dependencies to run sweeper tests
-   - `pip install -e ".[test]"`
+    - `pip install -e ".[test]"`
 1. run tests: `pytest`
+
+### Uploading to pypi.org
+
+1. `python setup.py sdist`
+1. `twine upload dist/*`

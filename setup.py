@@ -10,7 +10,7 @@ def read(*names, **kwargs):
 
 
 setup(
-    name="sweeper",
+    name="agrc-sweeper",
     version="1.0.0",
     license="MIT",
     description="CLI tool for making good data",
@@ -38,8 +38,7 @@ setup(
     keywords=[],
     install_requires=[
         'docopt==0.6.*',
-        'fiona',
-        'geopandas',
+        'fiona', #: this needs to be installed via conda for now
         'xxhash',
         'usaddress'
     ],
@@ -53,5 +52,5 @@ setup(
             'pylint'
         ]
     },
-    entry_points={"console_scripts": ["sweeper = sweeper.sweeper:__main__"]}
+    entry_points={"console_scripts": ["sweeper = sweeper.__main__:main"]}
 )
