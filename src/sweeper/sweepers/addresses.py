@@ -28,19 +28,22 @@ class AddressTest():
         with arcpy.EnvManager(workspace=self.workspace):
             with arcpy.da.SearchCursor(self.table_name, ['OID@', self.field_name]) as search_cursor:
                 for oid, address in search_cursor:
-                    error_message = None
+                    issue_message = None
                     try:
                         parsed_address = Address(address)
                     except Exception as exception:
-                        error_message = str(exception)
+                        issue_message = str(exception)
 
-                    parts_found = set(parsed_address.__dict__)
-                    missing_parts = required_street_address_parts - parts_found
-                    if len(missing_parts) > 0 and 'po_box' not in parts_found:
-                        error_message = f'missing address parts: {", ".join(missing_parts)}'
+                    if issue_message is None:
+                        parts_found = set(parsed_address.__dict__)
+                        missing_parts = required_street_address_parts - parts_found
+                        if len(missing_parts) > 0 and 'po_box' not in parts_found:
+                            issue_message = f'missing address parts: {", ".join(missing_parts)}'
+                        elif parsed_address.normalized != address:
+                            issue_message = f'address not fully normalized: "{address}" -> "{parsed_address.normalized}"'
 
-                    if error_message is not None:
-                        report['issues'][oid] = error_message
+                    if issue_message is not None:
+                        report['issues'][oid] = issue_message
                         self.oids_with_issues.append(oid)
 
         return report
