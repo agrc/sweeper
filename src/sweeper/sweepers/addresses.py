@@ -49,7 +49,7 @@ class AddressTest():
         return report
 
     def try_fix(self):
-        report = {'title': 'Address Try Fix', 'feature_class': self.table_name, 'issues': {}}
+        report = {'title': 'Address Try Fix', 'feature_class': self.table_name, 'issues': {}, 'fixes': {}}
 
         with arcpy.EnvManager(workspace=self.workspace):
             describe = arcpy.da.Describe(self.table_name)
@@ -59,7 +59,7 @@ class AddressTest():
                     try:
                         parsed_address = Address(address)
                         update_cursor.updateRow((oid, parsed_address.normalized))
-                        report['issues'][oid] = f'{address} -> {parsed_address.normalized}'
+                        report['fixes'][oid] = f'{address} -> {parsed_address.normalized}'
                     except Exception as exception:
                         report['issues'][oid] = str(exception)
 

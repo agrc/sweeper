@@ -8,6 +8,41 @@ A module that contains the templates for the reports and functions to format dat
 import os
 from datetime import datetime
 
+def _print_items(report, key, writer):
+    '''print out issues or fixes
+    report: report dictionary
+    key: 'issues' | 'fixes'
+    writer: function
+    '''
+    try:
+        items = report[key]
+    except KeyError:
+        return
+
+    items_found = len(items)
+    if items_found == 0:
+        writer(r'No {key} found!')
+        writer('---')
+
+        return
+
+    writer(f'{items_found} {key} found:')
+
+    if type(items) == list:
+        for oid in items:
+            writer(f'    ObjectID {oid}')
+    else:
+        #: must be dict
+        for oid in items:
+            writer(f'    ObjectID {oid}: {items[oid]}')
+
+    writer(f'\nSelect statement to view {key} in ArcGIS:')
+    statement = f'OBJECTID IN ({", ".join([str(oid) for oid in items])})'
+
+    writer(statement)
+
+    writer('---')
+
 def _generate_report(writer, reports):
     if len(reports) == 0:
         writer('No issues found!')
@@ -17,31 +52,9 @@ def _generate_report(writer, reports):
     #: loop through each report dict in the list of dicts
     for report in reports:
         writer(f'{report["title"]} Report for {report["feature_class"]}')
-        issues = report['issues']
-        issues_found = len(issues)
-        if issues_found == 0:
-            writer('No issues found!')
-            writer('---')
 
-            continue
-
-        writer(f'{issues_found} issues found')
-        writer('  Issues found:')
-
-        if type(issues) == list:
-            for oid in issues:
-                writer(f'    ObjectID {oid}')
-        else:
-            #: must be dict
-            for oid in issues:
-                writer(f'    ObjectID {oid}: {issues[oid]}')
-
-        writer('\nSelect statement to view issues in ArcGIS:')
-        statement = f'OBJECTID IN ({", ".join([str(oid) for oid in issues])})'
-
-        writer(statement)
-
-        writer('---')
+        _print_items(report, 'fixes', writer)
+        _print_items(report, 'issues', writer)
 
 def save_report(reports, save_directory):
     '''
