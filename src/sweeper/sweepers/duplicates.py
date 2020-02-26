@@ -11,14 +11,15 @@ class DuplicateTest():
     '''A class that finds and removes duplicate geometries or attributes or both
     '''
     def __init__(self, workspace, table_name):
-        self.report = {'title': 'Duplicate Test', 'feature_class': table_name, 'issues': []}
         self.workspace = workspace
         self.table_name = table_name
+        self.oids_with_issues = []
 
 
     def sweep(self):
         '''A method that finds duplicate records and returns a report dictionary
         '''
+        report = {'title': 'Duplicate Test', 'feature_class': self.table_name, 'issues': []}
         digests = set([])
 
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
@@ -57,35 +58,42 @@ class DuplicateTest():
                     digest = hasher.hexdigest()
 
                     if digest in digests:
-                        self.report['issues'].append(str(object_id))
+                        report['issues'].append(str(object_id))
+                        self.oids_with_issues.append(object_id)
 
                     digests.add(digest)
 
-        return self.report
+        return report
 
 
     def try_fix(self):
         '''a method that tries to remove the duplicate records
         '''
-        if len(self.report['issues']) == 0:
-            return
+        report = {'title': 'Duplicate Try Fix', 'feature_class': self.table_name, 'issues': [], 'fixes': []}
 
-        sql = f'"OBJECTID" IN ({",".join(self.report["issues"])})'
+        if len(self.oids_with_issues) == 0:
+            return report
+
+        sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
         temp_feature_layer = 'temp_layer'
 
         with arcpy.EnvManager(workspace=self.workspace):
             try:
                 duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
 
-                print(f'attempting to delete {len(self.report["issues"])} duplicate records')
+                print(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
 
                 arcpy.management.DeleteFeatures(duplicate_features)
             except Exception as error:
-                print(f'unable to delete features {error}')
+                error_message = f'unable to delete features {error}'
+                report['issues'].append(error_message)
             finally:
                 if arcpy.Exists(temp_feature_layer):
                     arcpy.management.Delete(temp_feature_layer)
 
+            report['fixes'].append(f'{len(self.oids_with_issues)} records deleted successfully')
+
+        return report
 
     def clone(self, table_name):
         print(f'cloning to {table_name}')
