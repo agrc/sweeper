@@ -21,7 +21,7 @@ def _print_items(report, key, writer):
 
     items_found = len(items)
     if items_found == 0:
-        writer(r'No {key} found!')
+        writer(f'No {key} found!')
         writer('---')
 
         return
