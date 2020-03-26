@@ -77,6 +77,19 @@ class Address():
         if self.po_box is not None:
             return
 
+        try:
+            #: e.g. US HWY
+            self.street_name = f'{normalize_street_name_pre_type(self.StreetNamePreType)} {self.street_name}'
+            del self.StreetNamePreType
+        except AttributeError:
+            pass
+
+        try:
+            self.street_name = f'{self.StreetNamePreModifier} {self.street_name}'
+            del self.StreetNamePreModifier
+        except AttributeError:
+            pass
+
         #: look for two-character prefix directions which usaddress does not handle
         if self.street_name:
             street_name_parts = self.street_name.split(' ')
@@ -146,6 +159,11 @@ def normalize_street_type(type_text):
             return abbreviation
 
     raise InvalidStreetTypeError(type_text)
+
+def normalize_street_name_pre_type(text):
+    '''normalizes highways by doing things like replaces SR with HWY and removes US
+    '''
+    return text.replace('SR', 'HWY').replace('US ', '')
 
 
 class InvalidStreetTypeError(Exception):
