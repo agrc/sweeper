@@ -463,3 +463,12 @@ class TestHighways():
         assert address.prefix_direction == 'N'
         assert address.street_name == 'HWY 89'
         assert address.normalized == '1910 N HWY 89'
+
+    def test_street_name_with_sr(self):
+        address = Address('1910 s woodsrow dr')
+
+        assert address.address_number == '1910'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'WOODSROW'
+        assert address.street_type == 'DR'
+        assert address.normalized == '1910 S WOODSROW DR'
