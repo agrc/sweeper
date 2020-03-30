@@ -400,6 +400,31 @@ class TestHighways():
         assert address.street_name == 'HWY 22'
         assert address.normalized == '910 S HWY 22'
 
+    def test_state_route_expanded(self):
+        address = Address('910 S State Route 22')
+
+        assert address.address_number == '910'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'HWY 22'
+        assert address.normalized == '910 S HWY 22'
+
+    def test_state_route_with_punctuation(self):
+        address = Address('910 S S.R. 22')
+
+        assert address.address_number == '910'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'HWY 22'
+        assert address.normalized == '910 S HWY 22'
+
+    def test_state_route_casing(self):
+        address = Address('910 S sr 22')
+
+        assert address.address_number == '910'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'HWY 22'
+        assert address.normalized == '910 S HWY 22'
+
+
     def test_highways(self):
         address = Address('1910 N US HWY 89')
 
@@ -414,3 +439,27 @@ class TestHighways():
         assert address.prefix_direction == 'S'
         assert address.street_name == 'OLD HWY 89'
         assert address.normalized == '1106 S OLD HWY 89'
+
+    def test_highway_expanded(self):
+        address = Address('1910 N US highway 89')
+
+        assert address.address_number == '1910'
+        assert address.prefix_direction == 'N'
+        assert address.street_name == 'HWY 89'
+        assert address.normalized == '1910 N HWY 89'
+
+    def test_highway_with_punctuation(self):
+        address = Address('1910 N U.S. highway 89')
+
+        assert address.address_number == '1910'
+        assert address.prefix_direction == 'N'
+        assert address.street_name == 'HWY 89'
+        assert address.normalized == '1910 N HWY 89'
+
+    def test_highway_casing(self):
+        address = Address('1910 N u.s. highway 89')
+
+        assert address.address_number == '1910'
+        assert address.prefix_direction == 'N'
+        assert address.street_name == 'HWY 89'
+        assert address.normalized == '1910 N HWY 89'
