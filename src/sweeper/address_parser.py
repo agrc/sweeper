@@ -7,6 +7,7 @@ A module that parses street addresses into their various parts.
 import json
 import pprint
 from os.path import dirname, join, realpath
+from re import compile
 
 import usaddress
 
@@ -160,10 +161,14 @@ def normalize_street_type(type_text):
 
     raise InvalidStreetTypeError(type_text)
 
+
+HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
 def normalize_street_name_pre_type(text):
     '''normalizes highways by doing things like replaces SR with HWY and removes US
+
+    No need to worried about casing or "."s because usaddress has already taken care of them by this point.
     '''
-    return text.replace('SR', 'HWY').replace('US ', '')
+    return HWY_REGEX.sub('HWY', text).replace('US ', '')
 
 
 class InvalidStreetTypeError(Exception):
