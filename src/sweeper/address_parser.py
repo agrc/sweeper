@@ -13,14 +13,14 @@ import usaddress
 
 TAG_MAPPING = {
     'AddressNumber': 'address_number',
-    # 'AddressNumberPrefix': 'address1',
+    'AddressNumberPrefix': 'address_number',
     'AddressNumberSuffix': 'address_number_suffix',
     'StreetNamePreDirectional': 'prefix_direction',
     'StreetName': 'street_name',
-    # 'StreetNamePreModifier': 'address1',
-    # 'StreetNamePreType': 'address1',
+    # 'StreetNamePreModifier': 'street_name', #: handled in class below
+    # 'StreetNamePreType': 'street_name', #: handled in class below
     'StreetNamePostDirectional': 'street_direction',
-    # 'StreetNamePostModifier': 'address1',
+    'StreetNamePostModifier': 'street_type',
     'StreetNamePostType': 'street_type',
     # 'CornerOf': 'address1',
     # 'IntersectionSeparator': 'address1',
@@ -29,7 +29,7 @@ TAG_MAPPING = {
     # 'USPSBoxGroupType': 'address1',
     # 'USPSBoxID': 'address1',
     # 'USPSBoxType': 'address1',
-    # 'BuildingName': 'address2',
+    'BuildingName': 'unit_id',
     'OccupancyType': 'unit_type',
     'OccupancyIdentifier': 'unit_id',
     # 'SubaddressIdentifier': 'address2',
