@@ -1,4 +1,4 @@
-# sweeper
+# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)
 
 fix data
 
