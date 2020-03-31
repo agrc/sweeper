@@ -12,6 +12,7 @@
         "pformat",
         "posix",
         "pypi",
+        "pytest",
         "sdist",
         "usaddress",
         "xxhash"

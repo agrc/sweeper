@@ -7,19 +7,20 @@ A module that parses street addresses into their various parts.
 import json
 import pprint
 from os.path import dirname, join, realpath
+from re import compile
 
 import usaddress
 
 TAG_MAPPING = {
     'AddressNumber': 'address_number',
-    # 'AddressNumberPrefix': 'address1',
+    'AddressNumberPrefix': 'address_number',
     'AddressNumberSuffix': 'address_number_suffix',
     'StreetNamePreDirectional': 'prefix_direction',
     'StreetName': 'street_name',
-    # 'StreetNamePreModifier': 'address1',
-    # 'StreetNamePreType': 'address1',
+    # 'StreetNamePreModifier': 'street_name', #: handled in class below
+    # 'StreetNamePreType': 'street_name', #: handled in class below
     'StreetNamePostDirectional': 'street_direction',
-    # 'StreetNamePostModifier': 'address1',
+    'StreetNamePostModifier': 'street_type',
     'StreetNamePostType': 'street_type',
     # 'CornerOf': 'address1',
     # 'IntersectionSeparator': 'address1',
@@ -28,7 +29,7 @@ TAG_MAPPING = {
     # 'USPSBoxGroupType': 'address1',
     # 'USPSBoxID': 'address1',
     # 'USPSBoxType': 'address1',
-    # 'BuildingName': 'address2',
+    'BuildingName': 'unit_id',
     'OccupancyType': 'unit_type',
     'OccupancyIdentifier': 'unit_id',
     # 'SubaddressIdentifier': 'address2',
@@ -41,6 +42,7 @@ TAG_MAPPING = {
 TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
     STREET_TYPES = json.loads(file.read())
+HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
 
 
 class Address():
@@ -76,6 +78,19 @@ class Address():
 
         if self.po_box is not None:
             return
+
+        try:
+            #: e.g. US HWY
+            self.street_name = f'{normalize_street_name_pre_type(self.StreetNamePreType)} {self.street_name}'
+            del self.StreetNamePreType
+        except AttributeError:
+            pass
+
+        try:
+            self.street_name = f'{self.StreetNamePreModifier} {self.street_name}'
+            del self.StreetNamePreModifier
+        except AttributeError:
+            pass
 
         #: look for two-character prefix directions which usaddress does not handle
         if self.street_name:
@@ -135,6 +150,7 @@ def normalize_direction(direction_text):
 
     return direction_text[0].upper()
 
+
 def normalize_street_type(type_text):
     '''
     returns the standard abbreviation for the input street type
@@ -146,6 +162,14 @@ def normalize_street_type(type_text):
             return abbreviation
 
     raise InvalidStreetTypeError(type_text)
+
+
+def normalize_street_name_pre_type(text):
+    '''normalizes highways by doing things like replaces SR with HWY and removes US
+
+    No need to worried about casing or "."s because usaddress has already taken care of them by this point.
+    '''
+    return HWY_REGEX.sub('HWY', text).replace('US ', '')
 
 
 class InvalidStreetTypeError(Exception):

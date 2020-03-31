@@ -80,7 +80,7 @@ A normalized string representing the entire address that was passed into the con
 1. install required dependencies to work on sweeper
     - `pip install -e ".[develop]"`
 1. install required dependencies to run sweeper tests
-    - `pip install -e ".[test]"`
+    - `pip install -e ".[tests]"`
 1. run tests: `pytest`
 
 ### Uploading to pypi.org
