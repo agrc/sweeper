@@ -42,6 +42,7 @@ TAG_MAPPING = {
 TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
     STREET_TYPES = json.loads(file.read())
+HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
 
 
 class Address():
@@ -149,6 +150,7 @@ def normalize_direction(direction_text):
 
     return direction_text[0].upper()
 
+
 def normalize_street_type(type_text):
     '''
     returns the standard abbreviation for the input street type
@@ -162,7 +164,6 @@ def normalize_street_type(type_text):
     raise InvalidStreetTypeError(type_text)
 
 
-HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
 def normalize_street_name_pre_type(text):
     '''normalizes highways by doing things like replaces SR with HWY and removes US
 
