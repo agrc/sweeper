@@ -4,11 +4,11 @@
 sweeper
 
 Usage:
-  sweeper sweep duplicates  --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep empties     --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep invalids    --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
-  sweeper sweep addresses   --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name> --field-name=<field_name>]
-  sweeper sweep             --workspace=<workspace> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path> --table-name=<table_name>]
+  sweeper sweep duplicates  --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep empties     --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep invalids    --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep addresses   --workspace=<workspace> --table-name=<table_name> --field-name=<field_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep             --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
 
 Arguments:
   workspace     - path to workspace eg: `c:\\my.gdb`
