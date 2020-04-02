@@ -24,12 +24,19 @@ class MetadataTest():
 
         name_parts = self.table_name.split('.')
 
+        #: check for required tags
         required_tags = []
         if len(name_parts) == 3:
             [database, schema, feature_class_name] = name_parts
             required_tags.append(database)
             required_tags.append(schema.title())
-        if metadata.tags is None or len(metadata.tags) == 0:
+        if metadata.tags is None:
+            missing_tags = required_tags
+        else:
+            tags = [tag.strip() for tag in metadata.tags.split(',')]
+            missing_tags = set(required_tags) - set(tags)
+
+        if len(missing_tags):
             report['issues'].append(f'missing tags: {required_tags}')
 
         return report
