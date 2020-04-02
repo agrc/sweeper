@@ -72,6 +72,7 @@ A normalized string representing the entire address that was passed into the con
    - `conda create --clone arcgispro-py3 --name sweeper`
 1. activate environment
    - `activate sweeper`
+1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
 
 ### Installing dependencies
 
