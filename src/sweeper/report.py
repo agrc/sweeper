@@ -28,18 +28,25 @@ def _print_items(report, key, writer):
 
     writer(f'{items_found} {key} found:')
 
+    has_oids = True
     if type(items) == list:
-        for oid in items:
-            writer(f'    ObjectID {oid}')
+        for item in items:
+            if type(item) == int:
+                writer(f'    ObjectID {item}')
+            else:
+                #: issues not associated with a specific row (e.g. metadata)
+                has_oids = False
+                writer(f'    {item}')
     else:
         #: must be dict
         for oid in items:
             writer(f'    ObjectID {oid}: {items[oid]}')
 
-    writer(f'\nSelect statement to view {key} in ArcGIS:')
-    statement = f'OBJECTID IN ({", ".join([str(oid) for oid in items])})'
+    if has_oids:
+        writer(f'\nSelect statement to view {key} in ArcGIS:')
+        statement = f'OBJECTID IN ({", ".join([str(oid) for oid in items])})'
 
-    writer(statement)
+        writer(statement)
 
     writer('---')
 

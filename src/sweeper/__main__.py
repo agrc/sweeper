@@ -8,11 +8,12 @@ Usage:
   sweeper sweep empties     --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
   sweeper sweep invalids    --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
   sweeper sweep addresses   --workspace=<workspace> --table-name=<table_name> --field-name=<field_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep metadata    --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
   sweeper sweep             --workspace=<workspace> --table-name=<table_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
 
 Arguments:
   workspace     - path to workspace eg: `c:\\my.gdb`
-  table_name    - name of feature class or table eg: `Roads`
+  table_name    - name of feature class or table eg: `Roads` (needs to be fully qualified (eg: `SGID.Transportation.Roads`) for metadata sweeper)
   report_path   - folder to save report to eg: `c:\\temp`
   backup_path   - place to create a temp gdb and import original table
   field_name    - name of the field to check
@@ -31,6 +32,7 @@ from . import backup, report, workspace_info
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
 from .sweepers.addresses import AddressTest
+from .sweepers.metadata import MetadataTest
 
 
 def main():
@@ -54,9 +56,12 @@ def main():
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
     elif args['addresses']:
         closet.append(AddressTest(args['--workspace'], args['--table-name'], args['--field-name']))
+    elif args['metadata']:
+        closet.append(MetadataTest(args['--workspace'], args['--table-name']))
     else:
         closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
+        closet.append(MetadataTest(args['--workspace'], args['--table-name']))
 
     reports = execute_sweepers(closet, args['--try-fix'])
 
