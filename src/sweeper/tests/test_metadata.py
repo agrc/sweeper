@@ -7,7 +7,7 @@ a module that tests the metadata sweeper
 from os import path
 from unittest import TestCase
 
-from ..sweepers.metadata import MetadataTest, title_case_tag
+from ..sweepers.metadata import MetadataTest, title_case_tag, update_tags
 
 current_folder = path.dirname(__file__)
 workspace = path.join(current_folder, 'data', 'Sweeper as CADASTRE.sde')
@@ -39,3 +39,12 @@ class TestTitleCaseTag(TestCase):
 
         for input_tag, expected in tests:
             assert title_case_tag(input_tag) == expected
+
+
+class TestUpdateTags(TestCase):
+
+    def test_update_tags(self):
+        results = update_tags(['a', 'b', 'c', 'd'], ['b', 'c'], ['B', 'E'])
+        expected = ['a', 'd', 'B', 'E']
+
+        assert results == expected
