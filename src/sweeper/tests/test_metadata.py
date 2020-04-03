@@ -7,7 +7,7 @@ a module that tests the metadata sweeper
 from os import path
 from unittest import TestCase
 
-from ..sweepers.metadata import MetadataTest, title_case_tag, update_tags
+from ..sweepers.metadata import MetadataTest, title_case_tag, update_tags, get_description_text_only
 
 current_folder = path.dirname(__file__)
 workspace = path.join(current_folder, 'data', 'Sweeper as CADASTRE.sde')
@@ -48,3 +48,31 @@ class TestUpdateTags(TestCase):
         expected = ['a', 'd', 'B', 'E']
 
         assert results == expected
+
+
+class TestSummary(TestCase):
+
+    def test_summary_longer_than_description(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.SummaryLongerThanDescription')
+        report = tool.sweep()
+
+        assert len(report['issues']) == 1
+        self.assertRegex(report['issues'][0], r'Summary is longer than Description')
+
+    def test_summary_too_long(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.SummaryTooLong')
+        report = tool.sweep()
+
+        assert len(report['issues']) == 1
+        self.assertRegex(report['issues'][0], r'Summary is longer than')
+
+
+class TestDescriptionParsing(TestCase):
+
+    def test_get_description_text_only(self):
+        input = '<DIV STYLE="text-align:Left;"><DIV><P><SPAN>This is a short description.</SPAN></P></DIV></DIV>'
+
+        assert get_description_text_only(input) == 'This is a short description.'
+
+    def test_handles_none(self):
+        assert get_description_text_only(None) == ''
