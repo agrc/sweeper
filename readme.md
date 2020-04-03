@@ -2,6 +2,24 @@
 
 fix data
 
+## Available Sweepers
+
+### addresses
+
+Checks that addresses have minimum required parts and optionally normalizes them.
+
+### duplicates
+
+Checks for duplicate features.
+
+### empties
+
+Checks for empty geometries.
+
+### metadata
+
+Checks to make sure that the metadata meets [the SGID Metadata Minimum Requirements Document](https://docs.google.com/document/d/1VkXRwfSn6MraI1VeLfei5tg6je4bd2pp_Vh1JuST9xs/edit).
+
 ## Parsing Addresses
 
 This project contains a module that can be used as a standalone address parser, `sweeper.address_parser`. This allows developer to take advantage of sweepers advanced address parsing and normalization without having to run the entire sweeper process.
