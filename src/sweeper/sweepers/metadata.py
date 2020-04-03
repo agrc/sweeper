@@ -6,6 +6,7 @@ A sweeper that checks geodatabase metadata
 '''
 from os.path import join
 from bs4 import BeautifulSoup
+import re
 
 from arcpy import metadata as md
 from arcpy import EnvManager, ListFeatureClasses, ListTables
@@ -17,6 +18,7 @@ UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'agrc', 'aog', 'at&t', 'blm', 'brat
 #: Articles that should be left lowercase.
 ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
+DATA_PAGE_LINK_REGEX = re.compile(r'gis\.utah\.gov.*\/data', re.IGNORECASE)
 
 #: copied from https://github.com/agrc/agol-validator/blob/master/checks.py with minor modifications
 def title_case_tag(tag):
@@ -112,6 +114,12 @@ class MetadataTest():
             description_text = get_description_text_only(metadata.description)
             if len(metadata.summary) > len(description_text):
                 report['issues'].append('Summary is longer than Description!')
+
+        #: check description for data page link
+        if metadata.description is not None:
+            if not DATA_PAGE_LINK_REGEX.search(metadata.description):
+                report['issues'].append('Description is missing link to gis.utah.gov data page.')
+
         return report
 
     def try_fix(self):

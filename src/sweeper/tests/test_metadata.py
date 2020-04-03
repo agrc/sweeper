@@ -13,21 +13,34 @@ current_folder = path.dirname(__file__)
 workspace = path.join(current_folder, 'data', 'Sweeper as CADASTRE.sde')
 
 
+def contains_issue_with_text(issues, text):
+    for issue in issues:
+        if issue.find(text) > -1:
+            return True
+
+    return False
+
+def does_not_contain_issue_with_text(issues, text):
+    for issue in issues:
+        if issue.find(text) > -1:
+            return False
+
+    return True
+
 class TestMetadataSweeper(TestCase):
 
     def test_no_tags(self):
         tool = MetadataTest(workspace, 'Sweeper.CADASTRE.MissingTags')
         report = tool.sweep()
 
-        assert len(report['issues']) == 1
-        self.assertRegex(report['issues'][0], r'missing tags')
+        assert contains_issue_with_text(report['issues'], 'missing tags')
 
     def test_title_cased_tags(self):
         tool = MetadataTest(workspace, 'Sweeper.CADASTRE.IncorrectCasing')
         report = tool.sweep()
 
-        assert len(report['issues']) == 3
-        self.assertRegex(report['issues'][0], r'incorrectly cased tag')
+        assert does_not_contain_issue_with_text(report['issues'], 'missing tags')
+        assert contains_issue_with_text(report['issues'], 'incorrectly cased tag')
 
 
 class TestTitleCaseTag(TestCase):
@@ -56,15 +69,13 @@ class TestSummary(TestCase):
         tool = MetadataTest(workspace, 'Sweeper.CADASTRE.SummaryLongerThanDescription')
         report = tool.sweep()
 
-        assert len(report['issues']) == 1
-        self.assertRegex(report['issues'][0], r'Summary is longer than Description')
+        assert contains_issue_with_text(report['issues'], 'Summary is longer than Description')
 
     def test_summary_too_long(self):
         tool = MetadataTest(workspace, 'Sweeper.CADASTRE.SummaryTooLong')
         report = tool.sweep()
 
-        assert len(report['issues']) == 1
-        self.assertRegex(report['issues'][0], r'Summary is longer than')
+        assert contains_issue_with_text(report['issues'], 'Summary is longer than')
 
 
 class TestDescriptionParsing(TestCase):
@@ -76,3 +87,18 @@ class TestDescriptionParsing(TestCase):
 
     def test_handles_none(self):
         assert get_description_text_only(None) == ''
+
+
+class TestDescriptionChecks(TestCase):
+
+    def test_find_data_page_link(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.WithoutDataPageLink')
+        report = tool.sweep()
+
+        assert contains_issue_with_text(report['issues'], 'Description is missing link')
+
+    def test_existing_link(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.WithDataPageLink')
+        report = tool.sweep()
+
+        assert does_not_contain_issue_with_text(report['issues'], 'Description is missing link')
