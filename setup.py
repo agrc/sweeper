@@ -40,6 +40,7 @@ setup(
         'docopt==0.6.*',
         'xxhash==1.4.*',
         'usaddress==0.5.*',
+        'beautifulsoup4==4.8.*'
     ],
     dependency_links=[],
     extras_require={

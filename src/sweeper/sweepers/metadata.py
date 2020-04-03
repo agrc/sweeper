@@ -5,6 +5,7 @@ metadata.py
 A sweeper that checks geodatabase metadata
 '''
 from os.path import join
+from bs4 import BeautifulSoup
 
 from arcpy import metadata as md
 from arcpy import EnvManager, ListFeatureClasses, ListTables
@@ -57,6 +58,12 @@ def update_tags(existing, tags_to_remove, tags_to_add):
     return new_tags + tags_to_add
 
 
+def get_description_text_only(html):
+    soup = BeautifulSoup(html or '', 'html5lib')
+
+    return soup.get_text()
+
+
 class MetadataTest():
     '''A class that validates geodatabase metadata
     '''
@@ -98,6 +105,13 @@ class MetadataTest():
                     self.tags_to_remove.append(tag)
                     self.tags_to_add.append(formatted_tag)
 
+        #: check summary
+        if metadata.summary is not None:
+            if len(metadata.summary) > 2048:
+                report['issues'].append('Summary is longer than 2048 characters.')
+            description_text = get_description_text_only(metadata.description)
+            if len(metadata.summary) > len(description_text):
+                report['issues'].append('Summary is longer than Description!')
         return report
 
     def try_fix(self):
