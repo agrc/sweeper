@@ -38,8 +38,8 @@ setup(
     keywords=[],
     install_requires=[
         'docopt==0.6.*',
-        'xxhash',
-        'usaddress'
+        'xxhash==1.4.*',
+        'usaddress==0.5.*',
     ],
     dependency_links=[],
     extras_require={
