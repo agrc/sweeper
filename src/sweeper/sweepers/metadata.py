@@ -46,12 +46,25 @@ def title_case_tag(tag):
 
     return ' '.join(new_words)
 
+
+def get_tags_from_string(text):
+    return [tag.strip() for tag in text.split(',')]
+
+
+def update_tags(existing, tags_to_remove, tags_to_add):
+    new_tags = [existing_tag for existing_tag in existing if existing_tag not in tags_to_remove]
+
+    return new_tags + tags_to_add
+
+
 class MetadataTest():
     '''A class that validates geodatabase metadata
     '''
     def __init__(self, workspace, table_name):
         self.workspace = workspace
         self.table_name = table_name
+        self.tags_to_add = []
+        self.tags_to_remove = []
 
     def sweep(self):
         report = {'title': 'Metadata Test', 'workspace': self.workspace, 'feature_class': self.table_name, 'issues': []}
@@ -69,11 +82,12 @@ class MetadataTest():
         if metadata.tags is None:
             missing_tags = required_tags
         else:
-            tags = [tag.strip() for tag in metadata.tags.split(',')]
+            tags = get_tags_from_string(metadata.tags)
             missing_tags = set(required_tags) - set(tags)
 
         if len(missing_tags):
-            report['issues'].append(f'missing tags: {required_tags}')
+            report['issues'].append(f'missing tags: {missing_tags}')
+            self.tags_to_add = list(missing_tags)
 
         if metadata.tags is not None:
             #: check casing for existing tags
@@ -81,11 +95,33 @@ class MetadataTest():
                 formatted_tag = title_case_tag(tag)
                 if tag != formatted_tag:
                     report['issues'].append(f'incorrectly cased tag: {tag} (should be: {formatted_tag})')
+                    self.tags_to_remove.append(tag)
+                    self.tags_to_add.append(formatted_tag)
 
         return report
 
     def try_fix(self):
-        pass
+        report = {'title': 'Metadata Try Fix', 'feature_class': self.table_name, 'issues': [], 'fixes': []}
+
+        if len(self.tags_to_add) == 0 and len(self.tags_to_remove) == 0:
+            return report
+
+        metadata = md.Metadata(join(self.workspace, self.table_name))
+
+        try:
+            metadata.tags = ', '.join(update_tags(get_tags_from_string(metadata.tags), self.tags_to_remove, self.tags_to_add))
+
+            if len(self.tags_to_remove) > 0:
+                report['fixes'].append(f'Tags removed: {self.tags_to_remove}')
+
+            if len(self.tags_to_add) > 0:
+                report['fixes'].append(f'Tags added: {self.tags_to_add}')
+
+            metadata.save()
+        except Exception as error:
+            report['issues'].append(f'Error updating tags: {error}!')
+
+        return report
 
     def clone(self, table_name):
         print(f'cloning to {table_name}')
