@@ -4,12 +4,12 @@
 metadata.py
 A sweeper that checks geodatabase metadata
 '''
-from os.path import join
+from os.path import join, dirname, realpath
 from bs4 import BeautifulSoup
 import re
 
 from arcpy import metadata as md
-from arcpy import EnvManager, ListFeatureClasses, ListTables
+from arcpy import EnvManager, ListFeatureClasses, ListTables, Exists
 
 
 #: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
@@ -19,6 +19,9 @@ UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'agrc', 'aog', 'at&t', 'blm', 'brat
 ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
 DATA_PAGE_LINK_REGEX = re.compile(r'gis\.utah\.gov.*\/data', re.IGNORECASE)
+
+with open(join(dirname(realpath(__file__)), 'UseLimitations.html')) as file:
+    STANDARD_LIMITATIONS = re.sub(r'\s\s+', '', file.read()).replace('\n', '')
 
 #: copied from https://github.com/agrc/agol-validator/blob/master/checks.py with minor modifications
 def title_case_tag(tag):
@@ -77,6 +80,7 @@ class MetadataTest():
         self.table_name = table_name
         self.tags_to_add = []
         self.tags_to_remove = []
+        self.use_limitations_needs_update = False
 
     def sweep(self):
         report = {'title': 'Metadata Test', 'workspace': self.workspace, 'feature_class': self.table_name, 'issues': []}
@@ -127,6 +131,14 @@ class MetadataTest():
             if not DATA_PAGE_LINK_REGEX.search(metadata.description):
                 report['issues'].append('Description is missing link to gis.utah.gov data page.')
 
+        #: check use limitations
+        if metadata.accessConstraints is None or metadata.accessConstraints == '':
+            report['issues'].append('Use limitations text is missing.')
+            self.use_limitations_needs_update = True
+        elif metadata.accessConstraints != STANDARD_LIMITATIONS:
+            report['issues'].append('Use limitations text is not standard.')
+            self.use_limitations_needs_update = True
+
         return report
 
     def try_fix(self):
@@ -149,6 +161,16 @@ class MetadataTest():
             metadata.save()
         except Exception as error:
             report['issues'].append(f'Error updating tags: {error}!')
+
+        if self.use_limitations_needs_update:
+            try:
+                metadata.accessConstraints = STANDARD_LIMITATIONS
+
+                report['fixes'].append('Standard use limitations text applied.')
+
+                metadata.save()
+            except Exception as error:
+                report['issues'].append(f'Error updating use limitations: {error}!')
 
         return report
 
