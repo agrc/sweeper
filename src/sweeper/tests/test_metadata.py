@@ -102,3 +102,26 @@ class TestDescriptionChecks(TestCase):
         report = tool.sweep()
 
         assert does_not_contain_issue_with_text(report['issues'], 'Description is missing link')
+
+
+class TestUseLimitation(TestCase):
+
+    def test_correct_use_limitation(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.CorrectUseLimitations')
+        report = tool.sweep()
+
+        assert does_not_contain_issue_with_text(report['issues'], 'Use limitations')
+
+    def test_incorrect_use_limitation(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.WithBadUseLimitations')
+        report = tool.sweep()
+
+        assert contains_issue_with_text(report['issues'], 'Use limitations text is not standard')
+        assert tool.use_limitations_needs_update
+
+    def test_no_use_limitation(self):
+        tool = MetadataTest(workspace, 'Sweeper.CADASTRE.WithoutUseLimitations')
+        report = tool.sweep()
+
+        assert contains_issue_with_text(report['issues'], 'Use limitations text is missing')
+        assert tool.use_limitations_needs_update
