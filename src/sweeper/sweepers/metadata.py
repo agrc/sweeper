@@ -81,7 +81,11 @@ class MetadataTest():
     def sweep(self):
         report = {'title': 'Metadata Test', 'workspace': self.workspace, 'feature_class': self.table_name, 'issues': []}
 
-        metadata = md.Metadata(join(self.workspace, self.table_name))
+        table_path = join(self.workspace, self.table_name)
+
+        if not Exists(table_path):
+            raise Exception(f'dataset does not exist! {table_path}')
+        metadata = md.Metadata(table_path)
 
         name_parts = self.table_name.split('.')
 
