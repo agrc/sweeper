@@ -51,6 +51,9 @@ def title_case_tag(tag):
 
 
 def get_tags_from_string(text):
+    if text is None:
+        return []
+
     return [tag.strip() for tag in text.split(',')]
 
 
