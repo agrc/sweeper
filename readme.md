@@ -20,6 +20,24 @@ Checks for empty geometries.
 
 Checks to make sure that the metadata meets [the SGID Metadata Minimum Requirements Document](https://docs.google.com/document/d/1VkXRwfSn6MraI1VeLfei5tg6je4bd2pp_Vh1JuST9xs/edit).
 
+#### Tags
+
+Checks to make sure that existing tags are cased appropriately. This mean that the are title-cased other than known abbreviations (e.g. AGRC, BLM) and articles (e.g. a, the, of).
+
+This check also verifies that the data set contains a tag that matches the database name (e.g. `SGID`) and the schema (e.g. `Cadastre`).
+
+#### Summary
+
+Checks to make sure that the summary is less than 2048 characters (a limitation of AGOL) and that it is shorter than the description.
+
+#### Description
+
+Checks to make sure that the description contains a link to a data page on gis.utah.gov.
+
+#### Use Limitations
+
+Checks to make sure that the text in this section matches the [official text for AGRC](src\sweeper\sweepers\UseLimitations.html).
+
 ## Parsing Addresses
 
 This project contains a module that can be used as a standalone address parser, `sweeper.address_parser`. This allows developer to take advantage of sweepers advanced address parsing and normalization without having to run the entire sweeper process.
