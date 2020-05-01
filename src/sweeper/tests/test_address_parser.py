@@ -6,7 +6,7 @@ tests for the address parser module
 '''
 import pytest
 
-from ..address_parser import Address, normalize_direction, normalize_street_type, InvalidStreetTypeError
+from ..address_parser import (Address, InvalidStreetTypeError, normalize_direction, normalize_street_type)
 
 
 class TestAddressNumber():
@@ -423,7 +423,6 @@ class TestHighways():
         assert address.prefix_direction == 'S'
         assert address.street_name == 'HWY 22'
         assert address.normalized == '910 S HWY 22'
-
 
     def test_highways(self):
         address = Address('1910 N US HWY 89')
