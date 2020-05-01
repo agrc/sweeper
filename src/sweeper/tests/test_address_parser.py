@@ -255,6 +255,15 @@ class TestUnitParts():
         assert address.unit_type == 'BLDG'
         assert address.unit_id == '101'
 
+    def test_house_numbers_that_look_like_street_names(self):
+        #: upstream: https://github.com/datamade/usaddress/issues/283
+        address = Address('1940 E 5625 S')
+
+        assert address.address_number == '1940'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == '5625'
+        assert address.street_direction == 'S'
+        assert address.normalized == '1940 E 5625 S'
 
 class TestPOBox():
     '''
