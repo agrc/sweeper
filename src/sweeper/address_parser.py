@@ -32,8 +32,8 @@ TAG_MAPPING = {
     'BuildingName': 'unit_id',
     'OccupancyType': 'unit_type',
     'OccupancyIdentifier': 'unit_id',
-    # 'SubaddressIdentifier': 'address2',
-    # 'SubaddressType': 'address2',
+    'SubaddressIdentifier': 'unit_id',
+    'SubaddressType': 'unit_type',
     'PlaceName': 'city',
     # 'StateName': 'state',
     'ZipCode': 'zip_code',
@@ -176,6 +176,7 @@ class InvalidStreetTypeError(Exception):
     '''
     exception for when the street type does not have a corresponding value in street_types.json
     '''
+
     def __init__(self, type_text):
         super().__init__()
         self.message = f'No matching abbreviation found for {type_text}'

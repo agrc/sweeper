@@ -249,6 +249,12 @@ class TestUnitParts():
         assert address.unit_type == 'SUITE'
         assert address.unit_id == '3'
 
+    def test_building(self):
+        address = Address('1630 W 2000 S Bldg 101')
+
+        assert address.unit_type == 'BLDG'
+        assert address.unit_id == '101'
+
 
 class TestPOBox():
     '''
