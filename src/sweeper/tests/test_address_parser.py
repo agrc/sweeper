@@ -6,7 +6,8 @@ tests for the address parser module
 '''
 import pytest
 
-from ..address_parser import (Address, InvalidStreetTypeError, normalize_direction, normalize_street_type)
+from ..address_parser import (Address, InvalidStreetTypeError,
+                              normalize_direction, normalize_street_type)
 
 
 class TestAddressNumber():
@@ -170,6 +171,60 @@ class TestNormalizeStreetType():
         assert address.street_type == 'AVE'
         assert address.street_direction is None
         assert address.normalized == '123 E PARKWAY TRAIL AVE'
+
+        address = Address('2430 N RIVER VIEW WAY')
+
+        assert address.address_number == '2430'
+        assert address.prefix_direction == 'N'
+        assert address.street_name == 'RIVER VIEW'
+        assert address.street_type == 'WAY'
+        assert address.street_direction is None
+        assert address.normalized == '2430 N RIVER VIEW WAY'
+
+        address = Address('135 S RIVER BEND WAY')
+
+        assert address.address_number == '135'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'RIVER BEND'
+        assert address.street_type == 'WAY'
+        assert address.street_direction is None
+        assert address.normalized == '135 S RIVER BEND WAY'
+
+        address = Address('1384 S CANYON CREST')
+
+        assert address.address_number == '1384'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'CANYON'
+        assert address.street_type == 'CREST'
+        assert address.street_direction is None
+        assert address.normalized == '1384 S CANYON CREST'
+
+        address = Address('728 S WATER MILL WAY')
+
+        assert address.address_number == '728'
+        assert address.prefix_direction == 'S'
+        assert address.street_name == 'WATER MILL'
+        assert address.street_type == 'WAY'
+        assert address.street_direction is None
+        assert address.normalized == '728 S WATER MILL WAY'
+
+        address = Address('1623 E POETS REST')
+
+        assert address.address_number == '1623'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == 'POETS'
+        assert address.street_type == 'REST'
+        assert address.street_direction is None
+        assert address.normalized == '1623 E POETS REST'
+
+        address = Address('1623 E POETS RST')
+
+        assert address.address_number == '1623'
+        assert address.prefix_direction == 'E'
+        assert address.street_name == 'POETS'
+        assert address.street_type == 'REST'
+        assert address.street_direction is None
+        assert address.normalized == '1623 E POETS REST'
 
 
 class TestUnitParts():

@@ -46,6 +46,9 @@
         "CRSENT",
         "CRSNT"
     ],
+    "CREST": [
+        "CREST"
+    ],
     "CRK": [
         "CK",
         "CR",
@@ -238,6 +241,10 @@
         "RDG",
         "RDGE",
         "RIDGE"
+    ],
+    "REST": [
+        "REST",
+        "RST"
     ],
     "RNCH": [
         "RANCH",

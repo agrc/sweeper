@@ -104,6 +104,12 @@ class Address():
                     self.street_name = ' '.join(street_name_parts[:-1])
 
         if self.street_type is not None:
+            #: handle multiple street_types (assume only the last one is valid and move all others to the street name)
+            if len(self.street_type.split(' ')) > 1:
+                parsed_street_types = self.street_type.split(' ')
+                self.street_name += ' ' + ' '.join(parsed_street_types[:-1])
+                self.street_type = parsed_street_types[-1]
+
             self.street_type = normalize_street_type(self.street_type)
 
         if self.unit_id is not None:
@@ -130,13 +136,7 @@ class Address():
             return f'PO BOX {self.po_box}'
 
         parts = [
-            self.address_number,
-            self.address_number_suffix,
-            self.prefix_direction,
-            self.street_name,
-            self.street_type,
-            self.street_direction,
-            self.unit_type,
+            self.address_number, self.address_number_suffix, self.prefix_direction, self.street_name, self.street_type, self.street_direction, self.unit_type,
             self.unit_id
         ]
 
