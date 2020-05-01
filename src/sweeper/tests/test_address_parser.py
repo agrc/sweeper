@@ -265,6 +265,15 @@ class TestUnitParts():
         assert address.street_direction == 'S'
         assert address.normalized == '1940 E 5625 S'
 
+    def test_units_not_appropriate_for_hash_sign(self):
+        address = Address('957 PATTERSON ST REAR')
+
+        assert address.address_number == '957'
+        assert address.street_name == 'PATTERSON'
+        assert address.street_type == 'ST'
+        assert address.normalized == '957 PATTERSON ST REAR'
+
+
 class TestPOBox():
     '''
     tests for parsing PO box numbers

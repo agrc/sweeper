@@ -43,6 +43,7 @@ TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
     STREET_TYPES = json.loads(file.read())
 HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
+UNIT_VALUES_NOT_APPROPRIATE_FOR_HASH_SIGN = ['rear']
 
 
 class Address():
@@ -113,8 +114,8 @@ class Address():
             self.street_type = normalize_street_type(self.street_type)
 
         if self.unit_id is not None:
-            #: add `#` if there is not unit type
-            if not self.unit_id.startswith('#') and self.unit_type is None:
+            #: add `#` if there is not unit type and the unit is numeric
+            if not self.unit_id.startswith('#') and self.unit_type is None and self.unit_id.lower() not in UNIT_VALUES_NOT_APPROPRIATE_FOR_HASH_SIGN:
                 self.unit_id = f'# {self.unit_id}'
 
             #: strip `#` if there is a unit type
