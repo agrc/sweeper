@@ -194,8 +194,8 @@ class TestNormalizeStreetType():
 
         assert address.address_number == '1384'
         assert address.prefix_direction == 'S'
-        assert address.street_name == 'CANYON'
-        assert address.street_type == 'CREST'
+        assert address.street_name == 'CANYON CREST'
+        assert address.street_type is None
         assert address.street_direction is None
         assert address.normalized == '1384 S CANYON CREST'
 
@@ -212,8 +212,8 @@ class TestNormalizeStreetType():
 
         assert address.address_number == '1623'
         assert address.prefix_direction == 'E'
-        assert address.street_name == 'POETS'
-        assert address.street_type == 'REST'
+        assert address.street_name == 'POETS REST'
+        assert address.street_type is None
         assert address.street_direction is None
         assert address.normalized == '1623 E POETS REST'
 
@@ -221,10 +221,10 @@ class TestNormalizeStreetType():
 
         assert address.address_number == '1623'
         assert address.prefix_direction == 'E'
-        assert address.street_name == 'POETS'
-        assert address.street_type == 'REST'
+        assert address.street_name == 'POETS RST'
+        assert address.street_type is None
         assert address.street_direction is None
-        assert address.normalized == '1623 E POETS REST'
+        assert address.normalized == '1623 E POETS RST'
 
 
 class TestUnitParts():

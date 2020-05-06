@@ -111,7 +111,12 @@ class Address():
                 self.street_name += ' ' + ' '.join(parsed_street_types[:-1])
                 self.street_type = parsed_street_types[-1]
 
-            self.street_type = normalize_street_type(self.street_type)
+            try:
+                self.street_type = normalize_street_type(self.street_type)
+            except InvalidStreetTypeError:
+                #: must be part of the street name
+                self.street_name += f' {self.street_type}'
+                self.street_type = None
 
         if self.unit_id is not None:
             #: add `#` if there is not unit type and the unit is numeric
