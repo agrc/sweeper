@@ -2,6 +2,8 @@
 
 fix data
 
+![sweeper_sm](https://user-images.githubusercontent.com/325813/90076482-0a6bfb80-dcbd-11ea-9031-a6997dc87892.png)
+
 ## Available Sweepers
 
 ### Addresses
