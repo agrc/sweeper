@@ -20,7 +20,7 @@ Checks for empty geometries.
 
 ### Metadata
 
-Checks to make sure that the metadata meets [the basic SGID Metadata Requirements](https://gis.utah.gov/about/policy/metadata/#basic-sgid-metadata).
+Checks to make sure that the metadata meets [the Basic SGID Metadata Requirements](https://gis.utah.gov/about/policy/metadata/#basic-sgid-metadata).
 
 #### Tags
 
