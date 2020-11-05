@@ -40,7 +40,7 @@ Checks to make sure that the description contains a link to a data page on gis.u
 
 #### Use Limitations
 
-Checks to make sure that the text in this section matches the [official text for AGRC](src\sweeper\sweepers\UseLimitations.html).
+Checks to make sure that the text in this section matches the [official text for AGRC](src/sweeper/sweepers/UseLimitations.html).
 
 `--try-fix` updates the text to match the official text.
 
