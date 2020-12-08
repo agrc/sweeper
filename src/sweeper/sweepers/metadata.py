@@ -4,13 +4,12 @@
 metadata.py
 A sweeper that checks geodatabase metadata
 '''
-from os.path import join, dirname, realpath
-from bs4 import BeautifulSoup
 import re
+from os.path import dirname, join, realpath
 
+from arcpy import Exists
 from arcpy import metadata as md
-from arcpy import EnvManager, ListFeatureClasses, ListTables, Exists
-
+from bs4 import BeautifulSoup
 
 #: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
 #: Tags or words that should be uppercased, saved as lower to check against
