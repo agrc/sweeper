@@ -6,8 +6,8 @@ A module that parses street addresses into their various parts.
 '''
 import json
 import pprint
+import re
 from os.path import dirname, join, realpath
-from re import compile
 
 import usaddress
 
@@ -35,14 +35,14 @@ TAG_MAPPING = {
     'SubaddressIdentifier': 'unit_id',
     'SubaddressType': 'unit_type',
     'PlaceName': 'city',
-    # 'StateName': 'state',
+    'StateName': 'state',
     'ZipCode': 'zip_code',
     'USPSBoxID': 'po_box'
 }
 TWO_CHAR_DIRECTIONS = ['NO', 'SO', 'EA', 'WE']
 with open(join(dirname(realpath(__file__)), 'street_types.json'), 'r') as file:
     STREET_TYPES = json.loads(file.read())
-HWY_REGEX = compile('(SR|STATE ROUTE|HIGHWAY)')
+HWY_REGEX = re.compile('(SR|STATE ROUTE|HIGHWAY)')
 UNIT_VALUES_NOT_APPROPRIATE_FOR_HASH_SIGN = ['rear']
 
 
@@ -61,6 +61,7 @@ class Address():
     city = None
     zip_code = None
     po_box = None
+    state = None
 
     def __init__(self, address_text):
         parts, parsed_as = usaddress.tag(address_text.replace('.', ''), TAG_MAPPING)
