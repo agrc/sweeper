@@ -39,7 +39,7 @@ setup(
     install_requires=[
         'docopt==0.6.*',
         'xxhash==1.4.*',
-        'usaddress==0.5.*',
+        'agrc-usaddress==0.6.*',
         'beautifulsoup4==4.8.*'
     ],
     dependency_links=[],
