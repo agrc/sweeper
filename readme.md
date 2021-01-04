@@ -111,13 +111,15 @@ A normalized string representing the entire address that was passed into the con
 ## Development
 
 1. create conda environment
-   - `conda create --clone arcgispro-py3 --name sweeper`
+    - `conda create --name sweeper python=3.7`
 1. activate environment
-   - `activate sweeper`
+    - `activate sweeper`
 1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
 
 ### Installing dependencies
 
+1. install arcpy
+    - `conda install -c esri arcpy`
 1. install only required dependencies to run sweeper
     - `pip install -e .`
 1. install required dependencies to work on sweeper
