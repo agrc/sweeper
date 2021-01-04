@@ -550,3 +550,32 @@ class TestHighways():
         assert address.street_name == 'WOODSROW'
         assert address.street_type == 'DR'
         assert address.normalized == '1910 S WOODSROW DR'
+
+
+def test_cities():
+    '''
+    tests for handling cities
+    '''
+    address = Address('123 S Main St, City of Holladay, Utah')
+    assert address.address_number == '123'
+    assert address.street_name == 'MAIN'
+    assert address.street_type == 'ST'
+    assert address.street_direction is None
+    assert address.city == 'CITY OF HOLLADAY'
+    assert address.state == 'UTAH'
+
+    address = Address('123 S Main St, City of Holladay, UT')
+    assert address.address_number == '123'
+    assert address.street_name == 'MAIN'
+    assert address.street_type == 'ST'
+    assert address.street_direction is None
+    assert address.city == 'CITY OF HOLLADAY'
+    assert address.state == 'UT'
+
+    #: without state
+    address = Address('123 S Main St, City of Holladay')
+    assert address.address_number == '123'
+    assert address.street_name == 'MAIN'
+    assert address.street_type == 'ST'
+    assert address.street_direction is None
+    assert address.city == 'CITY OF HOLLADAY'
