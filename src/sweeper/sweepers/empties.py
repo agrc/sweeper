@@ -20,13 +20,19 @@ class EmptyTest():
         fields = ['OID@', 'SHAPE@']
 
         with arcpy.EnvManager(workspace=self.workspace):
-            with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
-                for oid, geometry in search_cursor:
-                    if geometry is not None:
-                        continue
+            description = arcpy.da.Describe(self.table_name)
 
-                    report['issues'].append(str(oid))
-                    self.oids_with_issues.append(oid)
+            if description['dataType'] == 'Table':
+                print(f'{self.table_name} is a table, skipping EmptyTest ...')
+                # return report
+            else:
+                with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
+                    for oid, geometry in search_cursor:
+                        if geometry is not None:
+                            continue
+
+                        report['issues'].append(str(oid))
+                        self.oids_with_issues.append(oid)
 
         return report
 
