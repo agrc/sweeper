@@ -4,12 +4,12 @@
 sweeper
 
 Usage:
-  sweeper sweep duplicates  --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep empties     --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep invalids    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep duplicates  --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep empties     --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep invalids    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --save-report=<report_path> --backup-to=<backup_path>]
   sweeper sweep addresses   --workspace=<workspace> --table-name=<table-name> --field-name=<field_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep metadata    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep             --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep metadata    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep             --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --save-report=<report_path> --backup-to=<backup_path>]
 
 Arguments:
   workspace     - path to workspace eg: `c:\\my.gdb`
@@ -63,7 +63,7 @@ def main():
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
         closet.append(MetadataTest(args['--workspace'], args['--table-name']))
 
-    reports = execute_sweepers(closet, args['--try-fix'])
+    reports = execute_sweepers(closet, args['--try-fix'], args['--change-detect'])
 
     report.print_report(reports)
 
@@ -71,7 +71,7 @@ def main():
         report.save_report(reports, args['--save-report'])
 
 
-def execute_sweepers(closet, try_fix):
+def execute_sweepers(closet, try_fix, change_detect):
     '''
     orchestrate the sweeper calls.
 
@@ -98,11 +98,21 @@ def execute_sweepers(closet, try_fix):
 
             continue
 
-        print('missing table, executing over workspace')
-
         #: get feature class names once
         if len(feature_class_names) == 0:
-            feature_class_names = workspace_info.get_featureclasses(tool.workspace)
+            if change_detect:
+                print('Getting table names from change detection table')
+                feature_class_names = workspace_info.get_change_detection()
+            else:
+                print('Missing table name, executing over workspace')
+                feature_class_names = workspace_info.get_featureclasses(tool.workspace)
+
+        if change_detect and feature_class_names is None:
+            #: reset variable to empty list
+            print('Change detection found no updated tables')
+            feature_class_names = []
+
+            continue
 
         #: explode sweeper class for each feature class
         for table_name in feature_class_names:
