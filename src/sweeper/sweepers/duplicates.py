@@ -21,13 +21,19 @@ class DuplicateTest():
         '''
         report = {'title': 'Duplicate Test', 'feature_class': self.table_name, 'issues': []}
         digests = set([])
+        is_table = False
 
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
         with arcpy.EnvManager(workspace=self.workspace):
             description = arcpy.da.Describe(self.table_name)
+            print(f'Working on Duplicates for: {self.table_name}')
+            if description['dataType'] == 'Table':
+                is_table = True
+                skip_fields = ['guid']
+            else:
+                skip_fields = ['guid', description['shapeFieldName']]
 
-            skip_fields = ['guid', description['shapeFieldName']]
 
             if description['hasGlobalID']:
                 skip_fields.append(description['globalIDFieldName'])
@@ -36,32 +42,50 @@ class DuplicateTest():
                 skip_fields.append(description['OIDFieldName'])
 
             fields = [field.name for field in description['fields'] if field.name not in skip_fields]
-
-            fields.append('SHAPE@WKT')
             fields.append('OID@')
 
-            shapefield_index = fields.index('SHAPE@WKT')
-            oid_index = fields.index('OID@')
+            #: include or exclude shape field depending on if working on table or feature class
+            if is_table:
+                oid_index = fields.index('OID@')
 
-            with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
-                for row in search_cursor:
-                    shape_wkt = row[shapefield_index]
-                    object_id = row[oid_index]
+                with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
+                    for row in search_cursor:
+                        object_id = row[oid_index]
 
-                    if shape_wkt is None:
-                        continue
+                        hasher = xxh64(f'{row[:-1]}')
+                        digest = hasher.hexdigest()
 
-                    #: trim some digits to help with hash matching
-                    generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
+                        if digest in digests:
+                            report['issues'].append(str(object_id))
+                            self.oids_with_issues.append(object_id)
 
-                    hasher = xxh64(f'{row[:-2]} {generalized_wkt}')
-                    digest = hasher.hexdigest()
+                        digests.add(digest)
+            else:
+                oid_index = fields.index('OID@')            
+                fields.append('SHAPE@WKT')           
 
-                    if digest in digests:
-                        report['issues'].append(str(object_id))
-                        self.oids_with_issues.append(object_id)
+                shapefield_index = fields.index('SHAPE@WKT')
+                oid_index = fields.index('OID@')
 
-                    digests.add(digest)
+                with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
+                    for row in search_cursor:
+                        shape_wkt = row[shapefield_index]
+                        object_id = row[oid_index]
+
+                        if shape_wkt is None:
+                            continue
+
+                        #: trim some digits to help with hash matching
+                        generalized_wkt = truncate_shape_precision.sub(r'\1', shape_wkt)
+
+                        hasher = xxh64(f'{row[:-2]} {generalized_wkt}')
+                        digest = hasher.hexdigest()
+
+                        if digest in digests:
+                            report['issues'].append(str(object_id))
+                            self.oids_with_issues.append(object_id)
+
+                        digests.add(digest)
 
         return report
 
