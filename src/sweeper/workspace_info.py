@@ -67,20 +67,30 @@ def get_change_detection():
     # egdb_conn = arcpy.ArcSDESQLExecute(server='sgid.agrc.utah.gov', database='SGID', user='USER', password='PASSWORD')
     egdb_conn = arcpy.ArcSDESQLExecute(egdb)
     # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '04/17/2021'"
-    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified = '04/12/2021'"
+    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified = '06/15/2021'"
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
 
+    #: result will typically be a nested list
     result = egdb_conn.execute(sql)
     print(f'SQL execution result: {result}')
+    print(f'Data type is: {type(result)}')
 
-    if not isinstance(result, list):
+    #: handle cases where result is a string (single feature class) or not a list (None type)
+    if isinstance(result, str):
+        fc_list = []
+        fc_list.append(result)
+        print(f'fc_list is: {fc_list}')
+        return fc_list
+    elif not isinstance(result, list):
         fc_list = None
         return fc_list
 
     #: Flatten resulting list and strip off the leading 'sgid.' of each table name
     fc_list = [item for sublist in result for item in sublist]
-    print(fc_list)
+    # print(fc_list)
+    print(f'fc_list is: {fc_list}')
     fc_list = [item.split('.', 1)[1] for item in fc_list]
-    print(fc_list)
+    # print(fc_list)
+    print(f'fc_list is: {fc_list}')
 
     return fc_list
