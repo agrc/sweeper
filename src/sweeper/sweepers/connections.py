@@ -7,7 +7,7 @@ dictionary = {
     'BOUNDARIES' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Boundaries.sde',
     'CADASTRE' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Cadastre.sde',
     'CLIMATE' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Climate.sde',
-    'DEMOGRAPHICS' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Demographics.sde',
+    'DEMOGRAPHIC' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Demographics.sde',
     'ECONOMY' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Economy.sde',
     'ELEVATION' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Elevation.sde',
     'ENERGY' : r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_Energy.sde',
