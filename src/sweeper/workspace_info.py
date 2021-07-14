@@ -61,13 +61,14 @@ def get_change_detection():
 
     print(f'Last date change detection was checked: {last_checked}')
 
-    egdb = r'C:\Users\eneemann\AppData\Roaming\ESRI\ArcGISPro\Favorites\internal@SGID@internal.agrc.utah.gov.sde'
+    # egdb = r'C:\Users\eneemann\AppData\Roaming\ESRI\ArcGISPro\Favorites\internal@SGID@internal.agrc.utah.gov.sde'
+    egdb = r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_agrc.sde'
     cd_table = 'SGID.META.ChangeDetection'
 
     # egdb_conn = arcpy.ArcSDESQLExecute(server='sgid.agrc.utah.gov', database='SGID', user='USER', password='PASSWORD')
     egdb_conn = arcpy.ArcSDESQLExecute(egdb)
     # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '04/17/2021'"
-    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified = '06/15/2021'"
+    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified = '07/05/2021'"
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
 
     #: result will typically be a nested list
@@ -79,6 +80,7 @@ def get_change_detection():
     if isinstance(result, str):
         fc_list = []
         fc_list.append(result)
+        fc_list = [item.split('.', 1)[1] for item in fc_list]
         print(f'fc_list is: {fc_list}')
         return fc_list
     elif not isinstance(result, list):
