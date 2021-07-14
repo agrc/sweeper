@@ -6,6 +6,7 @@ A sweeper that checks geodatabase metadata
 '''
 import re
 from os.path import dirname, join, realpath
+from . import connections
 
 from arcpy import Exists
 from arcpy import metadata as md
@@ -13,7 +14,7 @@ from bs4 import BeautifulSoup
 
 #: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
 #: Tags or words that should be uppercased, saved as lower to check against
-UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'agrc', 'aog', 'at&t', 'blm', 'brat', 'caf', 'cdl', 'daq', 'dfcm', 'dfirm', 'dsl', 'dwq', 'e911', 'ems', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'plss', 'pm10', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugs', 'uhp', 'uic', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'vcp', 'vista', 'voc']
+UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'agrc', 'aog', 'at&t', 'blm', 'brat', 'caf', 'cdl', 'daq', 'dfcm', 'dfirm', 'dnr', 'dsl', 'dwq', 'e911', 'ems', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'plss', 'pm10', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc', 'ugs', 'uhp', 'uic', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'vcp', 'vista', 'voc']
 #: Articles that should be left lowercase.
 ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
@@ -82,6 +83,7 @@ class MetadataTest():
         self.use_limitations_needs_update = False
 
     def sweep(self):
+        print(f'Sweep Workspace is:   {self.workspace}')
         report = {'title': 'Metadata Test', 'workspace': self.workspace, 'feature_class': self.table_name, 'issues': []}
 
         table_path = join(self.workspace, self.table_name)
@@ -94,10 +96,18 @@ class MetadataTest():
 
         #: check for required tags
         required_tags = []
+        #: case where 'SGID.' is in table_name
         if len(name_parts) == 3:
             [database, schema, feature_class_name] = name_parts
             required_tags.append(database)
             required_tags.append(schema.title())
+        #: case where 'SGID.' is not in table_name
+        elif len(name_parts) == 2:
+            database = 'SGID'
+            [schema, feature_class_name] = name_parts
+            required_tags.append(database)
+            required_tags.append(schema.title())
+
         if metadata.tags is None:
             missing_tags = required_tags
         else:
@@ -141,10 +151,12 @@ class MetadataTest():
         return report
 
     def try_fix(self):
+        print(f'Try Fix Workspace is:   {self.workspace}')
         report = {'title': 'Metadata Try Fix', 'feature_class': self.table_name, 'issues': [], 'fixes': []}
 
-        if len(self.tags_to_add) == 0 and len(self.tags_to_remove) == 0:
-            return report
+        #: commented out these lines, they were preventing fixes to limitations text when tags were good
+        # if len(self.tags_to_add) == 0 and len(self.tags_to_remove) == 0:
+        #     return report
 
         metadata = md.Metadata(join(self.workspace, self.table_name))
 
@@ -175,4 +187,6 @@ class MetadataTest():
 
     def clone(self, table_name):
         print(f'cloning to {table_name}')
-        return MetadataTest(self.workspace, table_name)
+        user = table_name.split('.')[0].upper()
+        user_workspace = connections.dictionary[user]
+        return MetadataTest(user_workspace, table_name)
