@@ -3,6 +3,7 @@
 
 
 import arcpy
+from . import connections
 
 class EmptyTest():
     '''A class to find empty geometries
@@ -48,6 +49,7 @@ class EmptyTest():
         fields = ['OID@']
         query = f'OBJECTID IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
 
+        print(f'Workspace is:   {self.workspace}')
         with arcpy.EnvManager(workspace=self.workspace):
             with arcpy.da.UpdateCursor(self.table_name, fields, query) as update_cursor:
                 for oid, in update_cursor:
@@ -62,4 +64,6 @@ class EmptyTest():
 
     def clone(self, table_name):
         print(f'cloning to {table_name}')
-        return EmptyTest(self.workspace, table_name)
+        user = table_name.split('.')[0].upper()
+        user_workspace = connections.dictionary[user]
+        return EmptyTest(user_workspace, table_name)
