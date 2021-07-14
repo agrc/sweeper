@@ -6,6 +6,7 @@ A module that contains the templates for the reports and functions to format dat
 '''
 
 import os
+import io
 from datetime import datetime
 
 def _print_items(report, key, writer):
@@ -96,3 +97,13 @@ def _create_report_directory(parent_directory):
     os.makedirs(report_directory)
 
     return report_directory
+
+def format_message(reports):
+    message = io.StringIO()
+    now = datetime.now().strftime('%Y%m%d_%H%M')
+    message.write(f'Email summary for {now} Sweeper run \n\n')
+
+    for report in reports:
+        message.write(f'{len(report["issues"]):4} Issues \t {report["title"]:<16} \t {report["feature_class"]:<50} \n')
+
+    return message
