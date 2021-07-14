@@ -34,7 +34,7 @@ from docopt import docopt
 from supervisor.models import MessageDetails, Supervisor
 from supervisor.message_handlers import EmailHandler
 
-from . import backup, report, workspace_info
+from . import backup, report, workspace_info, credentials
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
 from .sweepers.addresses import AddressTest
@@ -49,6 +49,13 @@ def main():
     #: backup input file before quality checks
     if args['--backup-to']:
         backup.backup_data(args['--workspace'], args['--table-name'], args['--backup-to'])
+
+    # if args['--scheduled']:
+    #     #: set up supervisor, add email handler
+    #     sweeper_supervisor = Supervisor(
+    #         project_name='sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
+    #     )
+    #     sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
 
     #: create a list to hold the instantiated objects.
     closet = []
@@ -76,40 +83,54 @@ def main():
     if args['--save-report']:
         report.save_report(reports, args['--save-report'])
 
-        if args['--scheduled']:
-            # invoke supervisor, compile summary report, send via email
+    if args['--scheduled']:
+        final_message = report.format_message(reports)
+        print(final_message.getvalue())
+        
+        # #: Build and send summary message
+        # summary_message = MessageDetails()
+        # summary_message.message = final_message.getvalue()
+        # summary_message.project_name = 'sweeper'
+        # summary_message.attachments = [credentials.REPORT_BASE_PATH]
+        # summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
-            #: Logger that will gather the summary information.
-            summary_logger = logging.getLogger(__name__)
-            summary_logger.setLevel(logging.DEBUG)
+        # sweeper_supervisor.notify(summary_message)
+
+
+        # if args['--scheduled']:
+        #     # invoke supervisor, compile summary report, send via email
+
+        #     #: Logger that will gather the summary information.
+        #     summary_logger = logging.getLogger(__name__)
+        #     summary_logger.setLevel(logging.DEBUG)
             
-            #: Create a string stream for summary report
-            summary_stream = StringIO()
-            summary_handler = logging.StreamHandler(stream=summary_stream)
-            stream_formatter = logging.Formatter(
-                fmt='<pre>%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s</pre>',
-                datefmt='%m-%d %H:%M:%S'
-            )
-            summary_handler.setFormatter(stream_formatter)
-            summary_logger.addHandler(summary_handler)
+        #     #: Create a string stream for summary report
+        #     summary_stream = StringIO()
+        #     summary_handler = logging.StreamHandler(stream=summary_stream)
+        #     stream_formatter = logging.Formatter(
+        #         fmt='<pre>%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s</pre>',
+        #         datefmt='%m-%d %H:%M:%S'
+        #     )
+        #     summary_handler.setFormatter(stream_formatter)
+        #     summary_logger.addHandler(summary_handler)
 
-            now = datetime.datetime.now().strftime('%Y%m%d_%H%M')
-            report_dir = os.path.join(args['--save-report'], f'sweeper_run_{now}')
+        #     now = datetime.datetime.now().strftime('%Y%m%d_%H%M')
+        #     report_dir = os.path.join(args['--save-report'], f'sweeper_run_{now}')
 
-            #: set up supervisor, add email handler
-            sweeper_supervisor = Supervisor(
-                project_name='sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
-            )
-            sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
+        #     #: set up supervisor, add email handler
+        #     sweeper_supervisor = Supervisor(
+        #         project_name='sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
+        #     )
+        #     sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
 
-            #: Build and send summary message
-            summary_message = MessageDetails()
-            summary_message.message = summary_stream.getvalue()
-            summary_message.project_name = 'sweeper'
-            summary_message.attachments = [credentials.REPORT_BASE_PATH]
-            summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
+        #     #: Build and send summary message
+        #     summary_message = MessageDetails()
+        #     summary_message.message = summary_stream.getvalue()
+        #     summary_message.project_name = 'sweeper'
+        #     summary_message.attachments = [credentials.REPORT_BASE_PATH]
+        #     summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
-            sweeper_supervisor.notify(summary_message)
+        #     sweeper_supervisor.notify(summary_message)
 
 
 
@@ -148,6 +169,8 @@ def execute_sweepers(closet, try_fix, change_detect):
             else:
                 print('Missing table name, executing over workspace')
                 feature_class_names = workspace_info.get_featureclasses(tool.workspace)
+                if any('SGID.' in fc for fc in feature_class_names):
+                    feature_class_names = [fc.split('SGID.', 1)[1] for fc in feature_class_names if 'SGID.' in fc]
 
         print(f'feature_class_names is: {feature_class_names}')
 
