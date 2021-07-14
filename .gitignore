@@ -1,3 +1,6 @@
+#: file containing necessary credentials for running Sweeper
+credentials.py
+
 *.pyc
 *.egg-info
 .pytest_cache
