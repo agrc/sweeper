@@ -3,6 +3,7 @@
 import re
 
 from xxhash import xxh64
+from . import connections
 
 import arcpy
 
@@ -101,6 +102,7 @@ class DuplicateTest():
         sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
         temp_feature_layer = 'temp_layer'
 
+        print(f'Workspace is:   {self.workspace}')
         with arcpy.EnvManager(workspace=self.workspace):
             try:
                 duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
@@ -121,4 +123,6 @@ class DuplicateTest():
 
     def clone(self, table_name):
         print(f'cloning to {table_name}')
-        return DuplicateTest(self.workspace, table_name)
+        user = table_name.split('.')[0].upper()
+        user_workspace = connections.dictionary[user]
+        return DuplicateTest(user_workspace, table_name)
