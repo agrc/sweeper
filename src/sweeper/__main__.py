@@ -46,16 +46,14 @@ def main():
     '''
     args = docopt(__doc__, version=pkg_resources.require('agrc-sweeper')[0].version)
 
+    if args['--scheduled']:
+        #: set up supervisor, add email handler
+        sweeper_supervisor = Supervisor(project_name='agrc-sweeper')
+        sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
+
     #: backup input file before quality checks
     if args['--backup-to']:
         backup.backup_data(args['--workspace'], args['--table-name'], args['--backup-to'])
-
-    # if args['--scheduled']:
-    #     #: set up supervisor, add email handler
-    #     sweeper_supervisor = Supervisor(
-    #         project_name='sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
-    #     )
-    #     sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
 
     #: create a list to hold the instantiated objects.
     closet = []
@@ -87,14 +85,14 @@ def main():
         final_message = report.format_message(reports)
         print(final_message.getvalue())
         
-        # #: Build and send summary message
-        # summary_message = MessageDetails()
-        # summary_message.message = final_message.getvalue()
-        # summary_message.project_name = 'sweeper'
+        #: Build and send summary message
+        summary_message = MessageDetails()
+        summary_message.message = final_message.getvalue()
+        summary_message.project_name = 'agrc-sweeper'
         # summary_message.attachments = [credentials.REPORT_BASE_PATH]
-        # summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
+        summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
-        # sweeper_supervisor.notify(summary_message)
+        sweeper_supervisor.notify(summary_message)
 
 
         # if args['--scheduled']:
@@ -119,14 +117,14 @@ def main():
 
         #     #: set up supervisor, add email handler
         #     sweeper_supervisor = Supervisor(
-        #         project_name='sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
+        #         project_name='agrc-sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
         #     )
         #     sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
 
         #     #: Build and send summary message
         #     summary_message = MessageDetails()
         #     summary_message.message = summary_stream.getvalue()
-        #     summary_message.project_name = 'sweeper'
+        #     summary_message.project_name = 'agrc-sweeper'
         #     summary_message.attachments = [credentials.REPORT_BASE_PATH]
         #     summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
