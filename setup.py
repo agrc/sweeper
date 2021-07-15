@@ -40,7 +40,8 @@ setup(
         'docopt==0.6.*',
         'xxhash==1.4.*',
         'agrc-usaddress==0.6.*',
-        'beautifulsoup4==4.8.*'
+        'beautifulsoup4==4.8.*',
+        'agrc-supervisor'
     ],
     dependency_links=[],
     extras_require={
