@@ -12,7 +12,8 @@ from . import credentials
 
 #: A function to determine when change detection was last run
 def read_last_check_date():
-    last_checked = Path('./.last_checked')
+    # last_checked = Path('./.last_checked')
+    last_checked = Path(credentials.LAST_CHECKED_PATH)
 
     last_date_string = ''
 
