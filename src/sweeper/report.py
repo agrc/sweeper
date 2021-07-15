@@ -101,9 +101,9 @@ def _create_report_directory(parent_directory):
 def format_message(reports):
     message = io.StringIO()
     now = datetime.now().strftime('%Y%m%d_%H%M')
-    message.write(f'Email summary for {now} Sweeper run \n\n')
+    message.write(f'<pre>Email summary for {now} Sweeper run \n\n</pre>')
 
     for report in reports:
-        message.write(f'{len(report["issues"]):4} Issues \t {report["title"]:<16} \t {report["feature_class"]:<50} \n')
+        message.write(f'<pre>{len(report["issues"]):4} Issues \t {report["title"]:<16} \t {report["feature_class"]:<50} \n</pre>')
 
     return message
