@@ -53,13 +53,15 @@ def get_change_detection():
     workspace_path: full path to the change detection table.
     '''
 
-    last_checked = read_last_check_date()
-    print(f'Last date change detection was checked: {last_checked}')
+    checked_date = read_last_check_date()
+    print(f'Last date change detection was checked: {checked_date}')
 
-    if last_checked is None:
-        last_checked = datetime.date.today().strftime('%m/%d/%Y')
+    if checked_date:
+        checked_string = datetime.datetime.strptime(checked_date, '%Y-%m-%d')
     else:
-        last_checked = datetime.datetime.strptime(last_checked, '%m/%d/%Y')
+        checked_string = datetime.date.today()
+        
+    last_checked = checked_string.strftime('%m/%d/%Y')
 
     print(f'Last date change detection was checked: {last_checked}')
 
