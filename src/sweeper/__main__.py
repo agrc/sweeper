@@ -95,43 +95,6 @@ def main():
         sweeper_supervisor.notify(summary_message)
 
 
-        # if args['--scheduled']:
-        #     # invoke supervisor, compile summary report, send via email
-
-        #     #: Logger that will gather the summary information.
-        #     summary_logger = logging.getLogger(__name__)
-        #     summary_logger.setLevel(logging.DEBUG)
-            
-        #     #: Create a string stream for summary report
-        #     summary_stream = StringIO()
-        #     summary_handler = logging.StreamHandler(stream=summary_stream)
-        #     stream_formatter = logging.Formatter(
-        #         fmt='<pre>%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s</pre>',
-        #         datefmt='%m-%d %H:%M:%S'
-        #     )
-        #     summary_handler.setFormatter(stream_formatter)
-        #     summary_logger.addHandler(summary_handler)
-
-        #     now = datetime.datetime.now().strftime('%Y%m%d_%H%M')
-        #     report_dir = os.path.join(args['--save-report'], f'sweeper_run_{now}')
-
-        #     #: set up supervisor, add email handler
-        #     sweeper_supervisor = Supervisor(
-        #         project_name='agrc-sweeper', logger=summary_logger, log_path=credentials.REPORT_BASE_PATH
-        #     )
-        #     sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
-
-        #     #: Build and send summary message
-        #     summary_message = MessageDetails()
-        #     summary_message.message = summary_stream.getvalue()
-        #     summary_message.project_name = 'agrc-sweeper'
-        #     summary_message.attachments = [credentials.REPORT_BASE_PATH]
-        #     summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
-
-        #     sweeper_supervisor.notify(summary_message)
-
-
-
 def execute_sweepers(closet, try_fix, change_detect):
     '''
     orchestrate the sweeper calls.
