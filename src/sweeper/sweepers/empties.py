@@ -3,7 +3,7 @@
 
 
 import arcpy
-from . import connections
+from . import credentials
 
 class EmptyTest():
     '''A class to find empty geometries
@@ -65,5 +65,5 @@ class EmptyTest():
     def clone(self, table_name):
         print(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
-        user_workspace = connections.dictionary[user]
+        user_workspace = credentials.CONNECTIONS[user]
         return EmptyTest(user_workspace, table_name)

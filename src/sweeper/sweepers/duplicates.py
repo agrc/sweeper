@@ -3,7 +3,7 @@
 import re
 
 from xxhash import xxh64
-from . import connections
+from . import credentials
 
 import arcpy
 
@@ -124,5 +124,5 @@ class DuplicateTest():
     def clone(self, table_name):
         print(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
-        user_workspace = connections.dictionary[user]
+        user_workspace = credentials.CONNECTIONS[user]
         return DuplicateTest(user_workspace, table_name)
