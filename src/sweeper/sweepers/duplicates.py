@@ -3,7 +3,7 @@
 import re
 
 from xxhash import xxh64
-from . import credentials
+from .. import credentials
 
 import arcpy
 

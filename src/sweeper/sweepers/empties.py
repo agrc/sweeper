@@ -3,7 +3,7 @@
 
 
 import arcpy
-from . import credentials
+from .. import credentials
 
 class EmptyTest():
     '''A class to find empty geometries

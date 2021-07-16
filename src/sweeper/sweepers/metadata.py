@@ -6,7 +6,7 @@ A sweeper that checks geodatabase metadata
 '''
 import re
 from os.path import dirname, join, realpath
-from . import credentials
+from .. import credentials
 
 from arcpy import Exists
 from arcpy import metadata as md
