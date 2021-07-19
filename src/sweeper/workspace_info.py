@@ -12,7 +12,6 @@ from . import credentials
 
 #: A function to determine when change detection was last run
 def read_last_check_date():
-    # last_checked = Path('./.last_checked')
     last_checked = Path(credentials.LAST_CHECKED_PATH)
 
     last_date_string = ''
@@ -54,7 +53,6 @@ def get_change_detection():
     '''
 
     checked_date = read_last_check_date()
-    print(f'Last date change detection was checked: {checked_date}')
 
     if checked_date:
         checked_string = datetime.datetime.strptime(checked_date, '%Y-%m-%d')
@@ -62,24 +60,17 @@ def get_change_detection():
         checked_string = datetime.date.today()
         
     last_checked = checked_string.strftime('%m/%d/%Y')
-
     print(f'Last date change detection was checked: {last_checked}')
 
-    # egdb = r'C:\Users\eneemann\AppData\Roaming\ESRI\ArcGISPro\Favorites\internal@SGID@internal.agrc.utah.gov.sde'
-    # egdb = r'\\itwfpcap2\AGRC\sgid_to_agol\ConnectionFilesSGID\SGID_internal\SGID_agrc.sde'
     egdb = credentials.DB
     cd_table = credentials.CHANGE_DETECTION
 
-    # egdb_conn = arcpy.ArcSDESQLExecute(server='sgid.agrc.utah.gov', database='SGID', user='USER', password='PASSWORD')
     egdb_conn = arcpy.ArcSDESQLExecute(egdb)
-    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '04/17/2021'"
-    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified = '07/14/2021'"
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
 
     #: result will typically be a nested list
     result = egdb_conn.execute(sql)
     print(f'SQL execution result: {result}')
-    print(f'Data type is: {type(result)}')
 
     #: handle cases where result is a string (single feature class) or not a list (None type)
     if isinstance(result, str):
@@ -94,10 +85,8 @@ def get_change_detection():
 
     #: Flatten resulting list and strip off the leading 'sgid.' of each table name
     fc_list = [item for sublist in result for item in sublist]
-    # print(fc_list)
-    print(f'fc_list is: {fc_list}')
     fc_list = [item.split('.', 1)[1] for item in fc_list]
-    # print(fc_list)
     print(f'fc_list is: {fc_list}')
 
     return fc_list
+    

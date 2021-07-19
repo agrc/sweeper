@@ -89,7 +89,6 @@ def main():
         summary_message = MessageDetails()
         summary_message.message = final_message.getvalue()
         summary_message.project_name = 'agrc-sweeper'
-        # summary_message.attachments = [credentials.REPORT_BASE_PATH]
         summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
         sweeper_supervisor.notify(summary_message)

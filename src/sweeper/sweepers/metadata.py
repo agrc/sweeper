@@ -154,10 +154,6 @@ class MetadataTest():
         print(f'Try Fix Workspace is:   {self.workspace}')
         report = {'title': 'Metadata Try Fix', 'feature_class': self.table_name, 'issues': [], 'fixes': []}
 
-        #: commented out these lines, they were preventing fixes to limitations text when tags were good
-        # if len(self.tags_to_add) == 0 and len(self.tags_to_remove) == 0:
-        #     return report
-
         metadata = md.Metadata(join(self.workspace, self.table_name))
 
         try:
