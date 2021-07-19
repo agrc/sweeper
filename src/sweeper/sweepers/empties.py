@@ -25,7 +25,6 @@ class EmptyTest():
 
             if description['dataType'] == 'Table':
                 print(f'{self.table_name} is a table, skipping EmptyTest ...')
-                # return report
             else:
                 with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
                     for oid, geometry in search_cursor:
