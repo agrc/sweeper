@@ -30,9 +30,9 @@ def _print_items(report, key, writer):
     writer(f'{items_found} {key} found:')
 
     has_oids = True
-    if type(items) == list:
+    if isinstance(items, list):
         for item in items:
-            if type(item) == int:
+            if isinstance(item, int):
                 writer(f'    ObjectID {item}')
             else:
                 #: issues not associated with a specific row (e.g. metadata)
