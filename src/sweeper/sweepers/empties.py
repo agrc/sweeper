@@ -23,7 +23,7 @@ class EmptyTest():
         with arcpy.EnvManager(workspace=self.workspace):
             description = arcpy.da.Describe(self.table_name)
 
-            if description['dataType'] == 'Table':
+            if description['dataType'].casefold() == 'table':
                 print(f'{self.table_name} is a table, skipping EmptyTest ...')
             else:
                 with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
