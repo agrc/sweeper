@@ -41,7 +41,7 @@ setup(
         'xxhash==1.4.*',
         'agrc-usaddress==0.6.*',
         'beautifulsoup4==4.8.*',
-        'agrc-supervisor'
+        'agrc-supervisor==1.*'
     ],
     dependency_links=[],
     extras_require={
