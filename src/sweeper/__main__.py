@@ -94,7 +94,7 @@ def main():
         sweeper_supervisor.notify(summary_message)
 
 
-def execute_sweepers(closet, try_fix, change_detect):
+def execute_sweepers(closet, try_fix, using_change_detection):
     '''
     orchestrate the sweeper calls.
 
@@ -123,7 +123,7 @@ def execute_sweepers(closet, try_fix, change_detect):
 
         #: get feature class names once
         if len(feature_class_names) == 0:
-            if change_detect:
+            if using_change_detection:
                 print('Getting table names from change detection table')
                 feature_class_names = workspace_info.get_change_detection()
             else:
@@ -134,7 +134,7 @@ def execute_sweepers(closet, try_fix, change_detect):
 
         print(f'feature_class_names is: {feature_class_names}')
 
-        if change_detect and feature_class_names is None:
+        if using_change_detection and feature_class_names is None:
             #: reset variable to empty list
             print('Change detection found no updated tables')
             feature_class_names = []
