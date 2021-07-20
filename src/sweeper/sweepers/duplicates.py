@@ -29,7 +29,7 @@ class DuplicateTest():
         with arcpy.EnvManager(workspace=self.workspace):
             description = arcpy.da.Describe(self.table_name)
             print(f'Working on Duplicates for: {self.table_name}')
-            if description['dataType'] == 'Table':
+            if description['dataType'].casefold() == 'table':
                 is_table = True
                 skip_fields = ['guid']
             else:
