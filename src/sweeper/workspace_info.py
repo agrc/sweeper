@@ -48,9 +48,6 @@ def get_featureclasses(workspace_path):
 
 #: A function to return a list of feature classes based on the change detection table.
 def get_change_detection():
-    '''
-    workspace_path: full path to the change detection table.
-    '''
 
     checked_date = read_last_check_date()
 
@@ -89,4 +86,3 @@ def get_change_detection():
     print(f'fc_list is: {fc_list}')
 
     return fc_list
-    
