@@ -9,6 +9,9 @@ import os
 import datetime
 from pathlib import Path
 from . import credentials
+import logging
+
+log = logging.getLogger('sweeper')
 
 #: A function to determine when change detection was last run
 def read_last_check_date():
@@ -57,24 +60,25 @@ def get_change_detection():
         checked_string = datetime.date.today()
         
     last_checked = checked_string.strftime('%m/%d/%Y')
-    print(f'Last date change detection was checked: {last_checked}')
+    log.info(f'Last date change detection was checked: {last_checked}')
 
     egdb = credentials.DB
     cd_table = credentials.CHANGE_DETECTION
 
     egdb_conn = arcpy.ArcSDESQLExecute(egdb)
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
+    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '8/04/2021'"
 
     #: result will typically be a nested list
     result = egdb_conn.execute(sql)
-    print(f'SQL execution result: {result}')
+    log.info(f'SQL execution result: {result}')
 
     #: handle cases where result is a string (single feature class) or not a list (None type)
     if isinstance(result, str):
         fc_list = []
         fc_list.append(result)
         fc_list = [item.split('.', 1)[1] for item in fc_list]
-        print(f'fc_list is: {fc_list}')
+        log.info(f'fc_list is: {fc_list}')
         return fc_list
     elif not isinstance(result, list):
         fc_list = None
@@ -83,6 +87,6 @@ def get_change_detection():
     #: Flatten resulting list and strip off the leading 'sgid.' of each table name
     fc_list = [item for sublist in result for item in sublist]
     fc_list = [item.split('.', 1)[1] for item in fc_list]
-    print(f'fc_list is: {fc_list}')
+    log.info(f'fc_list is: {fc_list}')
 
     return fc_list

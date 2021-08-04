@@ -11,6 +11,9 @@ from .. import credentials
 from arcpy import Exists
 from arcpy import metadata as md
 from bs4 import BeautifulSoup
+import logging
+
+log = logging.getLogger('sweeper')
 
 #: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
 #: Tags or words that should be uppercased, saved as lower to check against
@@ -83,7 +86,7 @@ class MetadataTest():
         self.use_limitations_needs_update = False
 
     def sweep(self):
-        print(f'Sweep Workspace is:   {self.workspace}')
+        log.info(f'Sweep Workspace is:   {self.workspace}')
         report = {'title': 'Metadata Test', 'workspace': self.workspace, 'feature_class': self.table_name, 'issues': []}
 
         table_path = join(self.workspace, self.table_name)
@@ -151,7 +154,7 @@ class MetadataTest():
         return report
 
     def try_fix(self):
-        print(f'Try Fix Workspace is:   {self.workspace}')
+        log.info(f'Try Fix Workspace is:   {self.workspace}')
         report = {'title': 'Metadata Try Fix', 'feature_class': self.table_name, 'issues': [], 'fixes': []}
 
         metadata = md.Metadata(join(self.workspace, self.table_name))
@@ -182,7 +185,7 @@ class MetadataTest():
         return report
 
     def clone(self, table_name):
-        print(f'cloning to {table_name}')
+        log.info(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
         user_workspace = credentials.CONNECTIONS[user]
         return MetadataTest(user_workspace, table_name)
