@@ -8,6 +8,7 @@ DB = ''  #: Full path to sde connection file
 CHANGE_DETECTION = '' #: Change detection table name with 'SGID.' prefix
 LAST_CHECKED_PATH = '' #: Full path to .last_checked file
 REPORT_BASE_PATH = '' #: File path for report CSVs of everything that was fixed; rotated on each run
+LOG_FILE_PATH = '' #: File path to log that is rotated on each run
 CONNECTIONS = '' #: Dictionary that holds SDE connection file paths
 EMAIL_SETTINGS = {  #: Settings for EmailHandler
     'smtpServer': '',
