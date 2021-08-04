@@ -4,6 +4,9 @@
 
 import arcpy
 from .. import credentials
+import logging
+
+log = logging.getLogger('sweeper')
 
 class EmptyTest():
     '''A class to find empty geometries
@@ -24,7 +27,7 @@ class EmptyTest():
             description = arcpy.da.Describe(self.table_name)
 
             if description['dataType'].casefold() == 'table':
-                print(f'{self.table_name} is a table, skipping EmptyTest ...')
+                log.info(f'{self.table_name} is a table, skipping EmptyTest ...')
             else:
                 with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
                     for oid, geometry in search_cursor:
@@ -48,7 +51,7 @@ class EmptyTest():
         fields = ['OID@']
         query = f'OBJECTID IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
 
-        print(f'Workspace is:   {self.workspace}')
+        log.info(f'Workspace is:   {self.workspace}')
         with arcpy.EnvManager(workspace=self.workspace):
             with arcpy.da.UpdateCursor(self.table_name, fields, query) as update_cursor:
                 for oid, in update_cursor:
@@ -62,7 +65,7 @@ class EmptyTest():
         return report
 
     def clone(self, table_name):
-        print(f'cloning to {table_name}')
+        log.info(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
         user_workspace = credentials.CONNECTIONS[user]
         return EmptyTest(user_workspace, table_name)

@@ -9,7 +9,9 @@ from datetime import datetime
 
 import arcpy
 from . import workspace_info
+import logging
 
+log = logging.getLogger('sweeper')
 
 def backup_data(workspace_path, table_name, out_path):
     '''
@@ -46,4 +48,4 @@ def backup_data(workspace_path, table_name, out_path):
         #: backup the source feature class
         arcpy.management.Copy(full_table_path, os.path.join(out_path, fc_name))
 
-    print(f'The following feature classes were backed up here', out_path, ':', str(tables_to_backup))
+    log.info(f'The following feature classes were backed up here', out_path, ':', str(tables_to_backup))

@@ -6,7 +6,9 @@ from xxhash import xxh64
 from .. import credentials
 
 import arcpy
+import logging
 
+log = logging.getLogger('sweeper')
 
 class DuplicateTest():
     '''A class that finds and removes duplicate geometries or attributes or both
@@ -28,7 +30,7 @@ class DuplicateTest():
 
         with arcpy.EnvManager(workspace=self.workspace):
             description = arcpy.da.Describe(self.table_name)
-            print(f'Working on Duplicates for: {self.table_name}')
+            log.info(f'Working on Duplicates for: {self.table_name}')
             if description['dataType'].casefold() == 'table':
                 is_table = True
                 skip_fields = ['guid']
@@ -102,12 +104,12 @@ class DuplicateTest():
         sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
         temp_feature_layer = 'temp_layer'
 
-        print(f'Workspace is:   {self.workspace}')
+        log.info(f'Workspace is:   {self.workspace}')
         with arcpy.EnvManager(workspace=self.workspace):
             try:
                 duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
 
-                print(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
+                log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
 
                 arcpy.management.DeleteFeatures(duplicate_features)
             except Exception as error:
@@ -122,7 +124,7 @@ class DuplicateTest():
         return report
 
     def clone(self, table_name):
-        print(f'cloning to {table_name}')
+        log.info(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
         user_workspace = credentials.CONNECTIONS[user]
         return DuplicateTest(user_workspace, table_name)
