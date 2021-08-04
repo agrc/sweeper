@@ -26,8 +26,10 @@ import os
 import sys
 import datetime
 import logging
+import logging.handlers
 import pkg_resources
 from io import StringIO
+from pathlib import Path
 
 from docopt import docopt
 
@@ -45,6 +47,8 @@ def main():
     '''Main entry point for program. Parse arguments and pass to sweeper modules.
     '''
     args = docopt(__doc__, version=pkg_resources.require('agrc-sweeper')[0].version)
+
+    log = setup_logging(args['--save-report'], args['--scheduled'])
 
     if args['--scheduled']:
         #: set up supervisor, add email handler
@@ -74,7 +78,7 @@ def main():
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
         closet.append(MetadataTest(args['--workspace'], args['--table-name']))
 
-    reports = execute_sweepers(closet, args['--try-fix'], args['--change-detect'])
+    reports = execute_sweepers(closet, args['--try-fix'], args['--change-detect'], log)
 
     report.print_report(reports)
 
@@ -82,19 +86,22 @@ def main():
         report.save_report(reports, args['--save-report'])
 
     if args['--scheduled']:
+        report.add_to_log(reports)
+        
         final_message = report.format_message(reports)
-        print(final_message.getvalue())
+        log.info(final_message.getvalue())
         
         #: Build and send summary message
         summary_message = MessageDetails()
         summary_message.message = final_message.getvalue()
         summary_message.project_name = 'agrc-sweeper'
+        summary_message.attachments = [credentials.LOG_FILE_PATH]
         summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
 
         sweeper_supervisor.notify(summary_message)
 
 
-def execute_sweepers(closet, try_fix, using_change_detection):
+def execute_sweepers(closet, try_fix, using_change_detection, log):
     '''
     orchestrate the sweeper calls.
 
@@ -114,7 +121,7 @@ def execute_sweepers(closet, try_fix, using_change_detection):
             #: run sweeper again to ensure all errors were fixed.
             reports.append(tool.sweep())
 
-    print(f'running {len(closet)} sweepers. try fix: {try_fix}')
+    log.info(f'running {len(closet)} sweepers. try fix: {try_fix}')
     for tool in closet:
         if tool.table_name:
             run_tool(tool)
@@ -124,19 +131,19 @@ def execute_sweepers(closet, try_fix, using_change_detection):
         #: get feature class names once
         if len(feature_class_names) == 0:
             if using_change_detection:
-                print('Getting table names from change detection table')
+                log.info('Getting table names from change detection table')
                 feature_class_names = workspace_info.get_change_detection()
             else:
-                print('Missing table name, executing over workspace')
+                log.info('Missing table name, executing over workspace')
                 feature_class_names = workspace_info.get_featureclasses(tool.workspace)
                 if any('SGID.' in fc for fc in feature_class_names):
                     feature_class_names = [fc.split('SGID.', 1)[1] for fc in feature_class_names if 'SGID.' in fc]
 
-        print(f'feature_class_names is: {feature_class_names}')
+        log.info(f'feature_class_names is: {feature_class_names}')
 
         if using_change_detection and feature_class_names is None:
             #: reset variable to empty list
-            print('Change detection found no updated tables')
+            log.info('Change detection found no updated tables')
             feature_class_names = []
 
             continue
@@ -148,6 +155,32 @@ def execute_sweepers(closet, try_fix, using_change_detection):
             run_tool(new_tool)
 
     return reports
+
+
+def setup_logging(save_report, scheduled):
+    logger = logging.getLogger('sweeper')
+    logger.setLevel(logging.INFO) 
+    
+    formatter = logging.Formatter(
+        fmt='%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s', datefmt='%m-%d %H:%M:%S'
+        )
+
+    #: always set up console_handler
+    console_handler = logging.StreamHandler(stream=sys.stdout)
+    console_handler.setFormatter(formatter)
+
+    #: use log file when report location not provided and when running from scheduled task
+    if scheduled and not save_report:
+        #: get LOG_FILE_PATH from credentials.py
+        log_file = Path(credentials.LOG_FILE_PATH)
+        file_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
+        file_handler.doRollover()
+        file_handler.setFormatter(formatter) 
+    
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    return logger
 
 
 if __name__ == '__main__':
