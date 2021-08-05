@@ -175,10 +175,11 @@ def setup_logging(save_report, scheduled):
         log_file = Path(credentials.LOG_FILE_PATH)
         file_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
         file_handler.doRollover()
-        file_handler.setFormatter(formatter) 
+        file_handler.setFormatter(formatter)
+
+        logger.addHandler(file_handler)
     
     logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
 
     return logger
 
