@@ -67,7 +67,6 @@ def get_change_detection():
 
     egdb_conn = arcpy.ArcSDESQLExecute(egdb)
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
-    # sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '8/04/2021'"
 
     #: result will typically be a nested list
     result = egdb_conn.execute(sql)
