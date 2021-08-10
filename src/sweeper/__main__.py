@@ -87,10 +87,10 @@ def main():
 
     if args['--scheduled']:
         report.add_to_log(reports)
-        
+
         final_message = report.format_message(reports)
         log.info(final_message.getvalue())
-        
+
         #: Build and send summary message
         summary_message = MessageDetails()
         summary_message.message = final_message.getvalue()
@@ -154,13 +154,16 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
 
             run_tool(new_tool)
 
+    if using_change_detection:
+        workspace_info.update_last_check_date()
+
     return reports
 
 
 def setup_logging(save_report, scheduled):
     logger = logging.getLogger('sweeper')
-    logger.setLevel(logging.INFO) 
-    
+    logger.setLevel(logging.INFO)
+
     formatter = logging.Formatter(
         fmt='%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s', datefmt='%m-%d %H:%M:%S'
         )
@@ -178,7 +181,7 @@ def setup_logging(save_report, scheduled):
         file_handler.setFormatter(formatter)
 
         logger.addHandler(file_handler)
-    
+
     logger.addHandler(console_handler)
 
     return logger
