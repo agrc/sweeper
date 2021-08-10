@@ -106,8 +106,11 @@ def format_message(reports):
     now = datetime.now().strftime('%Y%m%d_%H%M')
     message.write(f'<pre>Email summary for {now} Sweeper run \n\n</pre>')
 
-    for report in reports:
-        message.write(f'<pre>{len(report["issues"]):4} Issues \t {report["title"]:<16} \t {report["feature_class"]:<50} \n</pre>')
+    if not reports:
+        message.write('<pre>No changes identified or Sweeper tests run\n</pre>')
+    else:
+        for report in reports:
+            message.write(f'<pre>{len(report["issues"]):4} Issues \t {report["title"]:<16} \t {report["feature_class"]:<50} \n</pre>')
 
     return message
 
