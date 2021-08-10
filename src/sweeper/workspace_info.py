@@ -15,7 +15,7 @@ log = logging.getLogger('sweeper')
 
 #: A function to determine when change detection was last run
 def read_last_check_date():
-    last_checked = Path(credentials.LAST_CHECKED_PATH)
+    last_checked = Path('./.last_checked')
 
     last_date_string = ''
 
@@ -27,6 +27,17 @@ def read_last_check_date():
         return None
 
     return last_date_string
+
+
+#: A function to update the last_checked file
+def update_last_check_date():
+    last_checked = Path('./.last_checked')
+
+    if not last_checked.exists():
+        last_checked.touch()
+
+    with open(last_checked, 'w') as log_file:
+        log_file.write(datetime.datetime.today().strftime('%Y-%m-%d'))
 
 
 #: A function to generate and return a list of workspace feature classes.
@@ -58,7 +69,7 @@ def get_change_detection():
         checked_string = datetime.datetime.strptime(checked_date, '%Y-%m-%d')
     else:
         checked_string = datetime.date.today()
-        
+
     last_checked = checked_string.strftime('%m/%d/%Y')
     log.info(f'Last date change detection was checked: {last_checked}')
 
