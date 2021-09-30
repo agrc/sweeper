@@ -97,6 +97,17 @@ The PO Box if a po-box-type address was entered (e.g. `po_box` would be `1` for 
 `normalized`
 A normalized string representing the entire address that was passed into the constructor. PO Boxes are normalized in this format `PO BOX <number>`.
 
+## Installation (requires Pro 2.7+)
+
+1. create conda environment
+    - `conda create --name sweeper python=3.7`
+1. activate environment
+    - `activate sweeper`
+1. install arcpy
+    - `conda install arcpy -c esri`
+1. install sweeper
+    - `pip install agrc-sweeper`
+
 ## Installation (requires Pro 2.5+)
 
 1. create conda environment
