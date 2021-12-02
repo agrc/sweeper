@@ -17,7 +17,7 @@ log = logging.getLogger('sweeper')
 
 #: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
 #: Tags or words that should be uppercased, saved as lower to check against
-UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'agrc', 'aog', 'at&t', 'blm', 'brat', 'caf', 'cdl', 'daq', 'dfcm', 'dfirm', 'dnr', 'dsl', 'dwq', 'e911', 'ems', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'plss', 'pm10', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc', 'ugs', 'uhp', 'uic', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'vcp', 'vista', 'voc']
+UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'ugrc', 'aog', 'at&t', 'blm', 'brat', 'caf', 'cdl', 'daq', 'dfcm', 'dfirm', 'dnr', 'dsl', 'dwq', 'e911', 'ems', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'plss', 'pm10', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc', 'ugs', 'uhp', 'uic', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'vcp', 'vista', 'voc']
 #: Articles that should be left lowercase.
 ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
@@ -32,7 +32,7 @@ def title_case_tag(tag):
     Changes a tag to the correct title case while also removing any periods:
     'U.S. bureau Of Geoinformation' -> 'US Bureau of Geoinformation'. Should
     properly upper-case any words or single tags that are acronyms:
-    'agrc' -> 'AGRC', 'Plss Fabric' -> 'PLSS Fabric'. Any words separated by
+    'ugrc' -> 'UGRC', 'Plss Fabric' -> 'PLSS Fabric'. Any words separated by
     a hyphen will also be title-cased: 'water-related' -> 'Water-Related'.
     Note: No check is done for articles at the begining of a tag; all articles
     will be lowercased.
