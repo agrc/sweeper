@@ -108,17 +108,6 @@ A normalized string representing the entire address that was passed into the con
 1. install sweeper
     - `pip install agrc-sweeper`
 
-## Installation (requires Pro 2.5+)
-
-1. create conda environment
-    - `conda create --clone arcgispro-py3 --name sweeper`
-1. activate environment
-    - `activate sweeper`
-1. install sweeper
-    - `pip install agrc-sweeper`
-1. run cli for docs
-    - `sweeper`
-
 ## Development
 
 1. create conda environment
