@@ -15,9 +15,14 @@ import logging
 
 log = logging.getLogger('sweeper')
 
-#: these constants were copied from https://github.com/agrc/agol-validator/blob/master/validate.py
+#: these constants were copied from https://github.com/agrc/auditor/blob/master/src/auditor/auditor.py
 #: Tags or words that should be uppercased, saved as lower to check against
-UPPERCASED_TAGS = ['2g', '3g', '4g', 'agol', 'ugrc', 'aog', 'at&t', 'blm', 'brat', 'caf', 'cdl', 'daq', 'dfcm', 'dfirm', 'dnr', 'dsl', 'dwq', 'e911', 'ems', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'plss', 'pm10', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc', 'ugs', 'uhp', 'uic', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'vcp', 'vista', 'voc']
+UPPERCASED_TAGS = [
+    '2g', '3g', '4g', 'agol', 'aog', 'at&t', 'atv', 'blm', 'brat', 'caf', 'cdl', 'dabc', 'daq', 'dem', 'dfcm', 'dfirm', 'dnr', 'dogm', 'dot', 'dsl', 'dsm',
+    'dtm', 'dwq', 'e911', 'ems', 'epa', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'ngda',
+    'nox', 'npsbn', 'ntia', 'nwi', 'osa', 'pli', 'plss', 'pm10', 'ppm', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc',
+    'ugs', 'uhp', 'uic', 'uipa', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'utsc', 'vcp', 'vista', 'voc', 'wbd', 'wre'
+]
 #: Articles that should be left lowercase.
 ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
@@ -25,6 +30,7 @@ DATA_PAGE_LINK_REGEX = re.compile(r'gis\.utah\.gov.*\/data', re.IGNORECASE)
 
 with open(join(dirname(realpath(__file__)), 'UseLimitations.html')) as file:
     STANDARD_LIMITATIONS = re.sub(r'\s\s+', '', file.read()).replace('\n', '')
+
 
 #: copied from https://github.com/agrc/agol-validator/blob/master/checks.py with minor modifications
 def title_case_tag(tag):
@@ -78,6 +84,7 @@ def get_description_text_only(html):
 class MetadataTest():
     '''A class that validates geodatabase metadata
     '''
+
     def __init__(self, workspace, table_name):
         self.workspace = workspace
         self.table_name = table_name
