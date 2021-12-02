@@ -47,7 +47,7 @@ class TestTitleCaseTag(TestCase):
 
     def test_title_case_tag(self):
         #: input, expected
-        tests = [['agrc', 'AGRC'], ['Plss Fabric', 'PLSS Fabric'], ['water-related', 'Water-Related'], ['test', 'Test'],
+        tests = [['ugrc', 'UGRC'], ['Plss Fabric', 'PLSS Fabric'], ['water-related', 'Water-Related'], ['test', 'Test'],
                  ['article is a good test', 'Article is a Good Test']]
 
         for input_tag, expected in tests:
