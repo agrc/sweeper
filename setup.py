@@ -11,7 +11,7 @@ def read(*names, **kwargs):
 
 setup(
     name="agrc-sweeper",
-    version="1.2.0",
+    version="1.2.1",
     license="MIT",
     description="CLI tool for making good data",
     long_description="",
