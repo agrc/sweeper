@@ -28,6 +28,8 @@ ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
 DATA_PAGE_LINK_REGEX = re.compile(r'gis\.utah\.gov.*\/data', re.IGNORECASE)
 
+HAS_OWN_LICENSE = ['openstreetmap_places', 'buildings']
+
 with open(join(dirname(realpath(__file__)), 'UseLimitations.html')) as file:
     STANDARD_LIMITATIONS = re.sub(r'\s\s+', '', file.read()).replace('\n', '')
 
@@ -151,7 +153,9 @@ class MetadataTest():
                 report['issues'].append('Description is missing link to gis.utah.gov data page.')
 
         #: check use limitations
-        if metadata.accessConstraints is None or metadata.accessConstraints == '':
+        if feature_class_name.casefold() in HAS_OWN_LICENSE:
+            self.use_limitations_needs_update = False
+        elif metadata.accessConstraints is None or metadata.accessConstraints == '':
             report['issues'].append('Use limitations text is missing.')
             self.use_limitations_needs_update = True
         elif metadata.accessConstraints != STANDARD_LIMITATIONS:
