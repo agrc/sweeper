@@ -2,7 +2,8 @@ name: Publish on tag
 on:
   release:
     types: [published]
-
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   publish:
     name: Build and Publish
@@ -20,7 +21,10 @@ jobs:
       - name: 👊 Bump version
         run: |
           TAG=$(gh release view --json tagName --jq ".tagName")
-          sed "s/version=.*$/version=\"$TAG\",/" setup.py
+          sed -i "s/version=.*$/version=\"$TAG\",/" setup.py
+
+      - name: Install wheel
+        run: pip install wheel
 
       - name: 📦 Build package
         run: python setup.py sdist bdist_wheel
