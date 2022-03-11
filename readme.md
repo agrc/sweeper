@@ -1,6 +1,6 @@
-# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)
+# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)[![Publish on tag](https://github.com/agrc/sweeper/actions/workflows/python.yml/badge.svg)](https://github.com/agrc/sweeper/actions/workflows/python.yml)
 
-fix data
+The data cleaning service.
 
 ![sweeper_sm](https://user-images.githubusercontent.com/325813/90411835-91c4c080-e069-11ea-9d03-f3e60421b835.png)
 
@@ -129,6 +129,8 @@ A normalized string representing the entire address that was passed into the con
 1. run tests: `pytest`
 
 ### Uploading to pypi.org
+
+Packaging is managed through GitHub Actions by publishing a release.
 
 1. Bump `version` in `setup.py`
 1. `git commit -am "chore: bump version"`
