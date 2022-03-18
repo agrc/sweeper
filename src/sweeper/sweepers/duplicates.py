@@ -17,6 +17,7 @@ class DuplicateTest():
         self.workspace = workspace
         self.table_name = table_name
         self.oids_with_issues = []
+        self.is_table = False
 
 
     def sweep(self):
@@ -24,7 +25,6 @@ class DuplicateTest():
         '''
         report = {'title': 'Duplicate Test', 'feature_class': self.table_name, 'issues': []}
         digests = set([])
-        is_table = False
 
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
@@ -32,7 +32,7 @@ class DuplicateTest():
             description = arcpy.da.Describe(self.table_name)
             log.info(f'Working on Duplicates for: {self.table_name}')
             if description['dataType'].casefold() == 'table':
-                is_table = True
+                self.is_table = True
                 skip_fields = ['guid']
             else:
                 skip_fields = ['guid', description['shapeFieldName']]
@@ -48,7 +48,7 @@ class DuplicateTest():
             fields.append('OID@')
 
             #: include or exclude shape field depending on if working on table or feature class
-            if is_table:
+            if self.is_table:
                 oid_index = fields.index('OID@')
 
                 with arcpy.da.SearchCursor(self.table_name, fields) as search_cursor:
@@ -106,18 +106,32 @@ class DuplicateTest():
 
         log.info(f'Workspace is:   {self.workspace}')
         with arcpy.EnvManager(workspace=self.workspace):
-            try:
-                duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
+            if self.is_table:
+                try:
+                    duplicate_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer, sql)
 
-                log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
+                    log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
 
-                arcpy.management.DeleteFeatures(duplicate_features)
-            except Exception as error:
-                error_message = f'unable to delete features {error}'
-                report['issues'].append(error_message)
-            finally:
-                if arcpy.Exists(temp_feature_layer):
-                    arcpy.management.Delete(temp_feature_layer)
+                    arcpy.management.DeleteRows(duplicate_features)
+                except Exception as error:
+                    error_message = f'unable to delete features {error}'
+                    report['issues'].append(error_message)
+                finally:
+                    if arcpy.Exists(temp_feature_layer):
+                        arcpy.management.Delete(temp_feature_layer)
+            else:
+                try:
+                    duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
+
+                    log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
+
+                    arcpy.management.DeleteFeatures(duplicate_features)
+                except Exception as error:
+                    error_message = f'unable to delete features {error}'
+                    report['issues'].append(error_message)
+                finally:
+                    if arcpy.Exists(temp_feature_layer):
+                        arcpy.management.Delete(temp_feature_layer)
 
             report['fixes'].append(f'{len(self.oids_with_issues)} records deleted successfully')
 
