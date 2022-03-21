@@ -105,27 +105,20 @@ class DuplicateTest():
         temp_feature_layer = 'temp_layer'
 
         log.info(f'Workspace is:   {self.workspace}')
+        #: Delete duplicate rows using different arcpy tools for tables and feature classes
         with arcpy.EnvManager(workspace=self.workspace):
             if self.is_table:
-                try:
-                    duplicate_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer, sql)
-
-                    log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
-
-                    arcpy.management.DeleteRows(duplicate_features)
-                except Exception as error:
-                    error_message = f'unable to delete features {error}'
-                    report['issues'].append(error_message)
-                finally:
-                    if arcpy.Exists(temp_feature_layer):
-                        arcpy.management.Delete(temp_feature_layer)
+                duplicate_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer, sql)
             else:
-                try:
-                    duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
-
-                    log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
-
+                duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
+            
+            try:
+                log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
+                if self.is_table:
+                    arcpy.management.DeleteRows(duplicate_features)
+                else:
                     arcpy.management.DeleteFeatures(duplicate_features)
+                
                 except Exception as error:
                     error_message = f'unable to delete features {error}'
                     report['issues'].append(error_message)
