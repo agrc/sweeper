@@ -64,8 +64,8 @@ class DuplicateTest():
 
                         digests.add(digest)
             else:
-                oid_index = fields.index('OID@')            
-                fields.append('SHAPE@WKT')           
+                oid_index = fields.index('OID@')
+                fields.append('SHAPE@WKT')
 
                 shapefield_index = fields.index('SHAPE@WKT')
                 oid_index = fields.index('OID@')
@@ -111,20 +111,19 @@ class DuplicateTest():
                 duplicate_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer, sql)
             else:
                 duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
-            
+
             try:
                 log.info(f'attempting to delete {len(self.oids_with_issues)} duplicate records')
                 if self.is_table:
                     arcpy.management.DeleteRows(duplicate_features)
                 else:
                     arcpy.management.DeleteFeatures(duplicate_features)
-                
-                except Exception as error:
-                    error_message = f'unable to delete features {error}'
-                    report['issues'].append(error_message)
-                finally:
-                    if arcpy.Exists(temp_feature_layer):
-                        arcpy.management.Delete(temp_feature_layer)
+            except Exception as error:
+                error_message = f'unable to delete features {error}'
+                report['issues'].append(error_message)
+            finally:
+                if arcpy.Exists(temp_feature_layer):
+                    arcpy.management.Delete(temp_feature_layer)
 
             report['fixes'].append(f'{len(self.oids_with_issues)} records deleted successfully')
 
