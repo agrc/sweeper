@@ -66,7 +66,7 @@ def main():
     if args['duplicates']:
         closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
     elif args['invalids']:
-        pass
+        raise NotImplementedError('"Invalids" sweep/check not implemented yet.')
     elif args['empties']:
         closet.append(EmptyTest(args['--workspace'], args['--table-name']))
     elif args['addresses']:
