@@ -19,8 +19,8 @@ log = logging.getLogger('sweeper')
 #: Tags or words that should be uppercased, saved as lower to check against
 UPPERCASED_TAGS = [
     '2g', '3g', '4g', 'agol', 'aog', 'at&t', 'atv', 'blm', 'brat', 'caf', 'cdl', 'dabc', 'daq', 'dem', 'dfcm', 'dfirm', 'dnr', 'dogm', 'dot', 'dsl', 'dsm',
-    'dtm', 'dwq', 'e911', 'ems', 'epa', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'ngda',
-    'nox', 'npsbn', 'ntia', 'nwi', 'osa', 'pli', 'plss', 'pm10', 'ppm', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc',
+    'dtm', 'dwq', 'e911', 'ems', 'epa', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'gsl', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'ngda',
+    'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'osa', 'pli', 'plss', 'pm10', 'ppm', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc',
     'ugs', 'uhp', 'uic', 'uipa', 'us', 'usao', 'usdw', 'usfs', 'usfws', 'usps', 'ustc', 'ut', 'uta', 'utsc', 'vcp', 'vista', 'voc', 'wbd', 'wre'
 ]
 #: Articles that should be left lowercase.
@@ -119,6 +119,9 @@ class MetadataTest():
             [schema, feature_class_name] = name_parts
             required_tags.append(database)
             required_tags.append(schema.title())
+        #: case where name only has one part (local feature class)
+        else:
+            feature_class_name = self.table_name
 
         if metadata.tags is None:
             missing_tags = required_tags
