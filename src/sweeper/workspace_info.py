@@ -73,10 +73,10 @@ def get_change_detection():
     last_checked = checked_string.strftime('%m/%d/%Y')
     log.info(f'Last date change detection was checked: {last_checked}')
 
-    egdb = credentials.DB
+    egdb = Path(credentials.DB)
     cd_table = credentials.CHANGE_DETECTION
 
-    egdb_conn = arcpy.ArcSDESQLExecute(egdb)
+    egdb_conn = arcpy.ArcSDESQLExecute(str(egdb))
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"
 
     #: result will typically be a nested list
@@ -86,7 +86,7 @@ def get_change_detection():
     #: handle cases where result is a string (single feature class) or not a list (None type)
     if isinstance(result, str):
         #: reset list to None if single table doesn't exist in Internal database
-        if not arcpy.Exists(os.path.join(egdb, result)):
+        if not arcpy.Exists(str(egdb / result)):
             fc_list = None
             return fc_list
         
@@ -105,7 +105,7 @@ def get_change_detection():
 
     #: Remove tables that aren't in the Internal database (but were in the change detection table)
     for fc in fc_list:
-        if not arcpy.Exists(os.path.join(egdb, fc)):
+        if not arcpy.Exists(str(egdb / fc)):
             fc_list.remove(fc)
 
     #: Strip off the leading 'sgid.' of each table name
