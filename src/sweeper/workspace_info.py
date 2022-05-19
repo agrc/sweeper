@@ -85,17 +85,30 @@ def get_change_detection():
 
     #: handle cases where result is a string (single feature class) or not a list (None type)
     if isinstance(result, str):
+        #: reset list to None if single table doesn't exist in Internal database
+        if not arcpy.Exists(os.path.join(egdb, result)):
+            fc_list = None
+            return fc_list
+        
         fc_list = []
         fc_list.append(result)
         fc_list = [item.split('.', 1)[1] for item in fc_list]
         log.info(f'fc_list is: {fc_list}')
         return fc_list
+    
     elif not isinstance(result, list):
         fc_list = None
         return fc_list
 
-    #: Flatten resulting list and strip off the leading 'sgid.' of each table name
+    #: Flatten resulting list
     fc_list = [item for sublist in result for item in sublist]
+
+    #: Remove tables that aren't in the Internal database (but were in the change detection table)
+    for fc in fc_list:
+        if not arcpy.Exists(os.path.join(egdb, fc)):
+            fc_list.remove(fc)
+
+    #: Strip off the leading 'sgid.' of each table name
     fc_list = [item.split('.', 1)[1] for item in fc_list]
     log.info(f'fc_list is: {fc_list}')
 
