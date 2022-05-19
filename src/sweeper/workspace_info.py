@@ -5,7 +5,6 @@ workspace_info.py
 A module that gets information about the workspace, including a list of feature classes.
 '''
 import arcpy
-import os
 import datetime
 from pathlib import Path
 from . import credentials
