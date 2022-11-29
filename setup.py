@@ -11,7 +11,7 @@ def read(*names, **kwargs):
 
 setup(
     name="agrc-sweeper",
-    version="0.0.0",
+    version="1.1.0",
     license="MIT",
     description="CLI tool for making good data",
     long_description="",
@@ -36,22 +36,13 @@ setup(
         "Topic :: Utilities",
     ],
     keywords=[],
-    install_requires=[
-        'docopt==0.6.*',
-        'xxhash==1.4.*',
-        'agrc-usaddress==0.6.*',
-        'beautifulsoup4==4.8.*',
-        'agrc-supervisor==1.2.*'
-    ],
+    install_requires=['docopt==0.6.*', 'xxhash >= 3.*', 'agrc-usaddress==0.6.*', 'beautifulsoup4==4.8.*', 'agrc-supervisor==3.*'],
     dependency_links=[],
     extras_require={
         'tests': [
             'pytest',
         ],
-        'develop': [
-            'yapf',
-            'pylint'
-        ]
+        'develop': ['yapf', 'pylint']
     },
     entry_points={"console_scripts": ["sweeper = sweeper.__main__:main"]}
 )
