@@ -28,7 +28,15 @@ ARTICLES = ['a', 'the', 'of', 'is', 'in']
 
 DATA_PAGE_LINK_REGEX = re.compile(r'gis\.utah\.gov.*\/data', re.IGNORECASE)
 
-HAS_OWN_LICENSE = ['opensourceplaces', 'buildings']
+HAS_OWN_LICENSE = [
+    'opensourceplaces',
+    'buildings',
+    'h3_hexes_z5',
+    'h3_hexes_z6',
+    'h3_hexes_z7',
+    'h3_hexes_z8',
+    'h3_hexes_z9',
+    ]
 
 with open(join(dirname(realpath(__file__)), 'UseLimitations.html')) as file:
     STANDARD_LIMITATIONS = re.sub(r'\s\s+', '', file.read()).replace('\n', '')
