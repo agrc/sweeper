@@ -52,8 +52,8 @@ def main():
 
     if args['--scheduled']:
         #: set up supervisor, add email handler
-        sweeper_supervisor = Supervisor(project_name='agrc-sweeper')
-        sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS))
+        sweeper_supervisor = Supervisor()
+        sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS, client_name='agrc-sweeper'))
 
     #: backup input file before quality checks
     if args['--backup-to']:
@@ -164,9 +164,7 @@ def setup_logging(save_report, scheduled):
     logger = logging.getLogger('sweeper')
     logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter(
-        fmt='%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s', datefmt='%m-%d %H:%M:%S'
-        )
+    formatter = logging.Formatter(fmt='%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s', datefmt='%m-%d %H:%M:%S')
 
     #: always set up console_handler
     console_handler = logging.StreamHandler(stream=sys.stdout)
