@@ -99,27 +99,26 @@ A normalized string representing the entire address that was passed into the con
 
 ## Installation (requires Pro 2.7+)
 
-1. create conda environment
-    - `conda create --name sweeper python=3.7`
+<!-- Current conda install arcpy -c esri seems to be wonky; just clone to be safe -->
+1. clone arcgis conda environment
+    - `conda create -name sweeper --clone arcgispro-py3`
 1. activate environment
     - `activate sweeper`
-1. install arcpy
-    - `conda install arcpy -c esri`
 1. install sweeper
     - `pip install agrc-sweeper`
 
 ## Development
 
-1. create conda environment
-    - `conda create --name sweeper python=3.7`
+1. clone arcgis conda environment
+    - `conda create -name sweeper --clone arcgispro-py3`
 1. activate environment
     - `activate sweeper`
 1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
 
 ### Installing dependencies
 
-1. install arcpy
-    - `conda install -c esri arcpy`
+1. clone arcgis conda environment
+    - `conda create -name sweeper --clone arcgispro-py3`
 1. install only required dependencies to run sweeper
     - `pip install -e .`
 1. install required dependencies to work on sweeper
