@@ -37,12 +37,12 @@ setup(
     ],
     keywords=[],
     install_requires=[
-        'agrc-supervisor==3.*',
-        'agrc-usaddress==0.6.*',
-        'beautifulsoup4==4.8.*',
-        'docopt==0.6.*',
-        'html5lib>=1.1',
-        'xxhash >= 3.*',
+        'agrc-supervisor~=3.0',
+        'agrc-usaddress~=0.6',
+        'beautifulsoup4~=4.12',
+        'docopt~=0.6',
+        'html5lib>~=1.1',
+        'xxhash~=3.2',
     ],
     dependency_links=[],
     extras_require={
