@@ -17,7 +17,7 @@ log = logging.getLogger('sweeper')
 
 #: these constants were copied from https://github.com/agrc/auditor/blob/master/src/auditor/auditor.py
 #: Tags or words that should be uppercased, saved as lower to check against
-UPPERCASED_TAGS = [
+UPPERCASE_TAGS = [
     '2g', '3g', '4g', 'agol', 'aog', 'at&t', 'atv', 'blm', 'brat', 'caf', 'cdl', 'dabc', 'daq', 'dem', 'dfcm', 'dfirm', 'dnr', 'dogm', 'dot', 'dsl', 'dsm',
     'dtm', 'dwq', 'e911', 'ems', 'epa', 'fae', 'fcc', 'fema', 'gcdb', 'gis', 'gnis', 'gsl', 'hava', 'huc', 'lir', 'lrs', 'lte', 'luca', 'mrrc', 'nca', 'ng911', 'ngda',
     'nox', 'npsbn', 'ntia', 'nwi', 'nws', 'osa', 'pli', 'plss', 'pm10', 'ppm', 'psap', 'sao', 'sbdc', 'sbi', 'sgid', 'sitla', 'sligp', 'trax', 'uca', 'udot', 'ugrc',
@@ -50,7 +50,7 @@ def title_case_tag(tag):
     properly upper-case any words or single tags that are acronyms:
     'ugrc' -> 'UGRC', 'Plss Fabric' -> 'PLSS Fabric'. Any words separated by
     a hyphen will also be title-cased: 'water-related' -> 'Water-Related'.
-    Note: No check is done for articles at the begining of a tag; all articles
+    Note: No check is done for articles at the beginning of a tag; all articles
     will be lowercased.
     tag:        The single or multi-word tag to check
     '''
@@ -60,7 +60,7 @@ def title_case_tag(tag):
         cleaned_word = word.replace('.', '').lower()
 
         #: Upper case specified words:
-        if cleaned_word.lower() in UPPERCASED_TAGS:
+        if cleaned_word.lower() in UPPERCASE_TAGS:
             new_words.append(cleaned_word.upper())
         #: Lower case articles/conjunctions
         elif cleaned_word.lower() in ARTICLES:

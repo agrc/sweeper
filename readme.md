@@ -24,7 +24,7 @@ Checks to make sure that the metadata meets [the Basic SGID Metadata Requirement
 
 #### Tags
 
-Checks to make sure that existing tags are cased appropriately. This mean that the are title-cased other than known abbreviations (e.g. AGRC, BLM) and articles (e.g. a, the, of).
+Checks to make sure that existing tags are cased appropriately. This mean that the are title-cased other than known abbreviations (e.g. UGRC, BLM) and articles (e.g. a, the, of).
 
 This check also verifies that the data set contains a tag that matches the database name (e.g. `SGID`) and the schema (e.g. `Cadastre`).
 
@@ -40,7 +40,7 @@ Checks to make sure that the description contains a link to a data page on gis.u
 
 #### Use Limitations
 
-Checks to make sure that the text in this section matches the [official text for AGRC](src/sweeper/sweepers/UseLimitations.html).
+Checks to make sure that the text in this section matches the [official text for UGRC](src/sweeper/sweepers/UseLimitations.html).
 
 `--try-fix` updates the text to match the official text.
 
@@ -100,6 +100,7 @@ A normalized string representing the entire address that was passed into the con
 ## Installation (requires Pro 2.7+)
 
 <!-- Current conda install arcpy -c esri seems to be wonky; just clone to be safe -->
+
 1. clone arcgis conda environment
     - `conda create -name sweeper --clone arcgispro-py3`
 1. activate environment

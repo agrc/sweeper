@@ -18,7 +18,7 @@ class EmptyTest():
 
 
     def sweep(self):
-        '''A method to find empty geometries and return a report dictionarty
+        '''A method to find empty geometries and return a report dictionary
         '''
         report = {'title': 'Empty Test', 'feature_class': self.table_name, 'issues': []}
         fields = ['OID@', 'SHAPE@']

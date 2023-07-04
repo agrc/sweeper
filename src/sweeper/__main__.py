@@ -22,13 +22,11 @@ Examples:
   sweeper sweep           --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb
   sweeper sweep addresses --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb --field-name=ADDRESS
 '''
-import os
 import sys
 import datetime
 import logging
 import logging.handlers
 import pkg_resources
-from io import StringIO
 from pathlib import Path
 
 from docopt import docopt
