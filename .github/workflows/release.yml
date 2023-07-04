@@ -1,4 +1,4 @@
-name: Publish on tag
+name: Release Events
 on:
   release:
     types: [published]
