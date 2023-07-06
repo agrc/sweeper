@@ -6,7 +6,9 @@ from setuptools import find_packages, setup
 
 
 def read(*names, **kwargs):
-    return io.open(join(dirname(__file__), *names), encoding=kwargs.get("encoding", "utf8")).read()
+    return io.open(
+        join(dirname(__file__), *names), encoding=kwargs.get("encoding", "utf8")
+    ).read()
 
 
 setup(
@@ -37,22 +39,22 @@ setup(
     ],
     keywords=[],
     install_requires=[
-        'agrc-supervisor~=3.0',
-        'agrc-usaddress~=0.6',
-        'beautifulsoup4~=4.12',
-        'docopt~=0.6',
-        'html5lib>~=1.1',
-        'xxhash~=3.2',
+        "agrc-supervisor~=3.0",
+        "agrc-usaddress~=0.6",
+        "beautifulsoup4~=4.12",
+        "docopt~=0.6",
+        "html5lib~=1.1",
+        "xxhash~=3.2",
     ],
     dependency_links=[],
     extras_require={
-        'tests': [
-            'pytest',
+        "tests": [
+            "pytest",
         ],
-        'develop': [
-            'yapf',
-            'pylint',
-        ]
+        "develop": [
+            "yapf",
+            "pylint",
+        ],
     },
-    entry_points={"console_scripts": ["sweeper = sweeper.__main__:main"]}
+    entry_points={"console_scripts": ["sweeper = sweeper.__main__:main"]},
 )
