@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.2](https://github.com/agrc/sweeper/compare/v1.4.1...v1.4.2) (2023-07-06)
+
+
+### 📖 Documentation Improvements
+
+* remove old deployment docs ([415db45](https://github.com/agrc/sweeper/commit/415db457a5ab6bd19ff4b85cd4e61ed2a8f3dcdd))
+* update long description and author ([5d5628a](https://github.com/agrc/sweeper/commit/5d5628a9fa1509477f43a56bcc6d03a30357c40a))
+
 ## [1.4.1](https://github.com/agrc/sweeper/compare/v1.4.0...v1.4.1) (2023-07-06)
 
 
