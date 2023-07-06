@@ -1,4 +1,4 @@
-# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)[![Publish on tag](https://github.com/agrc/sweeper/actions/workflows/release.yml/badge.svg)](https://github.com/agrc/sweeper/actions/workflows/release.yml)
+# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)[![Push Events](https://github.com/agrc/sweeper/actions/workflows/push.yml/badge.svg)](https://github.com/agrc/sweeper/actions/workflows/push.yml)
 
 The data cleaning service.
 
