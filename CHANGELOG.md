@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/agrc/sweeper/compare/v1.4.2...v1.4.3) (2023-07-06)
+
+
+### 🐛 Bug Fixes
+
+* lowercase filename ([2ab666c](https://github.com/agrc/sweeper/commit/2ab666c03c72850dcea5ab1bc57e2a1287642dac))
+
 ## [1.4.2](https://github.com/agrc/sweeper/compare/v1.4.1...v1.4.2) (2023-07-06)
 
 
