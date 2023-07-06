@@ -127,14 +127,3 @@ A normalized string representing the entire address that was passed into the con
 1. install required dependencies to run sweeper tests
     - `pip install -e ".[tests]"`
 1. run tests: `pytest`
-
-### Uploading to pypi.org
-
-Packaging is managed through GitHub Actions by publishing a release.
-
-1. Bump `version` in `setup.py`
-1. `git commit -am "chore: bump version"`
-1. `git tag v1.2.1`
-1. `git push && git push --tags`
-1. `python setup.py sdist bdist_wheel`
-1. `twine upload dist/*` (`pip install twine`, if needed)
