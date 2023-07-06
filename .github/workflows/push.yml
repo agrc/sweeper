@@ -39,6 +39,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created
     environment:
       name: prod
+      url: https://pypi.org/project/agrc-sweeper/
     permissions:
       id-token: write
 
@@ -60,6 +61,3 @@ jobs:
 
       - name: 🚀 Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}?
