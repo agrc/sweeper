@@ -1,0 +1,37 @@
+name: Pull Request Events
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Set up code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          cache: pip
+          cache-dependency-path: setup.py
+
+      - name: 🏗 Install module
+        run: pip install .[tests]
+
+      - name: 🧪 Run pytest
+        run: pytest
+
+      - name: ⬆️ Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./cov.xml
