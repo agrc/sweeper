@@ -14,7 +14,7 @@ def read(*names, **kwargs):
 
 setup(
     name="agrc-sweeper",
-    version="1.4.2",
+    version="1.4.3",
     license="MIT",
     description="CLI tool for making good data",
     long_description=(Path(__file__).parent / "readme.md").read_text(),
