@@ -1,6 +1,7 @@
 import glob
 import io
 from os.path import basename, dirname, join, splitext
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
