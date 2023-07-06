@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.1](https://github.com/agrc/sweeper/compare/v1.4.0...v1.4.1) (2023-07-06)
+
+
+### 🐛 Bug Fixes
+
+* correct py pi action ([c71e9f4](https://github.com/agrc/sweeper/commit/c71e9f4f789b658d9d750cfcfc03d96a2dc20e36))
+
+
+### 📖 Documentation Improvements
+
+* fix badge ([eea97fb](https://github.com/agrc/sweeper/commit/eea97fb7de90c6040b33ec6b1dbee1b065e068ce))
+
 ## [1.4.0](https://github.com/agrc/sweeper/compare/v1.3.5...v1.4.0) (2023-07-06)
 
 
