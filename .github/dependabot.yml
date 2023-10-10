@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      ci-dependencies:
+        dependency-type: 'production'
   - package-ecosystem: pip
     directory: /
     schedule:
