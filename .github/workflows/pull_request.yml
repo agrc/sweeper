@@ -21,7 +21,7 @@ jobs:
           show-progress: false
 
       - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           cache: pip
           cache-dependency-path: setup.py
