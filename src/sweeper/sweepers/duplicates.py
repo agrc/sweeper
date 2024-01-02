@@ -13,11 +13,12 @@ log = logging.getLogger('sweeper')
 class DuplicateTest():
     '''A class that finds and removes duplicate geometries or attributes or both
     '''
-    def __init__(self, workspace, table_name):
+    def __init__(self, workspace, table_name, skip_tables):
         self.workspace = workspace
         self.table_name = table_name
         self.oids_with_issues = []
         self.is_table = False
+        self.skip_tables = skip_tables
 
 
     def sweep(self):
@@ -28,15 +29,20 @@ class DuplicateTest():
 
         truncate_shape_precision = re.compile(r'(\d+\.\d{2})(\d+)')
 
+        if self.table_name.casefold in self.skip_tables:
+            log.info(f'Skipping {self.table_name}')
+
+            return report
+
         with arcpy.EnvManager(workspace=self.workspace):
             description = arcpy.da.Describe(self.table_name)
             log.info(f'Working on Duplicates for: {self.table_name}')
+            
             if description['dataType'].casefold() == 'table':
                 self.is_table = True
                 skip_fields = ['guid']
             else:
                 skip_fields = ['guid', description['shapeFieldName']]
-
 
             if description['hasGlobalID']:
                 skip_fields.append(description['globalIDFieldName'])
@@ -133,4 +139,5 @@ class DuplicateTest():
         log.info(f'cloning to {table_name}')
         user = table_name.split('.')[0].upper()
         user_workspace = credentials.CONNECTIONS[user]
+        
         return DuplicateTest(user_workspace, table_name)
