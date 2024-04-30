@@ -11,3 +11,4 @@ build/
 .env/
 .last_checked
 sweeper_log*
+.coverage
