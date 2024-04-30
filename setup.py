@@ -1,20 +1,23 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+"""
+setup.py
+A module that installs sweeper as a module
+"""
 import glob
-import io
-from os.path import basename, dirname, join, splitext
+from os.path import basename, splitext
 from pathlib import Path
 
 from setuptools import find_packages, setup
 
-
-def read(*names, **kwargs):
-    return io.open(
-        join(dirname(__file__), *names), encoding=kwargs.get("encoding", "utf8")
-    ).read()
-
+#: Load version from source file
+version = {}
+version_file = Path(__file__).parent / "src" / "sweeper" / "version.py"
+exec(version_file.read_text(), version)
 
 setup(
     name="agrc-sweeper",
-    version="1.4.3",
+    version=version["__version__"],
     license="MIT",
     description="CLI tool for making good data",
     long_description=(Path(__file__).parent / "readme.md").read_text(),
@@ -41,22 +44,28 @@ setup(
     ],
     keywords=[],
     install_requires=[
-        "agrc-supervisor~=3.0",
-        "agrc-usaddress~=0.6",
-        "beautifulsoup4~=4.12",
-        "docopt~=0.6",
-        "html5lib~=1.1",
-        "xxhash~=3.2",
+        "agrc-supervisor==3.*",
+        "agrc-usaddress==0.*",
+        "beautifulsoup4==4.*",
+        "docopt==0.*",
+        "html5lib==1.*",
+        "xxhash==3.*",
     ],
     dependency_links=[],
     extras_require={
         "tests": [
-            "pytest",
-        ],
-        "develop": [
-            "yapf",
-            "pylint",
+            "pytest-cov==5.*",
+            "pytest-instafail==0.5.*",
+            "pytest-mock==3.*",
+            "pytest-ruff==0.*",
+            "pytest-watch==4.*",
+            "pytest==8.*",
+            "black==24.*",
+            "ruff==0.*",
         ],
     },
+    setup_requires=[
+        "pytest-runner",
+    ],
     entry_points={"console_scripts": ["sweeper = sweeper.__main__:main"]},
 )
