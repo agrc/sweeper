@@ -52,5 +52,7 @@
     "python.testing.pytestArgs": [
         "--no-cov"
     ],
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
 }

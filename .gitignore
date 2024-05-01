@@ -12,3 +12,4 @@ build/
 .last_checked
 sweeper_log*
 .coverage
+cov.xml
