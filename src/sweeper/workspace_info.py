@@ -4,6 +4,7 @@
 workspace_info.py
 A module that gets information about the workspace, including a list of feature classes.
 """
+
 import datetime
 import logging
 from pathlib import Path
@@ -64,7 +65,6 @@ def get_featureclasses(workspace_path):
 
 #: A function to return a list of feature classes based on the change detection table.
 def get_change_detection():
-
     checked_date = read_last_check_date()
 
     if checked_date:
