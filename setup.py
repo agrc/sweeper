@@ -57,7 +57,6 @@ setup(
             "pytest-cov==5.*",
             "pytest-instafail==0.5.*",
             "pytest-mock==3.*",
-            "pytest-ruff==0.*",
             "pytest-watch==4.*",
             "pytest==8.*",
             "black==24.*",
