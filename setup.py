@@ -11,14 +11,9 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-#: Load version from source file
-version = {}
-version_file = Path(__file__).parent / "src" / "sweeper" / "version.py"
-exec(version_file.read_text(), version)
-
 setup(
     name="agrc-sweeper",
-    version=version["__version__"],
+    version="1.4.3",
     license="MIT",
     description="CLI tool for making good data",
     long_description=(Path(__file__).parent / "readme.md").read_text(),
