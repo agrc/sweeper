@@ -29,7 +29,10 @@ jobs:
       - name: 🏗 Install module
         run: pip install .[tests]
 
-      - name: 🧪 Run pytest
+      - name: 🧶 Lint
+        run: ruff check --output-format=github .
+
+      - name: 🧪 Run Tests
         run: pytest
 
       - name: ⬆️ Upload coverage to Codecov
