@@ -34,7 +34,7 @@ from docopt import docopt
 from supervisor.message_handlers import SendGridHandler
 from supervisor.models import MessageDetails, Supervisor
 
-from . import backup, config, report, version, workspace_info
+from . import backup, config, report, workspace_info
 from .sweepers.addresses import AddressTest
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
@@ -58,7 +58,7 @@ def main():
                     "api_key": config.get_config("SENDGRID_API_KEY"),
                 },
                 client_name="agrc-sweeper",
-                client_version=version.__version__,
+                client_version=pkg_resources.require("agrc-sweeper")[0].version,
             )
         )
 
@@ -101,7 +101,7 @@ def main():
         #: Build and send summary message
         summary_message = MessageDetails()
         summary_message.message = final_message.getvalue()
-        summary_message.attachments = [config.get_config("LOG_FILE_PATH")]
+        summary_message.attachments = [config.LOG_FILE_PATH]
         summary_message.subject = f"Sweeper Report {datetime.datetime.today()}"
 
         sweeper_supervisor.notify(summary_message)
@@ -180,7 +180,7 @@ def setup_logging(save_report, scheduled):
 
     #: use log file when report location not provided and when running from scheduled task
     if scheduled and not save_report:
-        log_file = Path(config.get_config("LOG_FILE_PATH"))
+        log_file = Path(config.LOG_FILE_PATH)
         file_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
         file_handler.doRollover()
         file_handler.setFormatter(formatter)
