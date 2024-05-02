@@ -75,8 +75,8 @@ def get_change_detection():
     last_checked = checked_string.strftime("%m/%d/%Y")
     log.info(f"Last date change detection was checked: {last_checked}")
 
-    egdb = Path(config.CHANGE_DETECTION_CONNECTION)
-    cd_table = config.CHANGE_DETECTION_TABLE
+    egdb = Path(config.get_config("CHANGE_DETECTION_CONNECTION"))
+    cd_table = config.get_config("CHANGE_DETECTION_TABLE")
 
     egdb_conn = arcpy.ArcSDESQLExecute(str(egdb))
     sql = f"SELECT table_name FROM {cd_table} WHERE last_modified >= '{last_checked}'"

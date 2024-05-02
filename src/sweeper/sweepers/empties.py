@@ -3,16 +3,15 @@
 
 
 import logging
-from pathlib import Path
 
 import arcpy
 
-from .. import config
+from .base import SweeperBase
 
 log = logging.getLogger("sweeper")
 
 
-class EmptyTest:
+class EmptyTest(SweeperBase):
     """A class to find empty geometries"""
 
     def __init__(self, workspace, table_name):
@@ -63,9 +62,3 @@ class EmptyTest:
         report["fixes"].append(f"{len(self.oids_with_issues)} records deleted successfully")
 
         return report
-
-    def clone(self, table_name):
-        log.info(f"cloning to {table_name}")
-        user = table_name.split(".")[0].upper()
-        user_workspace = Path(config.CONNECTIONS_FOLDER, f"{user}.sde")
-        return EmptyTest(str(user_workspace), table_name)

@@ -1,17 +1,24 @@
 import json
+import logging
 from pathlib import Path
+
+log = logging.getLogger("sweeper")
 
 try:
     with open("config.json") as f:
         config = json.load(f)
 except FileNotFoundError:
-    raise FileNotFoundError("A config.json not found in current working directory. Please create one.")
+    log.debug("A config.json not found in current working directory. This will prevent some features from working.")
 
-SENDGRID_API_KEY = config["SENDGRID_API_KEY"]
-TO_ADDRESSES = config["TO_ADDRESSES"]
-CONNECTIONS_FOLDER = config["CONNECTIONS_FOLDER"]
-CHANGE_DETECTION_CONNECTION = config["CHANGE_DETECTION_CONNECTION"]
-CHANGE_DETECTION_TABLE = config["CHANGE_DETECTION_TABLE"]
+
+def get_config(name):
+    try:
+        return config[name]
+    except KeyError:
+        raise KeyError(
+            f"Config key {name} not found in config.json. Perhaps you need to create or update it? Note that it needs to be in the current working directory."
+        )
+
 
 # set this to the current working directory
 LOG_FILE_PATH = Path(Path.cwd(), "sweeper.log")

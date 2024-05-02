@@ -8,13 +8,12 @@ A sweeper that checks geodatabase metadata
 import logging
 import re
 from os.path import dirname, join, realpath
-from pathlib import Path
 
 from arcpy import Exists
 from arcpy import metadata as md
 from bs4 import BeautifulSoup
 
-from .. import config
+from .base import SweeperBase
 
 log = logging.getLogger("sweeper")
 
@@ -173,7 +172,7 @@ def get_description_text_only(html):
     return soup.get_text()
 
 
-class MetadataTest:
+class MetadataTest(SweeperBase):
     """A class that validates geodatabase metadata"""
 
     def __init__(self, workspace, table_name):
@@ -288,9 +287,3 @@ class MetadataTest:
                 report["issues"].append(f"Error updating use limitations: {error}!")
 
         return report
-
-    def clone(self, table_name):
-        log.info(f"cloning to {table_name}")
-        user = table_name.split(".")[0].upper()
-        user_workspace = Path(config.CONNECTIONS_FOLDER, f"{user}.sde")
-        return MetadataTest(str(user_workspace), table_name)
