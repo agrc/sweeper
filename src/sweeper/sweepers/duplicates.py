@@ -2,17 +2,16 @@
 # * coding: utf8 *
 import logging
 import re
-from pathlib import Path
 
 import arcpy
 from xxhash import xxh64
 
-from .. import config
+from .base import SweeperBase
 
 log = logging.getLogger("sweeper")
 
 
-class DuplicateTest:
+class DuplicateTest(SweeperBase):
     """A class that finds and removes duplicate geometries or attributes or both"""
 
     def __init__(self, workspace, table_name):
@@ -125,9 +124,3 @@ class DuplicateTest:
             report["fixes"].append(f"{len(self.oids_with_issues)} records deleted successfully")
 
         return report
-
-    def clone(self, table_name):
-        log.info(f"cloning to {table_name}")
-        user = table_name.split(".")[0].upper()
-        user_workspace = Path(config.CONNECTIONS_FOLDER, f"{user}.sde")
-        return DuplicateTest(str(user_workspace), table_name)
