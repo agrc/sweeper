@@ -4,6 +4,7 @@
 test_address_parser.py
 tests for the address parser module
 """
+
 import pytest
 from sweeper.address_parser import Address, InvalidStreetTypeError, normalize_direction, normalize_street_type
 

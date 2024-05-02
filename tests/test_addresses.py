@@ -4,6 +4,7 @@
 test_addresses.py
 tests for the addresses sweeper
 """
+
 from os import path
 
 # ruff: isort: off

@@ -4,6 +4,7 @@
 metadata.py
 A sweeper that checks geodatabase metadata
 """
+
 import logging
 import re
 from os.path import dirname, join, realpath

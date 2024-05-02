@@ -4,6 +4,7 @@
 setup.py
 A module that installs sweeper as a module
 """
+
 import glob
 from os.path import basename, splitext
 from pathlib import Path
@@ -59,7 +60,6 @@ setup(
             "pytest-mock==3.*",
             "pytest-watch==4.*",
             "pytest==8.*",
-            "black==24.*",
             "ruff==0.*",
         ],
     },

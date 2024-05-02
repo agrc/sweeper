@@ -4,6 +4,7 @@
 test_metadata.py
 a module that tests the metadata sweeper
 """
+
 from os import path
 from unittest.mock import Mock
 
@@ -38,7 +39,6 @@ def does_not_contain_issue_with_text(issues, text):
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestMetadataSweeper:
-
     def test_no_tags(self):
         tool = MetadataTest(workspace, "Sweeper.CADASTRE.MissingTags")
         report = tool.sweep()
@@ -55,7 +55,6 @@ class TestMetadataSweeper:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestTitleCaseTag:
-
     def test_title_case_tag(self):
         #: input, expected
         tests = [
@@ -72,7 +71,6 @@ class TestTitleCaseTag:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestUpdateTags:
-
     def test_update_tags(self):
         results = update_tags(["a", "b", "c", "d"], ["b", "c"], ["B", "E"])
         expected = ["a", "d", "B", "E"]
@@ -82,7 +80,6 @@ class TestUpdateTags:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestSummary:
-
     def test_summary_longer_than_description(self):
         tool = MetadataTest(workspace, "Sweeper.CADASTRE.SummaryLongerThanDescription")
         report = tool.sweep()
@@ -98,7 +95,6 @@ class TestSummary:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestDescriptionParsing:
-
     def test_get_description_text_only(self):
         input = '<DIV STYLE="text-align:Left;"><DIV><P><SPAN>This is a short description.</SPAN></P></DIV></DIV>'
 
@@ -110,7 +106,6 @@ class TestDescriptionParsing:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestDescriptionChecks:
-
     def test_find_data_page_link(self):
         tool = MetadataTest(workspace, "Sweeper.CADASTRE.WithoutDataPageLink")
         report = tool.sweep()
@@ -126,7 +121,6 @@ class TestDescriptionChecks:
 
 @pytest.mark.skipif(should_skip, reason="No test SDE detected, skipping suit")
 class TestUseLimitation:
-
     def test_correct_use_limitation(self):
         tool = MetadataTest(workspace, "Sweeper.CADASTRE.CorrectUseLimitations")
         report = tool.sweep()

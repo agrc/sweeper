@@ -125,6 +125,7 @@ A normalized string representing the entire address that was passed into the con
 1. install required dependencies to work on sweeper
     - `pip install -e ".[tests]"`
 1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
-1. run tests: `pytest`
-1. run linter: `ruff check .`
 1. run sweeper: `python -m sweeper`
+1. test: `pytest`
+1. lint: `ruff check .`
+1. format: `ruff format .`
