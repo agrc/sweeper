@@ -102,28 +102,28 @@ A normalized string representing the entire address that was passed into the con
 <!-- Current conda install arcpy -c esri seems to be wonky; just clone to be safe -->
 
 1. clone arcgis conda environment
-    - `conda create --name sweeper --clone arcgispro-py3`
+   - `conda create --name sweeper --clone arcgispro-py3`
 1. activate environment
-    - `activate sweeper`
+   - `activate sweeper`
 1. install sweeper
-    - `pip install agrc-sweeper`
-1. create a file named `config.json` in the folder where you will run sweeper with the following contents:
+   - `pip install agrc-sweeper`
+1. Optionally duplicate `config.sample.json` as `config.json` in the folder where you will run sweeper.
 
-```json
-{
-    "SENDGRID_API_KEY": "your_sendgrid_api_key",
-    "TO_ADDRESSES": []
-}
-```
+> [!CAUTION]
+> This is required for the following functions:
+>
+> - `--scheduled` argument (required for sending emails)
+> - `--change-detect` argument
+> - using user-specific connection files via the `CONNECTIONS_FOLDER` config value
 
 ## Development
 
 1. clone arcgis conda environment
-    - `conda create --name sweeper --clone arcgispro-py3`
+   - `conda create --name sweeper --clone arcgispro-py3`
 1. activate environment
-    - `activate sweeper`
+   - `activate sweeper`
 1. install required dependencies to work on sweeper
-    - `pip install -e ".[tests]"`
+   - `pip install -e ".[tests]"`
 1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
 1. run sweeper: `sweeper`
 1. test: `pytest`
