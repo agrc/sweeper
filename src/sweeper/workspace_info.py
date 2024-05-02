@@ -49,6 +49,13 @@ def get_featureclasses(workspace_path):
     workspace_path: full path to the feature workspace.
     """
 
+    try:
+        arcpy.da.Describe(workspace_path)
+    except ValueError:
+        raise ValueError(f"{workspace_path} is not a valid workspace.")
+
+    log.info(f"{workspace_path} exists.")
+
     with arcpy.EnvManager(workspace=workspace_path):
         fc_list = []
 
