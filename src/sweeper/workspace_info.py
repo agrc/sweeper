@@ -54,12 +54,11 @@ def get_featureclasses(workspace_path):
     except ValueError:
         raise ValueError(f"{workspace_path} is not a valid workspace.")
 
-    log.info(f"{workspace_path} exists.")
-
     with arcpy.EnvManager(workspace=workspace_path):
         fc_list = []
 
         datasets = arcpy.ListDatasets(feature_type="feature")
+        #: add an empty string to make sure we get feature layers in the root
         datasets = [""] + datasets if datasets is not None else []
 
         #: generate a list of feature classes showing their full path (Example: Directory/Workspace/Dataset/TableName)
