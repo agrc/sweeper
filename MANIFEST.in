@@ -1,2 +1,3 @@
 include src/sweeper/*.json
 include src/sweeper/sweepers/*.html
+exclude config.json

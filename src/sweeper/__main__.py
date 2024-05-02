@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # * coding: utf8 *
-'''
+"""
 sweeper
 
 Usage:
@@ -21,69 +21,77 @@ Arguments:
 Examples:
   sweeper sweep           --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb
   sweeper sweep addresses --workspace=c:\\data\\thing --try-fix --save-report=c:\\temp --backup-to=c:\\temp\\backup.gdb --field-name=ADDRESS
-'''
-import sys
+"""
 import datetime
 import logging
 import logging.handlers
-import pkg_resources
+import sys
 from pathlib import Path
 
+import pkg_resources
 from docopt import docopt
-
+from supervisor.message_handlers import SendGridHandler
 from supervisor.models import MessageDetails, Supervisor
-from supervisor.message_handlers import EmailHandler
 
-from . import backup, report, workspace_info, credentials
+from . import backup, config, report, version, workspace_info
+from .sweepers.addresses import AddressTest
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
-from .sweepers.addresses import AddressTest
 from .sweepers.metadata import MetadataTest
 
 
 def main():
-    '''Main entry point for program. Parse arguments and pass to sweeper modules.
-    '''
-    args = docopt(__doc__, version=pkg_resources.require('agrc-sweeper')[0].version)
+    """Main entry point for program. Parse arguments and pass to sweeper modules."""
+    args = docopt(__doc__, version=pkg_resources.require("agrc-sweeper")[0].version)
 
-    log = setup_logging(args['--save-report'], args['--scheduled'])
+    log = setup_logging(args["--save-report"], args["--scheduled"])
 
-    if args['--scheduled']:
+    if args["--scheduled"]:
         #: set up supervisor, add email handler
         sweeper_supervisor = Supervisor()
-        sweeper_supervisor.add_message_handler(EmailHandler(credentials.EMAIL_SETTINGS, client_name='agrc-sweeper'))
+        sweeper_supervisor.add_message_handler(
+            SendGridHandler(
+                {
+                    "from_address": "noreply@utah.gov",
+                    "to_addresses": config.TO_ADDRESSES,
+                    "api_key": config.SENDGRID_API_KEY,
+                },
+                client_name="agrc-sweeper",
+                client_version=version.__version__,
+            )
+        )
 
     #: backup input file before quality checks
-    if args['--backup-to']:
-        backup.backup_data(args['--workspace'], args['--table-name'], args['--backup-to'])
+    if args["--backup-to"]:
+        backup.backup_data(args["--workspace"], args["--table-name"], args["--backup-to"])
 
     #: create a list to hold the instantiated objects.
     closet = []
 
     #: check what quality check to run.
-    if args['duplicates']:
-        closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
-    elif args['invalids']:
+    if args["duplicates"]:
+        closet.append(DuplicateTest(args["--workspace"], args["--table-name"]))
+    elif args["invalids"]:
         raise NotImplementedError('"Invalids" sweep/check not implemented yet.')
-    elif args['empties']:
-        closet.append(EmptyTest(args['--workspace'], args['--table-name']))
-    elif args['addresses']:
-        closet.append(AddressTest(args['--workspace'], args['--table-name'], args['--field-name']))
-    elif args['metadata']:
-        closet.append(MetadataTest(args['--workspace'], args['--table-name']))
+    elif args["empties"]:
+        closet.append(EmptyTest(args["--workspace"], args["--table-name"]))
+    elif args["addresses"]:
+        closet.append(AddressTest(args["--workspace"], args["--table-name"], args["--field-name"]))
+    elif args["metadata"]:
+        closet.append(MetadataTest(args["--workspace"], args["--table-name"]))
     else:
-        closet.append(DuplicateTest(args['--workspace'], args['--table-name']))
-        closet.append(EmptyTest(args['--workspace'], args['--table-name']))
-        closet.append(MetadataTest(args['--workspace'], args['--table-name']))
+        closet.append(DuplicateTest(args["--workspace"], args["--table-name"]))
+        closet.append(EmptyTest(args["--workspace"], args["--table-name"]))
+        closet.append(MetadataTest(args["--workspace"], args["--table-name"]))
 
-    reports = execute_sweepers(closet, args['--try-fix'], args['--change-detect'], log)
+    reports = execute_sweepers(closet, args["--try-fix"], args["--change-detect"], log)
 
     report.print_report(reports)
 
-    if args['--save-report']:
-        report.save_report(reports, args['--save-report'])
+    if args["--save-report"]:
+        report.save_report(reports, args["--save-report"])
 
-    if args['--scheduled']:
+    if args["--scheduled"]:
         report.add_to_log(reports)
 
         final_message = report.format_message(reports)
@@ -92,20 +100,19 @@ def main():
         #: Build and send summary message
         summary_message = MessageDetails()
         summary_message.message = final_message.getvalue()
-        summary_message.project_name = 'agrc-sweeper'
-        summary_message.attachments = [credentials.LOG_FILE_PATH]
-        summary_message.subject = f'Sweeper Report {datetime.datetime.today()}'
+        summary_message.attachments = [config.LOG_FILE_PATH]
+        summary_message.subject = f"Sweeper Report {datetime.datetime.today()}"
 
         sweeper_supervisor.notify(summary_message)
 
 
 def execute_sweepers(closet, try_fix, using_change_detection, log):
-    '''
+    """
     orchestrate the sweeper calls.
 
     closet: array of sweepers.
     try_fix: bool whether to fix or not.
-    '''
+    """
 
     feature_class_names = []
     reports = []
@@ -119,7 +126,7 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
             #: run sweeper again to ensure all errors were fixed.
             reports.append(tool.sweep())
 
-    log.info(f'running {len(closet)} sweepers. try fix: {try_fix}')
+    log.info(f"running {len(closet)} sweepers. try fix: {try_fix}")
     for tool in closet:
         if tool.table_name:
             run_tool(tool)
@@ -129,19 +136,19 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
         #: get feature class names once
         if len(feature_class_names) == 0:
             if using_change_detection:
-                log.info('Getting table names from change detection table')
+                log.info("Getting table names from change detection table")
                 feature_class_names = workspace_info.get_change_detection()
             else:
-                log.info('Missing table name, executing over workspace')
+                log.info("Missing table name, executing over workspace")
                 feature_class_names = workspace_info.get_featureclasses(tool.workspace)
-                if any('SGID.' in fc for fc in feature_class_names):
-                    feature_class_names = [fc.split('SGID.', 1)[1] for fc in feature_class_names if 'SGID.' in fc]
+                if any("SGID." in fc for fc in feature_class_names):
+                    feature_class_names = [fc.split("SGID.", 1)[1] for fc in feature_class_names if "SGID." in fc]
 
-        log.info(f'feature_class_names is: {feature_class_names}')
+        log.info(f"feature_class_names is: {feature_class_names}")
 
         if using_change_detection and feature_class_names is None:
             #: reset variable to empty list
-            log.info('Change detection found no updated tables')
+            log.info("Change detection found no updated tables")
             feature_class_names = []
 
             continue
@@ -159,10 +166,12 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
 
 
 def setup_logging(save_report, scheduled):
-    logger = logging.getLogger('sweeper')
+    logger = logging.getLogger("sweeper")
     logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter(fmt='%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s', datefmt='%m-%d %H:%M:%S')
+    formatter = logging.Formatter(
+        fmt="%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s", datefmt="%m-%d %H:%M:%S"
+    )
 
     #: always set up console_handler
     console_handler = logging.StreamHandler(stream=sys.stdout)
@@ -170,8 +179,7 @@ def setup_logging(save_report, scheduled):
 
     #: use log file when report location not provided and when running from scheduled task
     if scheduled and not save_report:
-        #: get LOG_FILE_PATH from credentials.py
-        log_file = Path(credentials.LOG_FILE_PATH)
+        log_file = Path(config.LOG_FILE_PATH)
         file_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
         file_handler.doRollover()
         file_handler.setFormatter(formatter)
@@ -183,5 +191,5 @@ def setup_logging(save_report, scheduled):
     return logger
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
