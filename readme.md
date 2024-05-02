@@ -107,6 +107,14 @@ A normalized string representing the entire address that was passed into the con
     - `activate sweeper`
 1. install sweeper
     - `pip install agrc-sweeper`
+1. create a file named `config.json` in the folder where you will run sweeper with the following contents:
+
+```json
+{
+    "SENDGRID_API_KEY": "your_sendgrid_api_key",
+    "TO_ADDRESSES": []
+}
+```
 
 ## Development
 
@@ -114,14 +122,9 @@ A normalized string representing the entire address that was passed into the con
     - `conda create --name sweeper --clone arcgispro-py3`
 1. activate environment
     - `activate sweeper`
-1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
-
-### Installing dependencies
-
-1. clone arcgis conda environment
-    - `conda create --name sweeper --clone arcgispro-py3`
-1. install only required dependencies to run sweeper
-    - `pip install -e .`
 1. install required dependencies to work on sweeper
     - `pip install -e ".[tests]"`
+1. `test_metadata.py` uses a SQL database that needs to be restored via `src/sweeper/tests/data/Sweeper.bak` to your local SQL Server.
 1. run tests: `pytest`
+1. run linter: `ruff check .`
+1. run sweeper: `python -m sweeper`
