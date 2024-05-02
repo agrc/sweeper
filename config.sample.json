@@ -1,0 +1,7 @@
+{
+  "SENDGRID_API_KEY": "your api key",
+  "TO_ADDRESSES": ["someone@utah.gov"],
+  "CONNECTIONS_FOLDER": "path-to-folder",
+  "CHANGE_DETECTION_CONNECTION": "something.sde",
+  "CHANGE_DETECTION_TABLE": "SGID.META.ChangeDetection"
+}

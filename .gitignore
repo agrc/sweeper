@@ -1,6 +1,3 @@
-#: file containing necessary credentials for running Sweeper
-credentials.py
-
 *.bat
 *.pyc
 *.egg-info
@@ -10,6 +7,7 @@ dist/
 build/
 .env/
 .last_checked
-sweeper_log*
+sweeper.log*
 .coverage
 cov.xml
+config.json
