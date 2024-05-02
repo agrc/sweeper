@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.4-0](https://github.com/agrc/sweeper/compare/v1.4.3...v1.4.4-0) (2024-05-02)
+
+
+### 🐛 Bug Fixes
+
+* add config to CI runs ([37bcedf](https://github.com/agrc/sweeper/commit/37bcedfc70dc2cfd67835e8706deb28df87f87b4))
+* credentials.py -&gt; config.json and smtp -> SendGrid ([09cb107](https://github.com/agrc/sweeper/commit/09cb107eaf08c7ac3713dcd8337f2fcda9514867)), closes [#85](https://github.com/agrc/sweeper/issues/85) [#86](https://github.com/agrc/sweeper/issues/86)
+* modernize and apply best practices ([12a3aa5](https://github.com/agrc/sweeper/commit/12a3aa56b9b8fce96a10a3584e8b5a44930b0f8a))
+* move tests to standard directory and add skipping logic ([46c43c0](https://github.com/agrc/sweeper/commit/46c43c041caedc3c664ea52aba14da9d3de351d5))
+* run ruff separate from pytest ([5b3f62b](https://github.com/agrc/sweeper/commit/5b3f62b8f89e2457f24c7f5fddaf18cb8ea754fd)), closes [#98](https://github.com/agrc/sweeper/issues/98)
+
 ## [1.4.3](https://github.com/agrc/sweeper/compare/v1.4.2...v1.4.3) (2023-07-06)
 
 
