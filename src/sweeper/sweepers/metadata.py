@@ -175,6 +175,8 @@ def get_description_text_only(html):
 class MetadataTest(SweeperBase):
     """A class that validates geodatabase metadata"""
 
+    key = "metadata"
+
     def __init__(self, workspace, table_name):
         self.workspace = workspace
         self.table_name = table_name

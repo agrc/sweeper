@@ -14,6 +14,8 @@ log = logging.getLogger("sweeper")
 class DuplicateTest(SweeperBase):
     """A class that finds and removes duplicate geometries or attributes or both"""
 
+    key = "duplicates"
+
     def __init__(self, workspace, table_name):
         self.workspace = workspace
         self.table_name = table_name
