@@ -34,7 +34,7 @@ from docopt import docopt
 from supervisor.message_handlers import SendGridHandler
 from supervisor.models import MessageDetails, Supervisor
 
-from . import backup, config, report, workspace_info
+from . import backup, config, report, utilities, workspace_info
 from .sweepers.addresses import AddressTest
 from .sweepers.duplicates import DuplicateTest
 from .sweepers.empties import EmptyTest
@@ -129,6 +129,7 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
 
     log.info(f"running {len(closet)} sweepers. try fix: {try_fix}")
     for tool in closet:
+        log.info(f"running sweeper: {tool.key}")
         if tool.table_name:
             run_tool(tool)
 
@@ -144,6 +145,16 @@ def execute_sweepers(closet, try_fix, using_change_detection, log):
                 feature_class_names = workspace_info.get_featureclasses(tool.workspace)
                 if any("SGID." in fc for fc in feature_class_names):
                     feature_class_names = [fc.split("SGID.", 1)[1] for fc in feature_class_names if "SGID." in fc]
+
+            #: apply exclusions
+            if config.has_config():
+                try:
+                    exclusions_config = config.get_config("EXCLUSIONS")
+                except KeyError:
+                    exclusions_config = {}
+
+                exclusions = exclusions_config.get(tool.key, [])
+            feature_class_names = utilities.apply_exclusions(feature_class_names, exclusions)
 
         log.info(f"feature_class_names is: {feature_class_names}")
 

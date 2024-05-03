@@ -116,6 +116,10 @@ A normalized string representing the entire address that was passed into the con
 > - `--change-detect` argument
 > - using user-specific connection files via the `CONNECTIONS_FOLDER` config value
 
+## Exclusions
+
+Tables can be skipped by adding values to the `EXCLUSIONS.<sweeper_key>` config array. These values are matched against table names using [fnmatch](https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch). Note that these do not apply when using the `--table-name` argument.
+
 ## Development
 
 1. clone arcgis conda environment

@@ -5,6 +5,8 @@
 class InvalidSweeper:
     """A class that identifies invalid geometry objects and returns a report dictionary"""
 
+    key = "invalids"
+
     def __init__(self, workspace, table_name):
         self.report = {}
         self.workspace = workspace

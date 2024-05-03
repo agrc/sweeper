@@ -7,11 +7,15 @@ A sweeper that works on address fields
 """
 
 import arcpy
+
+
 from ..address_parser import Address
 
 
 class AddressTest:
     """A class that validates address data"""
+
+    key = "addresses"
 
     def __init__(self, workspace, table_name, field_name):
         self.workspace = workspace

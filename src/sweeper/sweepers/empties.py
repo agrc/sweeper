@@ -14,6 +14,8 @@ log = logging.getLogger("sweeper")
 class EmptyTest(SweeperBase):
     """A class to find empty geometries"""
 
+    key = "empties"
+
     def __init__(self, workspace, table_name):
         self.workspace = workspace
         self.table_name = table_name
