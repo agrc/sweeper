@@ -11,6 +11,8 @@ from pathlib import Path
 
 import arcpy
 
+from sweeper.sweepers.utilities import apply_exclusions
+
 from . import config
 
 log = logging.getLogger("sweeper")
@@ -65,6 +67,15 @@ def get_featureclasses(workspace_path):
         for ds in datasets:
             for fc in arcpy.ListFeatureClasses(feature_dataset=ds):
                 fc_list.append(fc)
+
+        if config.has_config():
+            try:
+                exclusions = config.get_config("EXCLUSIONS")
+            except KeyError:
+                exclusions = []
+
+            if len(exclusions):
+                fc_list = apply_exclusions(fc_list, exclusions)
 
         return fc_list
 
