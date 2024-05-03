@@ -1,5 +1,5 @@
 import logging
-from fnmatch import fnmatch
+from fnmatch import fnmatchcase
 
 log = logging.getLogger("sweeper")
 
@@ -18,7 +18,7 @@ def apply_exclusions(list, exclusions):
     for exclusion in exclusions:
         new_list = []
         for item in list:
-            if fnmatch(item, exclusion):
+            if fnmatchcase(item.casefold(), exclusion.casefold()):
                 log.info(f"Excluding {item} based on exclusion {exclusion}")
             else:
                 new_list.append(item)
