@@ -342,6 +342,17 @@ class TestUnitParts:
         assert address.street_type == "ST"
         assert address.normalized == "957 PATTERSON ST REAR"
 
+    def test_multiple_units(self):
+        address = Address("1361 N 1075 WEST UNIT 12 BLDG B")
+
+        assert address.address_number == "1361"
+        assert address.prefix_direction == "N"
+        assert address.street_name == "1075"
+        assert address.street_direction == "W"
+        assert address.unit_type == "UNIT"
+        assert address.unit_id == "12-B"
+        assert address.normalized == "1361 N 1075 W UNIT 12-B"
+
 
 class TestPOBox:
     """
