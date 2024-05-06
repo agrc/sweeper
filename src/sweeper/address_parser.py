@@ -46,6 +46,7 @@ with open(join(dirname(realpath(__file__)), "street_types.json"), "r") as file:
 HWY_REGEX = re.compile("(SR|STATE ROUTE|HIGHWAY)")
 UNIT_VALUES_NOT_APPROPRIATE_FOR_HASH_SIGN = ["rear"]
 CARDINALS = ["N", "S", "E", "W", "NO", "SO", "EA", "WE", "NORTH", "SOUTH", "EAST", "WEST"]
+SHORTENED_CARDINALS = re.compile("rd|nd|th$", re.IGNORECASE)
 
 
 class Address:
@@ -110,7 +111,7 @@ class Address:
             del self.StreetNamePreModifier
 
         #: look for two-character prefix directions which usaddress does not handle
-        if self.street_name:
+        if self.street_name is not None:
             street_name_parts = self.street_name.split(" ")
             if len(street_name_parts) > 1:
                 if street_name_parts[0].upper() in TWO_CHAR_DIRECTIONS and self.prefix_direction is None:
@@ -140,6 +141,10 @@ class Address:
                 else:
                     self.street_name += f" {self.street_type}"
                 self.street_type = None
+
+        if self.street_direction is not None and self.street_name is not None:
+            #: check for shortened cardinals
+            self.street_name = SHORTENED_CARDINALS.sub("00", self.street_name)
 
         if self.unit_id is not None:
             #: add `#` if there is not unit type and the unit is numeric
