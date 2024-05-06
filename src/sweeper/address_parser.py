@@ -45,6 +45,7 @@ with open(join(dirname(realpath(__file__)), "street_types.json"), "r") as file:
     STREET_TYPES = json.loads(file.read())
 HWY_REGEX = re.compile("(SR|STATE ROUTE|HIGHWAY)")
 UNIT_VALUES_NOT_APPROPRIATE_FOR_HASH_SIGN = ["rear"]
+CARDINALS = ["N", "S", "E", "W", "NO", "SO", "EA", "WE", "NORTH", "SOUTH", "EAST", "WEST"]
 
 
 class Address:
@@ -79,6 +80,20 @@ class Address:
                 setattr(self, part, value)
             except AttributeError:
                 pass
+
+        #: check for incorrectly included prefix directions in street name
+        if self.street_name is not None:
+            street_name_parts = self.street_name.split(" ")
+            first_word = street_name_parts[0].upper()
+            if len(street_name_parts) > 1 and is_cardinal(first_word) and self.prefix_direction is None:
+                self.prefix_direction = normalize_direction(first_word)
+                self.street_name = " ".join(street_name_parts[1:])
+
+        #: check for cardinals incorrectly parsed as address_number_suffix
+        if is_cardinal(self.address_number_suffix):
+            self.street_name = f"{parts['prefix_direction'].upper()} {self.street_name}"
+            self.prefix_direction = self.address_number_suffix
+            self.address_number_suffix = None
 
         if self.po_box is not None:
             return
@@ -199,3 +214,14 @@ class InvalidStreetTypeError(Exception):
     def __init__(self, type_text):
         super().__init__()
         self.message = f"No matching abbreviation found for {type_text}"
+
+
+def is_cardinal(text):
+    """
+    returns True if the input text is a cardinal direction
+    """
+
+    if text is None:
+        return False
+
+    return text.upper() in CARDINALS
