@@ -6,7 +6,14 @@ tests for the address parser module
 """
 
 import pytest
-from sweeper.address_parser import Address, InvalidStreetTypeError, normalize_direction, normalize_street_type
+
+from sweeper.address_parser import (
+    Address,
+    InvalidStreetTypeError,
+    is_cardinal,
+    normalize_direction,
+    normalize_street_type,
+)
 
 
 class TestAddressNumber:
@@ -60,6 +67,31 @@ class TestPrefixDirection:
         assert address.street_type == "DR"
         assert address.street_direction is None
         assert address.normalized == "1901 SIDEWINDER DR"
+
+    def test_street_name_begins_with_direction(self):
+        address = Address("4036 E South Fork Canyon Rd")
+
+        assert address.address_number == "4036"
+        assert address.address_number_suffix is None
+        assert address.prefix_direction == "E"
+        assert address.street_name == "SOUTH FORK CANYON"
+        assert address.street_type == "RD"
+
+        address = Address("4036 E East Fork Canyon Rd")
+
+        assert address.address_number == "4036"
+        assert address.address_number_suffix is None
+        assert address.prefix_direction == "E"
+        assert address.street_name == "EAST FORK CANYON"
+        assert address.street_type == "RD"
+
+        address = Address("4036 E West Fork Canyon Rd")
+
+        assert address.address_number == "4036"
+        assert address.address_number_suffix is None
+        assert address.prefix_direction == "E"
+        assert address.street_name == "WEST FORK CANYON"
+        assert address.street_type == "RD"
 
 
 class TestStreetName:
@@ -589,3 +621,25 @@ def test_cities():
     assert address.street_type == "ST"
     assert address.street_direction is None
     assert address.city == "CITY OF HOLLADAY"
+
+
+def test_is_cardinal():
+    tests = [
+        ["N", True],
+        ["S", True],
+        ["E", True],
+        ["W", True],
+        ["NO", True],
+        ["north", True],
+        ["south", True],
+        ["east", True],
+        ["west", True],
+        ["123", False],
+        ["", False],
+        ["1234", False],
+        ["1234a", False],
+        [None, False],
+    ]
+
+    for input_text, expected in tests:
+        assert is_cardinal(input_text) == expected
