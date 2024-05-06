@@ -101,6 +101,13 @@ class TestStreetDirection:
         assert address.street_direction == "N"
         assert address.street_type is None
 
+    def test_two_letter_street_direction(self):
+        address = Address("166 E 14000 SO SUITE 200")
+
+        assert address.street_direction == "S"
+        assert address.street_type is None
+        assert address.street_name == "14000"
+
 
 class TestNormalizeDirection:
     """
