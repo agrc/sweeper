@@ -53,5 +53,8 @@
     "python.languageServer": "Pylance",
     "python.testing.pytestEnabled": true,
     "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "python.testing.pytestArgs": [
+        "--no-cov"
+    ]
 }
