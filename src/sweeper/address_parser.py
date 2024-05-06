@@ -65,6 +65,8 @@ class Address:
     zip_code = None
     po_box = None
     state = None
+    StreetNamePreType = None
+    StreetNamePreModifier = None
 
     def __init__(self, address_text):
         parts, parsed_as = usaddress.tag(address_text.replace(".", ""), TAG_MAPPING)
@@ -126,14 +128,21 @@ class Address:
             #: handle multiple street_types (assume only the last one is valid and move all others to the street name)
             if len(self.street_type.split(" ")) > 1:
                 parsed_street_types = self.street_type.split(" ")
-                self.street_name += " " + " ".join(parsed_street_types[:-1])
+                new_street_name = " ".join(parsed_street_types[:-1])
+                if self.street_name is None:
+                    self.street_name = new_street_name
+                else:
+                    self.street_name += f" {new_street_name}"
                 self.street_type = parsed_street_types[-1]
 
             try:
                 self.street_type = normalize_street_type(self.street_type)
             except InvalidStreetTypeError:
                 #: must be part of the street name
-                self.street_name += f" {self.street_type}"
+                if self.street_name is None:
+                    self.street_name = self.street_type
+                else:
+                    self.street_name += f" {self.street_type}"
                 self.street_type = None
 
         if self.unit_id is not None:
