@@ -6,7 +6,6 @@ tests for the address parser module
 """
 
 import pytest
-
 from sweeper.address_parser import (
     Address,
     InvalidStreetTypeError,
@@ -120,6 +119,32 @@ class TestStreetName:
 
         assert address.street_name == "MAIN"
         assert address.prefix_direction is None
+
+    def test_shortened_numeric_names(self):
+        address = Address("2040 S 23rd E")
+
+        assert address.address_number == "2040"
+        assert address.prefix_direction == "S"
+        assert address.street_name == "2300"
+        assert address.street_direction == "E"
+        assert address.normalized == "2040 S 2300 E"
+        assert address.street_type is None
+
+        address = Address("70 N 2ND E")
+        assert address.address_number == "70"
+        assert address.prefix_direction == "N"
+        assert address.street_name == "200"
+        assert address.street_direction == "E"
+        assert address.normalized == "70 N 200 E"
+        assert address.street_type is None
+
+        address = Address("123 S 20th E")
+        assert address.address_number == "123"
+        assert address.prefix_direction == "S"
+        assert address.street_name == "2000"
+        assert address.street_direction == "E"
+        assert address.normalized == "123 S 2000 E"
+        assert address.street_type is None
 
 
 class TestStreetDirection:
