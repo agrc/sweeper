@@ -70,7 +70,13 @@ class Address:
     StreetNamePreModifier = None
 
     def __init__(self, address_text):
-        parts, parsed_as = usaddress.tag(address_text.replace(".", ""), TAG_MAPPING)
+        address_text = address_text.replace(".", "")
+        extra_unit_parts = None
+        try:
+            parts, parsed_as = usaddress.tag(address_text, TAG_MAPPING)
+        except usaddress.RepeatedLabelError:
+            parts, parsed_as = usaddress.tag(" ".join(address_text.split(" ")[:-2]), TAG_MAPPING)
+            extra_unit_parts, _ = usaddress.tag(" ".join(address_text.split(" ")[-2:]), TAG_MAPPING)
         if parsed_as not in ["Street Address", "PO Box"]:
             raise Exception(f'"{address_text}" is not recognized as a valid street address, or P.O. Box')
 
@@ -158,6 +164,9 @@ class Address:
             #: strip `#` if there is a unit type
             elif self.unit_id.startswith("#") and self.unit_type is not None:
                 self.unit_id = self.unit_id[1:].strip()
+
+            if extra_unit_parts:
+                self.unit_id = f"{self.unit_id}-{extra_unit_parts['unit_id']}"
 
     def __repr__(self):
         properties = vars(self)
