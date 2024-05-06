@@ -100,18 +100,14 @@ class Address:
         if self.po_box is not None:
             return
 
-        try:
+        if self.StreetNamePreType is not None:
             #: e.g. US HWY
             self.street_name = f"{normalize_street_name_pre_type(self.StreetNamePreType)} {self.street_name}"
             del self.StreetNamePreType
-        except AttributeError:
-            pass
 
-        try:
+        if self.StreetNamePreModifier is not None:
             self.street_name = f"{self.StreetNamePreModifier} {self.street_name}"
             del self.StreetNamePreModifier
-        except AttributeError:
-            pass
 
         #: look for two-character prefix directions which usaddress does not handle
         if self.street_name:
