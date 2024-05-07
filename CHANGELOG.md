@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/agrc/sweeper/compare/v2.0.0...v2.0.1) (2024-05-07)
+
+
+### 🐛 Bug Fixes
+
+* agrc -&gt; ugrc ([10e681e](https://github.com/agrc/sweeper/commit/10e681e1bc7f720e3ef7d3427529622b243251d5))
+
 ## [2.0.0](https://github.com/agrc/sweeper/compare/v1.4.3...v2.0.0) (2024-05-07)
 
 
