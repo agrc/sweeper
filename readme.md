@@ -1,4 +1,4 @@
-# agrc-sweeper [![PyPI version](https://badge.fury.io/py/agrc-sweeper.svg)](https://badge.fury.io/py/agrc-sweeper)[![Push Events](https://github.com/agrc/sweeper/actions/workflows/push.yml/badge.svg)](https://github.com/agrc/sweeper/actions/workflows/push.yml)
+# ugrc-sweeper [![PyPI version](https://badge.fury.io/py/ugrc-sweeper.svg)](https://badge.fury.io/py/ugrc-sweeper)[![Push Events](https://github.com/agrc/sweeper/actions/workflows/push.yml/badge.svg)](https://github.com/agrc/sweeper/actions/workflows/push.yml)
 
 The data cleaning service.
 
@@ -106,7 +106,7 @@ A normalized string representing the entire address that was passed into the con
 1. activate environment
    - `activate sweeper`
 1. install sweeper
-   - `pip install agrc-sweeper`
+   - `pip install ugrc-sweeper`
 1. Optionally duplicate `config.sample.json` as `config.json` in the folder where you will run sweeper.
 
 > [!CAUTION]

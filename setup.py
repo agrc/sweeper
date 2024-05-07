@@ -12,7 +12,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 setup(
-    name="agrc-sweeper",
+    name="ugrc-sweeper",
     version="2.0.0",
     license="MIT",
     description="CLI tool for making good data",

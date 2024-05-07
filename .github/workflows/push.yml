@@ -38,7 +38,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created
     environment:
       name: prod
-      url: https://pypi.org/project/agrc-sweeper/
+      url: https://pypi.org/project/ugrc-sweeper/
     permissions:
       id-token: write
 
