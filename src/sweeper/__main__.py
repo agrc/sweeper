@@ -43,7 +43,7 @@ from .sweepers.metadata import MetadataTest
 
 def main():
     """Main entry point for program. Parse arguments and pass to sweeper modules."""
-    args = docopt(__doc__, version=pkg_resources.require("agrc-sweeper")[0].version)
+    args = docopt(__doc__, version=pkg_resources.require("ugrc-sweeper")[0].version)
 
     log = setup_logging(args["--save-report"], args["--scheduled"])
 
@@ -57,8 +57,8 @@ def main():
                     "to_addresses": config.get_config("TO_ADDRESSES"),
                     "api_key": config.get_config("SENDGRID_API_KEY"),
                 },
-                client_name="agrc-sweeper",
-                client_version=pkg_resources.require("agrc-sweeper")[0].version,
+                client_name="ugrc-sweeper",
+                client_version=pkg_resources.require("ugrc-sweeper")[0].version,
             )
         )
 
