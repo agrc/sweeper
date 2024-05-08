@@ -4,12 +4,12 @@
 sweeper
 
 Usage:
-  sweeper sweep duplicates  --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --scheduled --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep empties     --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --scheduled --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep invalids    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --scheduled --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep duplicates  --workspace=<workspace> [--table-name=<table_name> | --change-detect] [--verbose --try-fix --scheduled --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep empties     --workspace=<workspace> [--table-name=<table_name> | --change-detect] [--verbose --try-fix --scheduled --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep invalids    --workspace=<workspace> [--table-name=<table_name> | --change-detect] [--verbose --try-fix --scheduled --save-report=<report_path> --backup-to=<backup_path>]
   sweeper sweep addresses   --workspace=<workspace> --table-name=<table-name> --field-name=<field_name> [--verbose --try-fix --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep metadata    --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --scheduled --save-report=<report_path> --backup-to=<backup_path>]
-  sweeper sweep             --workspace=<workspace> [--table-name=<table_name> --verbose --try-fix --change-detect --scheduled --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep metadata    --workspace=<workspace> [--table-name=<table_name> | --change-detect] [--verbose --try-fix --scheduled --save-report=<report_path> --backup-to=<backup_path>]
+  sweeper sweep             --workspace=<workspace> [--table-name=<table_name> | --change-detect] [--verbose --try-fix --scheduled --save-report=<report_path> --backup-to=<backup_path>]
 
 Arguments:
   workspace     - path to workspace eg: `c:\\my.gdb`
