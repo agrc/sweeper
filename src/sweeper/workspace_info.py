@@ -76,6 +76,7 @@ def get_change_detection():
     if checked_date:
         checked_string = datetime.datetime.strptime(checked_date, "%Y-%m-%d")
     else:
+        #: this was a deliberate choice so that the first time sweeper is run, it won't processes all tables
         checked_string = datetime.date.today()
 
     last_checked = checked_string.strftime("%m/%d/%Y")
