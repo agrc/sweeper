@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.2](https://github.com/agrc/sweeper/compare/v2.0.1...v2.0.2) (2024-05-08)
+
+
+### 🐛 Bug Fixes
+
+* look for change detection connection file in connections config folder ([cc5d4bf](https://github.com/agrc/sweeper/commit/cc5d4bf8f02e2233922aef48f0730292d140b2f2))
+* make --table-name and --change-detect mutually exclusive ([37acc44](https://github.com/agrc/sweeper/commit/37acc44b2dd0bf80bca9dabcb0825bab7c30d92f))
+* move release coverage upload to separate job ([fba9dcc](https://github.com/agrc/sweeper/commit/fba9dccb70ea478076a83939895319275c75a64a))
+* upload code coverage after release ([1620d92](https://github.com/agrc/sweeper/commit/1620d92c8636c641c7793e41411ab19055413416))
+
+
+### 📖 Documentation Improvements
+
+* clarify default last checked date decision ([6d119cd](https://github.com/agrc/sweeper/commit/6d119cdef9d9c6223fdc687d2a68904fcb986510))
+
 ## [2.0.1](https://github.com/agrc/sweeper/compare/v2.0.0...v2.0.1) (2024-05-07)
 
 
