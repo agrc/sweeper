@@ -81,7 +81,7 @@ def get_change_detection():
     last_checked = checked_string.strftime("%m/%d/%Y")
     log.info(f"Last date change detection was checked: {last_checked}")
 
-    egdb = Path(config.get_config("CHANGE_DETECTION_CONNECTION"))
+    egdb = Path(config.get_config("CONNECTIONS_FOLDER")) / config.get_config("CHANGE_DETECTION_CONNECTION")
     cd_table = config.get_config("CHANGE_DETECTION_TABLE")
 
     egdb_conn = arcpy.ArcSDESQLExecute(str(egdb))
