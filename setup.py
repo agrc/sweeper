@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="ugrc-sweeper",
-    version="2.0.2",
+    version="2.0.3",
     license="MIT",
     description="CLI tool for making good data",
     long_description=(Path(__file__).parent / "readme.md").read_text(),
