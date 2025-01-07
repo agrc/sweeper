@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/agrc/sweeper/compare/v2.0.2...v2.0.3) (2025-01-07)
+
+
+### Dependencies
+
+* **dev:** update pytest-cov requirement from ==5.* to &gt;=5,&lt;7 ([#126](https://github.com/agrc/sweeper/issues/126)) ([8484699](https://github.com/agrc/sweeper/commit/8484699281c55afe3c126ed9a464199a8750ad7f))
+
 ## [2.0.2](https://github.com/agrc/sweeper/compare/v2.0.1...v2.0.2) (2024-05-08)
 
 
