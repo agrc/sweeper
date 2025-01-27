@@ -16,7 +16,7 @@ setup(
     version="2.0.4",
     license="MIT",
     description="CLI tool for making good data",
-    long_description=(Path(__file__) / "readme.md").read_text(),
+    long_description=(Path(__file__).parent / "readme.md").read_text(),
     long_description_content_type="text/markdown",
     author="UGRC",
     author_email="ugrc-developers@utah.gov",
