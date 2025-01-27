@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.5](https://github.com/agrc/sweeper/compare/v2.0.4...v2.0.5) (2025-01-27)
+
+
+### Bug Fixes
+
+* correct path to readme for publishing ([807dda6](https://github.com/agrc/sweeper/commit/807dda60381b77440073377d42ff7fb4c64799da))
+* include readme in manifest for publishing ([dcd1ad8](https://github.com/agrc/sweeper/commit/dcd1ad8eab355c799d767682d55129404edd448b))
+
 ## [2.0.4](https://github.com/agrc/sweeper/compare/v2.0.3...v2.0.4) (2025-01-27)
 
 
