@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.4](https://github.com/agrc/sweeper/compare/v2.0.3...v2.0.4) (2025-01-27)
+
+
+### Bug Fixes
+
+* set the backend explicitly ([dd64458](https://github.com/agrc/sweeper/commit/dd64458586538ad16abb27c33b06447484941805))
+
+
+### Dependencies
+
+* update supervisor ([289d4d8](https://github.com/agrc/sweeper/commit/289d4d85738098d91ac2ce586cd0f65a195b6fe1))
+
 ## [2.0.3](https://github.com/agrc/sweeper/compare/v2.0.2...v2.0.3) (2025-01-07)
 
 
