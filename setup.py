@@ -40,7 +40,7 @@ setup(
     ],
     keywords=[],
     install_requires=[
-        "agrc-supervisor==3.*",
+        "ugrc-supervisor==3.*",
         "agrc-usaddress==0.*",
         "beautifulsoup4==4.*",
         "docopt==0.*",
