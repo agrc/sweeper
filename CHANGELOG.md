@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.7](https://github.com/agrc/sweeper/compare/v2.0.6...v2.0.7) (2026-02-13)
+
+
+### Dependencies
+
+* **dev:** update pytest requirement from ==8.* to &gt;=8,&lt;10 ([#144](https://github.com/agrc/sweeper/issues/144)) ([bcaf0ae](https://github.com/agrc/sweeper/commit/bcaf0aef5676f5d323ce50cf338bfada0a792d87))
+
 ## [2.0.6](https://github.com/agrc/sweeper/compare/v2.0.5...v2.0.6) (2025-11-11)
 
 
