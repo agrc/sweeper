@@ -2,11 +2,10 @@
 # * coding: utf8 *
 import logging
 import re
+import typing
 from typing import Generator
 
 import arcpy
-from arcpy._mp import Layer, Table
-from arcpy.typing.gp import Result1
 from xxhash import xxh64
 
 from .base import SweeperBase
@@ -137,7 +136,10 @@ class DuplicateTest(SweeperBase):
                 finally:
                     arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
 
-            report["fixes"].append(f"{successful_deletes} records deleted successfully")
+            if arcpy.Exists(temp_feature_layer):
+                arcpy.management.Delete(temp_feature_layer)
+            if successful_deletes > 0:
+                report["fixes"].append(f"{successful_deletes} records deleted successfully")
             if failed_deletes > 0:
                 report["issues"].append(
                     f"{failed_batches} batch(es) with {failed_deletes} total records had errors deleting."
@@ -163,17 +165,17 @@ class DuplicateTest(SweeperBase):
             yield lst[i : i + chunk_size]
 
     @staticmethod
-    def _make_feature_layer(
-        feature_class: str, temp_layer_name: str, is_table: bool
-    ) -> Result1[str | Table | Layer] | Result1[str | Layer]:
+    def _make_feature_layer(feature_class: str, temp_layer_name: str, is_table: bool) -> typing.Any:
         """Single method to handle table or layer creation based on is_table parameter"""
+        #: arcpy's typing gets really convoluted, so we're just using typing.Any.
+
         if is_table:
             return arcpy.management.MakeTableView(feature_class, temp_layer_name)
         else:
             return arcpy.management.MakeFeatureLayer(feature_class, temp_layer_name)
 
     @staticmethod
-    def _delete_features_or_rows(feature_layer: Result1[str | Table | Layer] | Result1[str | Layer], is_table: bool):
+    def _delete_features_or_rows(feature_layer: typing.Any, is_table: bool):
         """Single method to handle deleting features or rows based on is_table parameter"""
         if is_table:
             arcpy.management.DeleteRows(feature_layer)
