@@ -445,11 +445,11 @@ class TestSweep:
         description = {
             "dataType": "Table",
             "hasGlobalID": False,
-            "hasOID": False,
+            "hasOID": True,
             "OIDFieldName": "OBJECTID",
             "shapeFieldName": "Shape",
             "globalIDFieldName": "GlobalID",
-            "fields": [self._make_field("Name")],
+            "fields": [self._make_field("Name"), self._make_field("OBJECTID")],
         }
         arcpy_mock.da.Describe.return_value = description
 
