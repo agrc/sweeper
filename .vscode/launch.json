@@ -1,20 +1,24 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Python Debugger: Module",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "sweeper",
-      "args": [
-        "sweep",
-        "--workspace",
-        "C:\\temp\\locators.gdb"
-      ],
-      "cwd": "${workspaceFolder}"
-    }
-  ]
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python Debugger: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sweeper.__main__",
+            "args": [
+                "sweep",
+                "duplicates",
+                "--workspace=C:\\temp\\sweeper_test\\Pre1978.gdb",
+                "--table-name=DAQPre1978LeadInHomes",
+                "--try-fix",
+                "--verbose",
+                "--save-report=C:\\temp\\sweeper_test\\"
+            ]
+        }
+    ]
 }

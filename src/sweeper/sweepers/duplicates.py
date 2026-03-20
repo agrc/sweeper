@@ -5,6 +5,8 @@ import re
 from typing import Generator
 
 import arcpy
+from arcpy._mp import Layer, Table
+from arcpy.typing.gp import Result1
 from xxhash import xxh64
 
 from .base import SweeperBase
@@ -111,68 +113,49 @@ class DuplicateTest(SweeperBase):
             f"Attempting to delete a total of {len(self.oids_with_issues)} duplicate records in {len(lists_of_oids)} batch(es) of {chunk_size} records each"
         )
 
+        successful_deletes = 0
+        failed_deletes = 0
+        failed_batches = 0
+
         with arcpy.EnvManager(workspace=self.workspace):
-            successful_deletes = 0
+            all_features = self._make_feature_layer(self.table_name, temp_feature_layer, self.is_table)
 
-            if self.is_table:
-                all_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer)
-                for index, list_of_oids in enumerate(lists_of_oids, start=1):
-                    sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
+            for index, list_of_oids in enumerate(lists_of_oids, start=1):
+                sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
 
-                    try:
-                        log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
-                        arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
-                        arcpy.management.DeleteRows(all_features)
-                        successful_deletes += len(list_of_oids)
-                    except Exception as error:
-                        error_message = f"unable to delete features in batch {index}: {error}"
-                        report["issues"].append(error_message)
-                    finally:
-                        arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
+                try:
+                    log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
+                    arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
+                    self._delete_features_or_rows(all_features, self.is_table)
+                    successful_deletes += len(list_of_oids)
+                except Exception as error:
+                    error_message = f"unable to delete features in batch {index}: {error}"
+                    log.info(error_message)
+                    report["issues"].append(error_message)
+                    failed_deletes += len(list_of_oids)
+                    failed_batches += 1
+                finally:
+                    arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
 
-            else:
-                all_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer)
-                for index, list_of_oids in enumerate(lists_of_oids, start=1):
-                    sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
-
-                    try:
-                        log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
-                        arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
-                        arcpy.management.DeleteFeatures(all_features)
-                        successful_deletes += len(list_of_oids)
-                    except Exception as error:
-                        error_message = f"unable to delete features {error}"
-                        report["issues"].append(error_message)
-                    finally:
-                        arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
-
-        #: TODO: move into loop, figure out report addition at success
-        #: Delete duplicate rows using different arcpy tools for tables and feature classes
-        with arcpy.EnvManager(workspace=self.workspace):
-            if self.is_table:
-                duplicate_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer, sql)
-            else:
-                duplicate_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer, sql)
-
-            try:
-                log.info(f"attempting to delete {len(self.oids_with_issues)} duplicate records")
-                if self.is_table:
-                    arcpy.management.DeleteRows(duplicate_features)
-                else:
-                    arcpy.management.DeleteFeatures(duplicate_features)
-            except Exception as error:
-                error_message = f"unable to delete features {error}"
-                report["issues"].append(error_message)
-            finally:
-                if arcpy.Exists(temp_feature_layer):
-                    arcpy.management.Delete(temp_feature_layer)
-
-            report["fixes"].append(f"{len(self.oids_with_issues)} records deleted successfully")
+            report["fixes"].append(f"{successful_deletes} records deleted successfully")
+            if failed_deletes > 0:
+                report["issues"].append(
+                    f"{failed_batches} batch(es) with {failed_deletes} total records had errors deleting."
+                )
 
         return report
 
     @staticmethod
-    def _chunk_oid_list(lst: list, chunk_size: int):
+    def _chunk_oid_list(lst: list, chunk_size: int) -> Generator[list, None, None]:
+        """Breaks a list into chunks of chunk_size
+
+        Args:
+            lst (list): Input List
+            chunk_size (int): The desired size per chunk
+
+        Yields:
+            Generator[list, None, None]: The next chunk_size sized chunk
+        """
         if len(lst) <= chunk_size:
             yield lst
             return
@@ -180,15 +163,19 @@ class DuplicateTest(SweeperBase):
             yield lst[i : i + chunk_size]
 
     @staticmethod
-    def _delete_features_or_rows(feature_layer, is_table):
-        if is_table:
-            arcpy.management.DeleteRows(feature_layer)
-        else:
-            arcpy.management.DeleteFeatures(feature_layer)
-
-    @staticmethod
-    def _make_feature_layer(feature_class, temp_layer_name, is_table):
+    def _make_feature_layer(
+        feature_class: str, temp_layer_name: str, is_table: bool
+    ) -> Result1[str | Table | Layer] | Result1[str | Layer]:
+        """Single method to handle table or layer creation based on is_table parameter"""
         if is_table:
             return arcpy.management.MakeTableView(feature_class, temp_layer_name)
         else:
             return arcpy.management.MakeFeatureLayer(feature_class, temp_layer_name)
+
+    @staticmethod
+    def _delete_features_or_rows(feature_layer: Result1[str | Table | Layer] | Result1[str | Layer], is_table: bool):
+        """Single method to handle deleting features or rows based on is_table parameter"""
+        if is_table:
+            arcpy.management.DeleteRows(feature_layer)
+        else:
+            arcpy.management.DeleteFeatures(feature_layer)
