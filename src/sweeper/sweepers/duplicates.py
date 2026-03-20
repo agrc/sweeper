@@ -117,7 +117,7 @@ class DuplicateTest(SweeperBase):
         failed_batches = 0
 
         with arcpy.EnvManager(workspace=self.workspace):
-            all_features = self._make_feature_layer(self.table_name, temp_feature_layer, self.is_table)
+            all_features = self._make_feature_layer(temp_feature_layer)
 
             for index, list_of_oids in enumerate(lists_of_oids, start=1):
                 sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
@@ -125,7 +125,11 @@ class DuplicateTest(SweeperBase):
                 try:
                     log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
                     arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
-                    self._delete_features_or_rows(all_features, self.is_table)
+                    if not self._valid_selection(all_features, list_of_oids):
+                        raise RuntimeError(
+                            f"Invalid selection for batch {index}. The OIDs in the selection do not match the expected OIDs."
+                        )
+                    self._delete_features_or_rows(all_features)
                     successful_deletes += len(list_of_oids)
                 except Exception as error:
                     error_message = f"unable to delete features in batch {index}: {error}"
@@ -164,20 +168,28 @@ class DuplicateTest(SweeperBase):
         for i in range(0, len(lst), chunk_size):
             yield lst[i : i + chunk_size]
 
-    @staticmethod
-    def _make_feature_layer(feature_class: str, temp_layer_name: str, is_table: bool) -> typing.Any:
+    def _make_feature_layer(self, temp_layer_name: str) -> typing.Any:
         """Single method to handle table or layer creation based on is_table parameter"""
         #: arcpy's typing gets really convoluted, so we're just using typing.Any.
 
-        if is_table:
-            return arcpy.management.MakeTableView(feature_class, temp_layer_name)
+        if self.is_table:
+            return arcpy.management.MakeTableView(self.table_name, temp_layer_name)
         else:
-            return arcpy.management.MakeFeatureLayer(feature_class, temp_layer_name)
+            return arcpy.management.MakeFeatureLayer(self.table_name, temp_layer_name)
 
-    @staticmethod
-    def _delete_features_or_rows(feature_layer: typing.Any, is_table: bool):
+    def _delete_features_or_rows(self, feature_layer: typing.Any):
         """Single method to handle deleting features or rows based on is_table parameter"""
-        if is_table:
+        if self.is_table:
             arcpy.management.DeleteRows(feature_layer)
         else:
             arcpy.management.DeleteFeatures(feature_layer)
+
+    @staticmethod
+    def _valid_selection(feature_layer_or_table: typing.Any, list_of_oids: list) -> bool:
+        """Makes sure the selection is valid by comparing the OBJECTIDs in the selection to the list of OBJECTIDs used to create the where clause. This is a safeguard to prevent deleting the entire table if something goes wrong with the where clause."""
+        with arcpy.da.SearchCursor(feature_layer_or_table, ["OID@"]) as cursor:
+            selected_oids = {str(row[0]) for row in cursor}
+        if set([str(oid) for oid in list_of_oids]) != selected_oids:
+            log.info("Selected OIDs do not match expected OIDs.")
+            return False
+        return True
