@@ -110,8 +110,41 @@ class DuplicateTest(SweeperBase):
         log.info(
             f"Attempting to delete a total of {len(self.oids_with_issues)} duplicate records in {len(lists_of_oids)} batch(es) of {chunk_size} records each"
         )
-        for list_of_oids in lists_of_oids:
-            sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
+
+        with arcpy.EnvManager(workspace=self.workspace):
+            successful_deletes = 0
+
+            if self.is_table:
+                all_features = arcpy.management.MakeTableView(self.table_name, temp_feature_layer)
+                for index, list_of_oids in enumerate(lists_of_oids, start=1):
+                    sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
+
+                    try:
+                        log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
+                        arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
+                        arcpy.management.DeleteRows(all_features)
+                        successful_deletes += len(list_of_oids)
+                    except Exception as error:
+                        error_message = f"unable to delete features in batch {index}: {error}"
+                        report["issues"].append(error_message)
+                    finally:
+                        arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
+
+            else:
+                all_features = arcpy.management.MakeFeatureLayer(self.table_name, temp_feature_layer)
+                for index, list_of_oids in enumerate(lists_of_oids, start=1):
+                    sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
+
+                    try:
+                        log.info(f"Batch {index}: attempting to delete {len(list_of_oids)} duplicate records")
+                        arcpy.management.SelectLayerByAttribute(all_features, "NEW_SELECTION", sql)
+                        arcpy.management.DeleteFeatures(all_features)
+                        successful_deletes += len(list_of_oids)
+                    except Exception as error:
+                        error_message = f"unable to delete features {error}"
+                        report["issues"].append(error_message)
+                    finally:
+                        arcpy.management.SelectLayerByAttribute(all_features, "CLEAR_SELECTION")
 
         #: TODO: move into loop, figure out report addition at success
         #: Delete duplicate rows using different arcpy tools for tables and feature classes
@@ -145,3 +178,17 @@ class DuplicateTest(SweeperBase):
             return
         for i in range(0, len(lst), chunk_size):
             yield lst[i : i + chunk_size]
+
+    @staticmethod
+    def _delete_features_or_rows(feature_layer, is_table):
+        if is_table:
+            arcpy.management.DeleteRows(feature_layer)
+        else:
+            arcpy.management.DeleteFeatures(feature_layer)
+
+    @staticmethod
+    def _make_feature_layer(feature_class, temp_layer_name, is_table):
+        if is_table:
+            return arcpy.management.MakeTableView(feature_class, temp_layer_name)
+        else:
+            return arcpy.management.MakeFeatureLayer(feature_class, temp_layer_name)
