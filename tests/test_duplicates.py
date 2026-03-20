@@ -1,5 +1,5 @@
 import sys
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 #: Mock arcpy before importing the module under test
 arcpy_mock = MagicMock()
@@ -50,27 +50,39 @@ class TestChunkOidList:
 
 
 class TestMakeFeatureLayer:
+    def setup_method(self):
+        arcpy_mock.reset_mock()
+
     def test_make_feature_layer_is_table_calls_make_table_view(self):
-        DuplicateTest._make_feature_layer("my_table", "temp_layer", True)
+        sweeper = DuplicateTest("workspace", "my_table")
+        sweeper.is_table = True
+        sweeper._make_feature_layer("temp_layer")
 
         arcpy_mock.management.MakeTableView.assert_called_once_with("my_table", "temp_layer")
 
     def test_make_feature_layer_is_not_table_calls_make_feature_layer(self):
-        DuplicateTest._make_feature_layer("my_fc", "temp_layer", False)
+        sweeper = DuplicateTest("workspace", "my_fc")
+        sweeper._make_feature_layer("temp_layer")
 
         arcpy_mock.management.MakeFeatureLayer.assert_called_once_with("my_fc", "temp_layer")
 
 
 class TestDeleteFeaturesOrRows:
+    def setup_method(self):
+        arcpy_mock.reset_mock()
+
     def test_delete_features_or_rows_is_table_calls_delete_rows(self):
+        sweeper = DuplicateTest("workspace", "my_table")
+        sweeper.is_table = True
         layer_mock = MagicMock()
-        DuplicateTest._delete_features_or_rows(layer_mock, True)
+        sweeper._delete_features_or_rows(layer_mock)
 
         arcpy_mock.management.DeleteRows.assert_called_once_with(layer_mock)
 
     def test_delete_features_or_rows_is_not_table_calls_delete_features(self):
+        sweeper = DuplicateTest("workspace", "my_fc")
         layer_mock = MagicMock()
-        DuplicateTest._delete_features_or_rows(layer_mock, False)
+        sweeper._delete_features_or_rows(layer_mock)
 
         arcpy_mock.management.DeleteFeatures.assert_called_once_with(layer_mock)
 
@@ -81,6 +93,11 @@ class TestTryFix:
         arcpy_mock.management.SelectLayerByAttribute.side_effect = None
         arcpy_mock.EnvManager.return_value.__enter__ = MagicMock(return_value=None)
         arcpy_mock.EnvManager.return_value.__exit__ = MagicMock(return_value=False)
+        self._valid_selection_patcher = patch.object(DuplicateTest, "_valid_selection", return_value=True)
+        self._valid_selection_patcher.start()
+
+    def teardown_method(self):
+        self._valid_selection_patcher.stop()
 
     def test_try_fix_no_oids_returns_empty_report(self):
         sweeper = DuplicateTest("workspace", "my_table")
@@ -177,6 +194,72 @@ class TestTryFix:
 
         assert any("500 records deleted successfully" in fix for fix in report["fixes"])
         assert any("1 batch(es) with 1000 total records had errors deleting." in issue for issue in report["issues"])
+
+    def test_try_fix_invalid_selection_reports_error(self):
+        sweeper = DuplicateTest("workspace", "my_table")
+        sweeper.oids_with_issues = [1, 2, 3]
+        layer_mock = MagicMock()
+        arcpy_mock.management.MakeFeatureLayer.return_value = layer_mock
+
+        with patch.object(DuplicateTest, "_valid_selection", return_value=False):
+            report = sweeper.try_fix()
+
+        assert any("Invalid selection for batch 1" in issue for issue in report["issues"])
+        assert any("1 batch(es) with 3 total records had errors deleting." in issue for issue in report["issues"])
+
+    def test_try_fix_continues_after_invalid_selection_batch(self):
+        sweeper = DuplicateTest("workspace", "my_table")
+        sweeper.oids_with_issues = list(range(1500))
+        layer_mock = MagicMock()
+        arcpy_mock.management.MakeFeatureLayer.return_value = layer_mock
+
+        #: Return False for batch 1, True for all subsequent batches
+        valid_selection_results = iter([False, True, True])
+        with patch.object(DuplicateTest, "_valid_selection", side_effect=valid_selection_results):
+            report = sweeper.try_fix()
+
+        assert any("500 records deleted successfully" in fix for fix in report["fixes"])
+        assert any("Invalid selection for batch 1" in issue for issue in report["issues"])
+        assert any("1 batch(es) with 1000 total records had errors deleting." in issue for issue in report["issues"])
+
+
+class TestValidSelection:
+    def setup_method(self):
+        arcpy_mock.reset_mock()
+
+    def _make_cursor_mock(self, rows):
+        cursor_mock = MagicMock()
+        cursor_mock.__enter__ = MagicMock(return_value=iter(rows))
+        cursor_mock.__exit__ = MagicMock(return_value=False)
+        arcpy_mock.da.SearchCursor.return_value = cursor_mock
+
+    def test_valid_selection_returns_true_when_oids_match(self):
+        self._make_cursor_mock([(1,), (2,), (3,)])
+
+        result = DuplicateTest._valid_selection(MagicMock(), [1, 2, 3])
+
+        assert result is True
+
+    def test_valid_selection_returns_false_when_oids_do_not_match(self):
+        self._make_cursor_mock([(1,), (2,)])
+
+        result = DuplicateTest._valid_selection(MagicMock(), [1, 2, 3])
+
+        assert result is False
+
+    def test_valid_selection_returns_false_when_selection_is_empty(self):
+        self._make_cursor_mock([])
+
+        result = DuplicateTest._valid_selection(MagicMock(), [1, 2, 3])
+
+        assert result is False
+
+    def test_valid_selection_returns_true_for_single_oid_match(self):
+        self._make_cursor_mock([(42,)])
+
+        result = DuplicateTest._valid_selection(MagicMock(), [42])
+
+        assert result is True
 
 
 #: This test class was added by copilot when creating tests for the try_fix method. They pass, but I've not verified if they're actually sane.
