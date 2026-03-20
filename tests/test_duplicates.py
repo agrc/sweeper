@@ -1,18 +1,48 @@
 import sys
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 #: Mock arcpy before importing the module under test
 arcpy_mock = MagicMock()
-sys.modules["arcpy"] = arcpy_mock
-sys.modules["arcpy.da"] = arcpy_mock.da
-sys.modules["arcpy._mp"] = arcpy_mock._mp
-sys.modules["arcpy.typing"] = arcpy_mock.typing
-sys.modules["arcpy.typing.gp"] = arcpy_mock.typing.gp
-sys.modules["xxhash"] = MagicMock()
-
-from sweeper.sweepers.duplicates import DuplicateTest  # noqa: E402
 
 
+@pytest.fixture(autouse=True, scope="module")
+def _mock_arcpy_and_xxhash():
+    """Mock arcpy (and submodules) and xxhash for this test module only."""
+    # Save original modules so we can restore them after the tests run.
+    module_names = [
+        "arcpy",
+        "arcpy.da",
+        "arcpy._mp",
+        "arcpy.typing",
+        "arcpy.typing.gp",
+        "xxhash",
+    ]
+    originals = {name: sys.modules.get(name) for name in module_names}
+
+    # Install mocks into sys.modules for the duration of this module's tests.
+    sys.modules["arcpy"] = arcpy_mock
+    sys.modules["arcpy.da"] = arcpy_mock.da
+    sys.modules["arcpy._mp"] = arcpy_mock._mp
+    sys.modules["arcpy.typing"] = arcpy_mock.typing
+    sys.modules["arcpy.typing.gp"] = arcpy_mock.typing.gp
+    sys.modules["xxhash"] = MagicMock()
+
+    from sweeper.sweepers.duplicates import DuplicateTest as _DuplicateTest  # noqa: E402
+
+    # Expose DuplicateTest at module level so existing tests continue to work.
+    globals()["DuplicateTest"] = _DuplicateTest
+
+    try:
+        yield
+    finally:
+        # Restore the original sys.modules entries.
+        for name, original in originals.items():
+            if original is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = original
 class TestChunkOidList:
     def test_chunk_oid_list_small_list_returns_single_chunk(self):
         lst = [1, 2, 3]
