@@ -1,7 +1,5 @@
 import sys
-from unittest.mock import MagicMock, call, patch
-
-import pytest
+from unittest.mock import MagicMock
 
 #: Mock arcpy before importing the module under test
 arcpy_mock = MagicMock()
@@ -181,6 +179,7 @@ class TestTryFix:
         assert any("1 batch(es) with 1000 total records had errors deleting." in issue for issue in report["issues"])
 
 
+#: This test class was added by copilot when creating tests for the try_fix method. They pass, but I've not verified if they're actually sane.
 class TestSweep:
     def setup_method(self):
         arcpy_mock.reset_mock()
@@ -212,7 +211,7 @@ class TestSweep:
         cursor_mock.__exit__ = MagicMock(return_value=False)
         arcpy_mock.da.SearchCursor.return_value = cursor_mock
 
-        import xxhash
+        # import xxhash  #: This is unused; not sure if manually inserting the mock into sys.modules works; this was a copilot-created test.
 
         real_hashes = {}
 
