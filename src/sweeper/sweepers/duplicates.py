@@ -2,6 +2,7 @@
 # * coding: utf8 *
 import logging
 import re
+from typing import Generator
 
 import arcpy
 from xxhash import xxh64
@@ -99,10 +100,20 @@ class DuplicateTest(SweeperBase):
         if len(self.oids_with_issues) == 0:
             return report
 
-        sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
+        chunk_size = 1000
+
+        # sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
+        lists_of_oids = list(self._chunk_oid_list(self.oids_with_issues, chunk_size))
         temp_feature_layer = "temp_layer"
 
         log.info(f"Workspace is:   {self.workspace}")
+        log.info(
+            f"Attempting to delete a total of {len(self.oids_with_issues)} duplicate records in {len(lists_of_oids)} batch(es) of {chunk_size} records each"
+        )
+        for list_of_oids in lists_of_oids:
+            sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in list_of_oids])})'
+
+        #: TODO: move into loop, figure out report addition at success
         #: Delete duplicate rows using different arcpy tools for tables and feature classes
         with arcpy.EnvManager(workspace=self.workspace):
             if self.is_table:
@@ -126,3 +137,11 @@ class DuplicateTest(SweeperBase):
             report["fixes"].append(f"{len(self.oids_with_issues)} records deleted successfully")
 
         return report
+
+    @staticmethod
+    def _chunk_oid_list(lst: list, chunk_size: int):
+        if len(lst) <= chunk_size:
+            yield lst
+            return
+        for i in range(0, len(lst), chunk_size):
+            yield lst[i : i + chunk_size]
