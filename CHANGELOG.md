@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.8](https://github.com/agrc/sweeper/compare/v2.0.7...v2.0.8) (2026-03-23)
+
+
+### Bug Fixes
+
+* delete dupes in chunks to limit sql length, use select for delete ([89616db](https://github.com/agrc/sweeper/commit/89616db75489f1f9b250dfcbad7a7eeb2125c76e))
+* **tests:** resolve ruff F821 errors for DuplicateTest in test_duplicates.py ([#148](https://github.com/agrc/sweeper/issues/148)) ([fd69f81](https://github.com/agrc/sweeper/commit/fd69f81dd933ff9b19361ba6624641bb03083085))
+
 ## [2.0.7](https://github.com/agrc/sweeper/compare/v2.0.6...v2.0.7) (2026-02-13)
 
 
