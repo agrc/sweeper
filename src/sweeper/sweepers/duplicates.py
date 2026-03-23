@@ -103,7 +103,6 @@ class DuplicateTest(SweeperBase):
 
         chunk_size = 1000
 
-        # sql = f'"OBJECTID" IN ({",".join([str(oid) for oid in self.oids_with_issues])})'
         lists_of_oids = list(self._chunk_oid_list(self.oids_with_issues, chunk_size))
         temp_feature_layer = "temp_layer"
 
